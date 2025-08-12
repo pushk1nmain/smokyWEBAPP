@@ -1,0 +1,128 @@
+# Docker Compose конфигурация для SmokyApp
+# Настроена для продакшн деплоя с автоматическими обновлениями
+
+version: '3.8'
+
+services:
+  # Основное веб-приложение
+  smokyapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: smokyapp-web
+    restart: unless-stopped
+    
+    # Сетевые настройки
+    ports:
+      - "80:80"
+      - "443:443"  # Для HTTPS (требует настройки SSL)
+    
+    # Переменные окружения
+    environment:
+      - NODE_ENV=production
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+      - TZ=Europe/Moscow
+    
+    # Монтирование томов
+    volumes:
+      # Логи приложения
+      - ./logs:/var/log/nginx
+      - ./logs:/var/log/smokyapp
+      
+      # Конфигурация nginx (для горячей перезагрузки)
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      
+      # SSL сертификаты (раскомментировать при использовании HTTPS)
+      # - ./ssl:/etc/nginx/ssl:ro
+      
+      # Скрипты обновления
+      - ./scripts:/app/scripts:ro
+    
+    # Ограничения ресурсов
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    
+    # Проверка здоровья
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Сеть
+    networks:
+      - smokyapp-network
+    
+    # Логирование
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  
+  # Сервис для автоматических обновлений (опционально)
+  updater:
+    build:
+      context: .
+      dockerfile: Dockerfile.updater
+    container_name: smokyapp-updater
+    restart: unless-stopped
+    
+    environment:
+      - REPO_URL=https://github.com/smokyapp/webapp.git
+      - BRANCH=main
+      - UPDATE_INTERVAL=300  # Проверка обновлений каждые 5 минут
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-your-secret-key}
+    
+    volumes:
+      # Docker socket для управления контейнерами
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      
+      # Скрипты обновления
+      - ./scripts:/app/scripts
+      
+      # Логи
+      - ./logs:/var/log/smokyapp
+    
+    # Ограничения ресурсов
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 32M
+    
+    networks:
+      - smokyapp-network
+    
+    # Зависимости
+    depends_on:
+      smokyapp:
+        condition: service_healthy
+
+# Сетевая конфигурация
+networks:
+  smokyapp-network:
+    driver: bridge
+    name: smokyapp-network
+
+# Именованные тома
+volumes:
+  nginx-logs:
+    driver: local
+    name: smokyapp-nginx-logs
+  
+  app-logs:
+    driver: local
+    name: smokyapp-logs

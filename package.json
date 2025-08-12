@@ -4,12 +4,11 @@
   "description": "Telegram Web App для SmokyApp - путь к свободе от курения",
   "type": "module",
   "scripts": {
-    "build": "echo 'Building for Vercel...' && echo 'Static build completed'",
+    "build": "echo 'Static build completed'",
     "dev": "python3 -m http.server 8000 || python -m http.server 8000",
     "preview": "python3 -m http.server 3000 || python -m http.server 3000",
     "lint": "echo 'Linting JavaScript files...'",
-    "clean": "echo 'Cleaning build artifacts...'",
-    "deploy": "vercel --prod"
+    "clean": "echo 'Cleaning build artifacts...'"
   },
   "dependencies": {},
   "devDependencies": {},

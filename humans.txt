@@ -10,9 +10,8 @@
     IDE: Cursor, VS Code
     Standards: HTML5, CSS3, ES6+
     Components: Vanilla JavaScript, Telegram Web App API
-    Hosting: Vercel
+
 
 /* THANKS */
     Telegram: для предоставления Web App платформы
-    Vercel: за хостинг и развертывание
     Open Source community: за инструменты разработки

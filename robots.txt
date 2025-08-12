@@ -9,8 +9,8 @@ Allow: /elements/
 # Служебные файлы скрыты от индексации  
 Disallow: /debug.html
 Disallow: /.env
-Disallow: /.vercel
+
 Disallow: /.github/
 
 # Карта сайта (опционально)
-# Sitemap: https://your-domain.vercel.app/sitemap.xml
+# Sitemap: https://your-domain.com/sitemap.xml

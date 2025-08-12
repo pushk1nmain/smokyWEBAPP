@@ -1,0 +1,57 @@
+# Dockerfile для сервиса автоматических обновлений SmokyApp
+# Легковесный контейнер для мониторинга изменений в GitHub
+
+FROM alpine:latest
+
+# Метаданные образа
+LABEL maintainer="SmokyApp Team"
+LABEL description="Служба автоматических обновлений для SmokyApp"
+LABEL version="1.0.0"
+
+# Устанавливаем необходимые пакеты
+RUN apk add --no-cache \
+    git \
+    curl \
+    bash \
+    docker \
+    docker-compose \
+    tzdata && \
+    rm -rf /var/cache/apk/*
+
+# Создаем пользователя для приложения
+RUN addgroup -g 1001 -S updater && \
+    adduser -S updater -u 1001 -G updater -G docker
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Копируем скрипты обновления
+COPY scripts/ /app/scripts/
+
+# Делаем скрипты исполняемыми
+RUN chmod +x /app/scripts/*.sh && \
+    chown -R updater:updater /app
+
+# Создаем директории для логов
+RUN mkdir -p /var/log/smokyapp && \
+    chown -R updater:updater /var/log/smokyapp
+
+# Настраиваем часовой пояс
+ENV TZ=Europe/Moscow
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Переменные окружения по умолчанию
+ENV REPO_URL=https://github.com/smokyapp/webapp.git
+ENV BRANCH=main
+ENV CHECK_INTERVAL=300
+ENV LOG_FILE=/var/log/smokyapp/updater.log
+
+# Переключаемся на непривилегированного пользователя
+USER updater
+
+# Проверка здоровья контейнера
+HEALTHCHECK --interval=60s --timeout=10s --start-period=10s --retries=3 \
+    CMD pgrep -f watch.sh > /dev/null || exit 1
+
+# Точка входа - запуск службы мониторинга
+CMD ["/app/scripts/watch.sh", "--daemon"]
