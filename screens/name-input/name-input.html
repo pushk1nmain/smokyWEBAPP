@@ -1,0 +1,49 @@
+<div class="name-input-screen">
+  <div class="name-input-screen__header">
+    <h1 class="screen__title">Как к вам обращаться?</h1>
+    <p class="screen__subtitle">
+      Введите ваше имя, чтобы мы могли персонализировать опыт использования приложения
+    </p>
+  </div>
+
+  <div class="name-input-screen__content">
+    <div class="name-input-form">
+      <div class="form-group">
+        <label for="userName" class="form-label">
+          Ваше имя
+        </label>
+        <input 
+          type="text" 
+          id="userName" 
+          class="form-input name-input" 
+          placeholder="Введите ваше имя"
+          autocomplete="given-name"
+          maxlength="50"
+          required
+        >
+        <div class="form-error hidden" id="nameError">
+          Пожалуйста, введите корректное имя (минимум 2 символа)
+        </div>
+        <div class="form-help">
+          Мы будем использовать это имя для персонализации сообщений
+        </div>
+      </div>
+
+      <div class="name-suggestions hidden" id="nameSuggestions">
+        <p class="suggestions-label">Или выберите из предложенных:</p>
+        <div class="suggestions-list" id="suggestionsList">
+          <!-- Предложения имен будут добавлены через JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="name-input-screen__footer">
+    <div class="privacy-note">
+      <div class="privacy-note__icon">🔒</div>
+      <p class="privacy-note__text">
+        Ваши данные надежно защищены и используются только для улучшения сервиса
+      </p>
+    </div>
+  </div>
+</div>
