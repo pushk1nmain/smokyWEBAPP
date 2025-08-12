@@ -1,10 +1,10 @@
-# Docker Compose конфигурация для SmokyApp
-# Настроена для продакшн деплоя с автоматическими обновлениями
+# Docker Compose конфигурация для SmokyApp с внешним nginx
+# Настроена для работы за прокси-сервером
 
 version: '3.8'
 
 services:
-  # Основное веб-приложение
+  # Основное веб-приложение (без внешних портов)
   smokyapp:
     build:
       context: .
@@ -13,15 +13,14 @@ services:
     container_name: smokyapp-web
     restart: unless-stopped
     
-    # Сетевые настройки
-    ports:
-      - "80:80"
-      - "443:443"  # Для HTTPS (требует настройки SSL)
+    # Только внутренний порт для проксирования
+    expose:
+      - "80"
     
     # Переменные окружения
     environment:
       - NODE_ENV=production
-      - NGINX_HOST=localhost
+      - NGINX_HOST=smokyapp-web
       - NGINX_PORT=80
       - TZ=Europe/Moscow
     
@@ -33,9 +32,6 @@ services:
       
       # Конфигурация nginx (для горячей перезагрузки)
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      
-      # SSL сертификаты (раскомментировать при использовании HTTPS)
-      # - ./ssl:/etc/nginx/ssl:ro
       
       # Скрипты обновления
       - ./scripts:/app/scripts:ro
@@ -50,7 +46,7 @@ services:
           cpus: '0.1'
           memory: 64M
     
-    # Проверка здоровья
+    # Проверка здоровья (внутренняя)
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
@@ -58,9 +54,10 @@ services:
       retries: 3
       start_period: 40s
     
-    # Сеть
+    # Подключение к внешней сети nginx
     networks:
-      - smokyapp-network
+      - nginx-proxy
+      - smokyapp-internal
     
     # Логирование
     logging:
@@ -69,7 +66,7 @@ services:
         max-size: "10m"
         max-file: "3"
   
-  # Сервис для автоматических обновлений (опционально)
+  # Сервис для автоматических обновлений
   updater:
     build:
       context: .
@@ -80,7 +77,7 @@ services:
     environment:
       - REPO_URL=https://github.com/smokyapp/webapp.git
       - BRANCH=main
-      - UPDATE_INTERVAL=300  # Проверка обновлений каждые 5 минут
+      - UPDATE_INTERVAL=300
       - WEBHOOK_SECRET=${WEBHOOK_SECRET:-your-secret-key}
     
     volumes:
@@ -104,7 +101,7 @@ services:
           memory: 32M
     
     networks:
-      - smokyapp-network
+      - smokyapp-internal
     
     # Зависимости
     depends_on:
@@ -113,9 +110,15 @@ services:
 
 # Сетевая конфигурация
 networks:
-  smokyapp-network:
+  # Внешняя сеть для подключения к nginx
+  nginx-proxy:
+    external: true
+    name: nginx-proxy
+  
+  # Внутренняя сеть приложения
+  smokyapp-internal:
     driver: bridge
-    name: smokyapp-network
+    name: smokyapp-internal
 
 # Именованные тома
 volumes:

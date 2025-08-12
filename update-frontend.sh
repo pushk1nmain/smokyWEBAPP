@@ -6,7 +6,16 @@ echo "🚀 Проверяем обновления Smoky WebApp Frontend..."
 
 # Переменные (автоматически определяем текущую папку)
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOCKER_COMPOSE_FILE="$APP_DIR/docker-compose.yml"
+
+# Определяем какой docker-compose файл использовать
+if [ -f "$APP_DIR/docker-compose-proxy.yml" ] && docker network ls | grep -q nginx-proxy; then
+    DOCKER_COMPOSE_FILE="$APP_DIR/docker-compose-proxy.yml"
+    PROXY_MODE=true
+    echo "🔗 Обнаружен режим проксирования"
+else
+    DOCKER_COMPOSE_FILE="$APP_DIR/docker-compose.yml" 
+    PROXY_MODE=false
+fi
 
 echo "📁 Работаем в директории: $APP_DIR"
 
@@ -103,10 +112,27 @@ echo "📊 Статус всех сервисов:"
 docker-compose -f $DOCKER_COMPOSE_FILE ps
 
 echo "🏥 Проверяем здоровье приложения..."
-if curl -f http://localhost/health >/dev/null 2>&1; then
+
+# Определяем URL для проверки здоровья
+if [ "$PROXY_MODE" = true ]; then
+    # В режиме прокси проверяем внутренний адрес контейнера
+    HEALTH_URL="http://smokyapp-web/health"
+    echo "🔗 Проверяем через внутренний адрес контейнера..."
+else
+    HEALTH_URL="http://localhost/health"
+fi
+
+if curl -f $HEALTH_URL >/dev/null 2>&1 || docker exec smokyapp-web curl -f http://localhost/health >/dev/null 2>&1; then
     echo "✅ Деплой завершен успешно!"
-    echo "🌐 Приложение доступно по адресу: http://localhost"
-    echo "📱 Telegram Web App готов к работе"
+    
+    if [ "$PROXY_MODE" = true ]; then
+        echo "🌐 Приложение работает в режиме проксирования"
+        echo "🔗 Доступ через ваш внешний nginx с SSL"
+        echo "📱 Telegram Web App готов к работе"
+    else
+        echo "🌐 Приложение доступно по адресу: http://localhost"
+        echo "📱 Telegram Web App готов к работе"
+    fi
     echo ""
     echo "📋 Полезные команды:"
     echo "   Логи приложения: docker-compose -f $DOCKER_COMPOSE_FILE logs -f smokyapp"

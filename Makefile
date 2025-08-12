@@ -52,6 +52,12 @@ start: ## Запуск приложения
 	@echo "$(GREEN)✅ Приложение запущено$(NC)"
 	@make status
 
+start-proxy: ## Запуск приложения для работы с внешним nginx
+	@echo "$(BLUE)▶️  Запуск SmokyApp (proxy режим)...$(NC)"
+	@docker-compose -f docker-compose-proxy.yml up -d
+	@echo "$(GREEN)✅ Приложение запущено в proxy режиме$(NC)"
+	@docker-compose -f docker-compose-proxy.yml ps
+
 stop: ## Остановка приложения
 	@echo "$(BLUE)⏹️  Остановка SmokyApp...$(NC)"
 	@docker-compose -f $(COMPOSE_FILE) down
@@ -222,3 +228,22 @@ health: ## Детальная проверка здоровья системы
 up: start ## Алиас для start
 down: stop ## Алиас для stop
 rebuild: build start ## Пересборка и запуск
+
+# Команды для работы с внешним nginx
+setup-ssl: ## Настройка SSL сертификатов
+	@echo "$(BLUE)🔒 Настройка SSL сертификатов...$(NC)"
+	@sudo ./scripts/setup-ssl.sh
+
+setup-proxy: ## Полная настройка с внешним nginx и SSL
+	@echo "$(BLUE)🔗 Настройка проксирования через внешний nginx...$(NC)"
+	@docker network create nginx-proxy 2>/dev/null || echo "$(YELLOW)Сеть nginx-proxy уже существует$(NC)"
+	@sudo ./scripts/setup-ssl.sh
+	@echo "$(YELLOW)После завершения настройки SSL запустите:$(NC)"
+	@echo "$(YELLOW)make start-proxy$(NC)"
+
+proxy-logs: ## Логи в режиме прокси
+	@docker-compose -f docker-compose-proxy.yml logs -f
+
+proxy-status: ## Статус в режиме прокси
+	@docker-compose -f docker-compose-proxy.yml ps
+	@docker network inspect nginx-proxy --format '{{range .Containers}}{{.Name}}: {{.IPv4Address}}{{"\n"}}{{end}}'
