@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Telegram Web App - статические ресурсы доступны для индексации
+Allow: /css/
+Allow: /js/
+Allow: /elements/
+
+# Служебные файлы скрыты от индексации  
+Disallow: /debug.html
+Disallow: /.env
+Disallow: /.vercel
+Disallow: /.github/
+
+# Карта сайта (опционально)
+# Sitemap: https://your-domain.vercel.app/sitemap.xml
