@@ -3,7 +3,7 @@
  * Скрипт экрана приветствия для интеграции с Telegram WebApp API
  */
 
-console.log('🔥 СКРИПТ НАЧИНАЕТ ЗАГРУЖАТЬСЯ...');
+
 
 
 
@@ -607,8 +607,6 @@ window.addEventListener('unhandledrejection', (event) => {
     handleError(event.reason, 'Unhandled Promise Rejection');
 });
 
-console.log('🔥 СКРИПТ ПОЛНОСТЬЮ ЗАГРУЖЕН, ДОБАВЛЯЕМ EVENT LISTENER...');
-
 // Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('📄 DOM загружен, инициализируем экран приветствия...');
@@ -619,8 +617,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Инициализируем экран приветствия (асинхронно)
     await initializeWelcomeScreen();
 });
-
-console.log('🔥 EVENT LISTENER ДОБАВЛЕН!');
 
 // Экспорт для использования в других модулях
 window.SmokyWelcome = {
