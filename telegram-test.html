@@ -109,8 +109,8 @@
         <div class="info-row">
             <span class="info-label">TelegramManager:</span>
             <span id="telegram-manager-status" class="status status--error">Проверяем...</span>
-        </div>
-        
+    </div>
+
         <div class="info-row">
             <span class="info-label">Среда выполнения:</span>
             <span id="environment-status" class="status status--info">Определяем...</span>
@@ -129,6 +129,7 @@
         <div style="margin-top: 20px;">
             <button class="btn" onclick="runDiagnostics()">🔄 Перезапустить диагностику</button>
             <button class="btn" onclick="testTelegramManager()">🧩 Тест TelegramManager</button>
+            <button class="btn" onclick="forceInitializeTelegramManager()">⚡ Принудительная инициализация</button>
             <button class="btn" onclick="clearLogs()">🗑️ Очистить логи</button>
         </div>
     </div>
@@ -312,11 +313,17 @@
             }
             
             try {
-                // Тест инициализации
-                if (typeof window.TelegramManager.initialize === 'function') {
-                    log('   Тестируем инициализацию...');
-                    const result = await window.TelegramManager.initialize();
-                    log(`   Результат инициализации: ${result ? '✅' : '❌'}`);
+                // Проверяем текущее состояние
+                log('   Проверяем текущее состояние...');
+                const isReady = window.TelegramManager.isReady ? window.TelegramManager.isReady() : false;
+                log(`   Текущая готовность: ${isReady ? '✅' : '❌'}`);
+                
+                // Проверяем внутренние свойства через _instance
+                if (window.TelegramManager._instance) {
+                    const instance = window.TelegramManager._instance;
+                    log(`   isInitialized: ${instance.isInitialized ? '✅' : '❌'}`);
+                    log(`   webApp существует: ${instance.webApp ? '✅' : '❌'}`);
+                    log(`   user данные: ${instance.user ? JSON.stringify(instance.user) : 'нет'}`);
                 }
                 
                 // Тест получения данных пользователя
@@ -325,16 +332,39 @@
                     log(`   Данные пользователя: ${userData ? JSON.stringify(userData) : 'нет'}`);
                 }
                 
-                // Тест готовности
-                if (typeof window.TelegramManager.isReady === 'function') {
-                    const isReady = window.TelegramManager.isReady();
-                    log(`   Готовность: ${isReady ? '✅' : '❌'}`);
-                }
-                
                 log('✅ Тестирование TelegramManager завершено');
                 
             } catch (error) {
                 log(`❌ Ошибка при тестировании TelegramManager: ${error.message}`);
+            }
+        }
+
+        // Принудительная инициализация TelegramManager
+        async function forceInitializeTelegramManager() {
+            log('⚡ Принудительная инициализация TelegramManager...');
+            
+            if (!window.TelegramManager) {
+                log('❌ TelegramManager недоступен для инициализации');
+                return;
+            }
+            
+            try {
+                log('   Запуск initialize()...');
+                const result = await window.TelegramManager.initialize();
+                log(`   Результат инициализации: ${result ? '✅ успешно' : '❌ неудачно'}`);
+                
+                // Проверяем готовность после инициализации
+                const isReady = window.TelegramManager.isReady();
+                log(`   Готовность после инициализации: ${isReady ? '✅' : '❌'}`);
+                
+                // Обновляем статус на странице
+                await checkTelegramManager();
+                
+                log('✅ Принудительная инициализация завершена');
+                
+            } catch (error) {
+                log(`❌ Ошибка принудительной инициализации: ${error.message}`);
+                log(`   Stack trace: ${error.stack}`);
             }
         }
 

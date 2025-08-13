@@ -454,13 +454,21 @@ console.log('🔧 TelegramManager экспортирован:', {
       hostname: window.location.hostname
     });
     
-    // Автоинициализируем только в реальной среде Telegram
-    if (isInTelegram && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    // Автоинициализируем если есть валидный Telegram API
+    if (hasTelegramAPI && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
       console.log('📡 Запуск автоинициализации TelegramManager...');
-      await telegramManager.initialize();
-      console.log('✅ TelegramManager автоинициализирован');
+      try {
+        const initResult = await telegramManager.initialize();
+        console.log('✅ TelegramManager автоинициализирован:', initResult);
+      } catch (error) {
+        console.error('❌ Ошибка автоинициализации TelegramManager:', error);
+      }
     } else {
-      console.log('📡 Автоинициализация пропущена (не в Telegram или localhost)');
+      console.log('📡 Автоинициализация пропущена:', {
+        hasTelegramAPI,
+        isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+        hostname: window.location.hostname
+      });
     }
   } catch (error) {
     console.warn('⚠️ Ошибка автоинициализации TelegramManager:', error);
