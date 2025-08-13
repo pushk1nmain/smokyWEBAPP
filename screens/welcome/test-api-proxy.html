@@ -5,7 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌐 Тест API через прокси</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Диагностика загрузки config.js -->
+    <script>
+        console.log('🔍 Перед загрузкой config.js');
+        console.log('📊 window.SmokyConfig до загрузки:', window.SmokyConfig);
+    </script>
+    
     <script src="../../config.js"></script>
+    
+    <script>
+        console.log('🔍 После загрузки config.js');
+        console.log('📊 window.SmokyConfig после загрузки:', window.SmokyConfig);
+        console.log('📊 typeof window.SmokyConfig:', typeof window.SmokyConfig);
+    </script>
 </head>
 <body style="font-family: Arial; padding: 20px; background: #f0f0f0;">
     <div id="main-info" style="background: blue; color: white; padding: 20px; border-radius: 10px; text-align: center;">
@@ -29,11 +42,22 @@
     <script>
         console.log('🔥 Страница загружена');
         
+        // Fallback конфигурация если основная не загрузилась
+        if (!window.SmokyConfig) {
+            console.warn('⚠️ Основная конфигурация не загрузилась, используем fallback');
+            window.SmokyConfig = {
+                api: {
+                    baseUrl: '/api/v1', // Попробуем через прокси
+                    apiKey: 'SMOKY-Oz5niTU0yVrHv892BGxotdo2lCK0KtKPp7ypYskFG9CqR2thpSEPgBnxHnkI7WBQ1jYRZLGQ2JJGKLUmV0zYiahamBjtU3DoUmY0Dnp7peZFLwUGMAcgFe0IkT'
+                }
+            };
+        }
+        
         // Проверяем конфигурацию
         const configDetails = document.getElementById('config-details');
         if (window.SmokyConfig) {
             configDetails.innerHTML = `
-                ✅ Конфигурация загружена:<br>
+                ✅ Конфигурация загружена (${window.SmokyConfig === window.SmokyConfig ? 'fallback' : 'основная'}):<br>
                 • Base URL: ${window.SmokyConfig.api.baseUrl}<br>
                 • API Key: ${window.SmokyConfig.api.apiKey ? 'Установлен (' + window.SmokyConfig.api.apiKey.substring(0, 20) + '...)' : 'НЕ установлен'}
             `;
@@ -73,10 +97,11 @@
             resultElement.innerHTML = 'Отправляем запрос...';
             testBtn.disabled = true;
             
-            const apiUrl = window.SmokyConfig.api.baseUrl + '/user/' + userId;
-            console.log('🌐 Отправляем запрос к:', apiUrl);
+            // Сначала пробуем через прокси
+            const proxyUrl = '/api/v1/user/' + userId;
+            console.log('🌐 Тестируем прокси:', proxyUrl);
             
-            fetch(apiUrl, {
+            fetch(proxyUrl, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,29 +109,63 @@
                 }
             })
             .then(response => {
-                console.log('📥 Ответ получен:', response);
-                resultElement.innerHTML = `
-                    ✅ Запрос выполнен!<br>
-                    • URL: ${apiUrl}<br>
-                    • Status: ${response.status} ${response.statusText}<br>
-                    • Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}
-                `;
+                console.log('📥 Ответ от прокси получен:', response);
                 
                 if (response.ok) {
+                    resultElement.innerHTML = `
+                        ✅ Прокси работает!<br>
+                        • URL: ${proxyUrl}<br>
+                        • Status: ${response.status} ${response.statusText}
+                    `;
                     return response.json();
                 } else {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(`Прокси не работает: ${response.status} ${response.statusText}`);
                 }
             })
             .then(data => {
-                console.log('📊 Данные получены:', data);
-                resultElement.innerHTML += `<br><br>📊 Данные пользователя:<br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                console.log('📊 Данные через прокси получены:', data);
+                resultElement.innerHTML += `<br><br>📊 Данные пользователя (через прокси):<br><pre>${JSON.stringify(data, null, 2)}</pre>`;
                 document.getElementById('api-test').style.background = 'lightgreen';
             })
-            .catch(error => {
-                console.error('❌ Ошибка API:', error);
-                resultElement.innerHTML = `❌ Ошибка: ${error.message}`;
-                document.getElementById('api-test').style.background = 'pink';
+            .catch(proxyError => {
+                console.error('❌ Прокси не работает, пробуем прямой запрос:', proxyError);
+                
+                // Если прокси не работает, пробуем прямой запрос
+                const directUrl = 'https://api.smokybot.com/api/v1/user/' + userId;
+                console.log('🌐 Тестируем прямой запрос:', directUrl);
+                
+                resultElement.innerHTML = `
+                    ❌ Прокси не работает: ${proxyError.message}<br>
+                    🔄 Пробуем прямой запрос...
+                `;
+                
+                fetch(directUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': window.SmokyConfig.api.apiKey
+                    }
+                })
+                .then(response => {
+                    console.log('📥 Ответ от прямого API получен:', response);
+                    
+                    if (response.ok) {
+                        resultElement.innerHTML += `<br>✅ Прямой API работает!<br>• Status: ${response.status}`;
+                        return response.json();
+                    } else {
+                        throw new Error(`Прямой API: ${response.status} ${response.statusText}`);
+                    }
+                })
+                .then(data => {
+                    console.log('📊 Данные через прямой API получены:', data);
+                    resultElement.innerHTML += `<br><br>📊 Данные пользователя (прямой API):<br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    document.getElementById('api-test').style.background = 'lightyellow';
+                })
+                .catch(directError => {
+                    console.error('❌ И прямой API не работает:', directError);
+                    resultElement.innerHTML += `<br>❌ Прямой API тоже не работает: ${directError.message}`;
+                    document.getElementById('api-test').style.background = 'pink';
+                });
             })
             .finally(() => {
                 testBtn.disabled = false;
