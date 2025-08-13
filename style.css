@@ -51,7 +51,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(180deg, rgba(198, 255, 221, 0.15) 0%, rgba(198, 255, 221, 0.05) 30%, transparent 100%); /* Едва заметный зеленый градиент сверху */
+    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
     overflow: hidden; /* Убираем прокрутку */
 }
 
