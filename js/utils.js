@@ -288,6 +288,58 @@ const safeExecute = async (func, fallback = null) => {
   }
 };
 
+/**
+ * Безопасный доступ к TelegramManager с проверкой доступности
+ * @param {string} method Название метода TelegramManager
+ * @param {Array} args Аргументы для метода
+ * @param {any} fallback Значение по умолчанию при недоступности
+ * @returns {any} Результат выполнения метода или fallback
+ */
+const safeTelegramManagerCall = (method, args = [], fallback = null) => {
+  try {
+    if (!window.TelegramManager) {
+      console.warn(`TelegramManager недоступен для вызова ${method}`);
+      return fallback;
+    }
+    
+    if (typeof window.TelegramManager[method] !== 'function') {
+      console.warn(`Метод ${method} недоступен в TelegramManager`);
+      return fallback;
+    }
+    
+    // Для методов, требующих готовности TelegramManager
+    const methodsRequiringReady = [
+      'showMainButton', 'hideMainButton', 'updateMainButtonText', 'setMainButtonEnabled',
+      'showBackButton', 'hideBackButton', 'hapticFeedback', 'sendData', 'close',
+      'getViewportSize', 'addEventListener', 'removeEventListener'
+    ];
+    
+    if (methodsRequiringReady.includes(method)) {
+      if (typeof window.TelegramManager.isReady !== 'function' || !window.TelegramManager.isReady()) {
+        console.warn(`TelegramManager не готов для вызова ${method}`);
+        return fallback;
+      }
+    }
+    
+    return window.TelegramManager[method](...args);
+  } catch (error) {
+    console.error(`Ошибка вызова TelegramManager.${method}:`, error);
+    return fallback;
+  }
+};
+
+/**
+ * Проверка готовности TelegramManager
+ * @returns {boolean} Готовность TelegramManager
+ */
+const isTelegramManagerReady = () => {
+  return !!(
+    window.TelegramManager && 
+    typeof window.TelegramManager.isReady === 'function' && 
+    window.TelegramManager.isReady()
+  );
+};
+
 // Экспорт для использования в других модулях
 window.Utils = {
   generateId,
@@ -308,5 +360,7 @@ window.Utils = {
   getCurrentTimestamp,
   isTelegramWebAppSupported,
   isRunningInTelegram,
-  safeExecute
+  safeExecute,
+  safeTelegramManagerCall,
+  isTelegramManagerReady
 };

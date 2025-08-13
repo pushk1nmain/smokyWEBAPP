@@ -98,22 +98,38 @@ class SmokyApp {
       return;
     }
     
-    // Проверяем доступность TelegramManager
-    if (!window.TelegramManager || typeof window.TelegramManager.initialize !== 'function') {
-      throw new Error('TelegramManager недоступен');
+    // Ждем инициализации TelegramManager с таймаутом
+    const maxWaitTime = 5000; // 5 секунд
+    const checkInterval = 100; // 100 мс
+    let waitTime = 0;
+    
+    while (!window.TelegramManager || typeof window.TelegramManager.initialize !== 'function') {
+      if (waitTime >= maxWaitTime) {
+        console.warn('⚠️ TelegramManager не инициализирован за отведенное время, переходим в режим разработки');
+        this.setupDevelopmentMode();
+        return;
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, checkInterval));
+      waitTime += checkInterval;
+      console.log(`   - Ожидание TelegramManager... ${waitTime}ms`);
     }
 
     try {
+      console.log('   - TelegramManager найден, начинаем инициализацию...');
       const telegramInitialized = await window.TelegramManager.initialize();
       
       if (!telegramInitialized) {
-        throw new Error('Telegram WebApp не инициализирован');
+        console.warn('⚠️ Telegram WebApp не инициализирован, используем режим разработки');
+        this.setupDevelopmentMode();
+        return;
       }
       
       console.log('✅ Telegram WebApp инициализирован');
     } catch (error) {
       console.error('❌ Ошибка инициализации Telegram WebApp:', error);
-      throw error;
+      console.warn('⚠️ Переходим в режим разработки из-за ошибки');
+      this.setupDevelopmentMode();
     }
   }
 
@@ -187,6 +203,13 @@ class SmokyApp {
     // Инициализируем mock UI для кнопок
     this.setupMockUI();
     
+    // Ждем инициализации TelegramManager, если он еще не готов
+    let maxWait = 30; // 3 секунды
+    while (!window.TelegramManager && maxWait > 0) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      maxWait--;
+    }
+    
     // Принудительно настраиваем TelegramManager для режима разработки
     if (window.TelegramManager) {
       // Устанавливаем mock данные в TelegramManager
@@ -199,6 +222,8 @@ class SmokyApp {
       console.log('   - webApp:', !!window.TelegramManager.webApp);
       console.log('   - user:', window.TelegramManager.user);
       console.log('   - isInitialized:', window.TelegramManager.isInitialized);
+    } else {
+      console.warn('⚠️ TelegramManager не найден даже в режиме разработки');
     }
   }
 

@@ -123,18 +123,9 @@ class BaseScreen {
    */
   setupTelegramButtons() {
     console.log('🔘 Настройка Telegram кнопок');
-    console.log('   - TelegramManager доступен:', !!window.TelegramManager);
-    console.log('   - TelegramManager.isReady доступен:', typeof window.TelegramManager?.isReady);
+    console.log('   - TelegramManager готов:', Utils.isTelegramManagerReady());
     
-    if (!TelegramManager?.isReady) {
-      console.warn('⚠️ TelegramManager.isReady недоступен');
-      return;
-    }
-    
-    const isReady = TelegramManager.isReady();
-    console.log('   - TelegramManager готов:', isReady);
-    
-    if (!isReady) {
+    if (!Utils.isTelegramManagerReady()) {
       console.warn('⚠️ TelegramManager не готов');
       return;
     }
@@ -142,21 +133,21 @@ class BaseScreen {
     // Главная кнопка
     if (this.hasMainButton) {
       console.log('   - Настраиваем главную кнопку:', this.mainButtonText);
-      TelegramManager.showMainButton(this.mainButtonText, this.isValid());
-      TelegramManager.addEventListener('mainButtonClicked', this.handleMainButton);
+      Utils.safeTelegramManagerCall('showMainButton', [this.mainButtonText, this.isValid()]);
+      Utils.safeTelegramManagerCall('addEventListener', ['mainButtonClicked', this.handleMainButton]);
     } else {
       console.log('   - Скрываем главную кнопку');
-      TelegramManager.hideMainButton();
+      Utils.safeTelegramManagerCall('hideMainButton');
     }
 
     // Кнопка назад
     if (this.hasBackButton && Router.canGoBack()) {
       console.log('   - Показываем кнопку назад');
-      TelegramManager.showBackButton();
-      TelegramManager.addEventListener('backButtonClicked', this.handleBackButton);
+      Utils.safeTelegramManagerCall('showBackButton');
+      Utils.safeTelegramManagerCall('addEventListener', ['backButtonClicked', this.handleBackButton]);
     } else {
       console.log('   - Скрываем кнопку назад');
-      TelegramManager.hideBackButton();
+      Utils.safeTelegramManagerCall('hideBackButton');
     }
   }
 
@@ -193,17 +184,17 @@ class BaseScreen {
    */
   async handleMainButton() {
     if (!this.isValid()) {
-      TelegramManager.hapticFeedback('error');
+      Utils.safeTelegramManagerCall('hapticFeedback', ['error']);
       return;
     }
 
     try {
-      TelegramManager.hapticFeedback('light');
+      Utils.safeTelegramManagerCall('hapticFeedback', ['light']);
       await this.save();
       Router.nextScreen();
     } catch (error) {
       console.error('Ошибка при переходе на следующий экран:', error);
-      TelegramManager.hapticFeedback('error');
+      Utils.safeTelegramManagerCall('hapticFeedback', ['error']);
       Utils.showNotification('Ошибка при сохранении данных', 'error');
     }
   }
@@ -212,7 +203,7 @@ class BaseScreen {
    * Обработчик кнопки назад
    */
   handleBackButton() {
-    TelegramManager.hapticFeedback('light');
+    Utils.safeTelegramManagerCall('hapticFeedback', ['light']);
     Router.goBack();
   }
 
@@ -229,18 +220,16 @@ class BaseScreen {
    * Очистка ресурсов при уходе с экрана
    */
   cleanup() {
-    if (TelegramManager.isReady()) {
-      TelegramManager.removeEventListener('mainButtonClicked', this.handleMainButton);
-      TelegramManager.removeEventListener('backButtonClicked', this.handleBackButton);
-    }
+    Utils.safeTelegramManagerCall('removeEventListener', ['mainButtonClicked', this.handleMainButton]);
+    Utils.safeTelegramManagerCall('removeEventListener', ['backButtonClicked', this.handleBackButton]);
   }
 
   /**
    * Обновление состояния главной кнопки
    */
   updateMainButton() {
-    if (!this.hasMainButton || !TelegramManager.isReady()) return;
-    TelegramManager.setMainButtonEnabled(this.isValid());
+    if (!this.hasMainButton) return;
+    Utils.safeTelegramManagerCall('setMainButtonEnabled', [this.isValid()]);
   }
 }
 
@@ -431,19 +420,17 @@ class ScreenRouter {
   async completeOnboarding() {
     try {
       // Отправляем данные боту о завершении прогрева
-      if (TelegramManager.isReady()) {
-        TelegramManager.sendData({
-          action: 'onboarding_completed',
-          userId: Utils.getTelegramId(),
-          completedAt: Utils.getCurrentTimestamp()
-        });
-      }
+      Utils.safeTelegramManagerCall('sendData', [{
+        action: 'onboarding_completed',
+        userId: Utils.getTelegramId(),
+        completedAt: Utils.getCurrentTimestamp()
+      }]);
 
       Utils.showNotification('Прогрев завершен успешно!', 'success');
       
       // Закрываем WebApp
       setTimeout(() => {
-        TelegramManager.close();
+        Utils.safeTelegramManagerCall('close');
       }, 2000);
 
     } catch (error) {

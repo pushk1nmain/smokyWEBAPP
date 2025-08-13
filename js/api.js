@@ -287,6 +287,28 @@ class AppAPI {
       }
     } catch (error) {
       console.error('Ошибка инициализации пользователя:', error);
+      
+      // В режиме разработки возвращаем mock данные
+      const isDevMode = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (isDevMode) {
+        console.log('🔧 Режим разработки: возвращаем mock данные пользователя');
+        return {
+          user: {
+            id: telegramId,
+            telegram_id: telegramId,
+            first_name: 'Тест',
+            last_name: 'Пользователь',
+            username: 'testuser',
+            language_code: 'ru',
+            progress_step: 0,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          },
+          isNewUser: true,
+          currentStep: 0
+        };
+      }
+      
       throw new Error('Не удалось инициализировать пользователя');
     } finally {
       Utils.toggleLoading(false);
