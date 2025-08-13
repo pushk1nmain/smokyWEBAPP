@@ -119,17 +119,44 @@ build_and_run() {
     # Загружаем переменные окружения
     load_env_safely
     
+    # Определяем файл docker-compose для использования
+    local compose_file="docker-compose.yml"
+    local compose_cmd="docker-compose"
+    
+    # Проверяем наличие docker-compose команды
+    if ! command -v docker-compose &> /dev/null; then
+        if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+            compose_cmd="docker compose"
+        else
+            error "Docker Compose не найден. Установите Docker Compose."
+            return 1
+        fi
+    fi
+    
+    # Проверяем валидность основного compose файла
+    if ! $compose_cmd -f "$compose_file" config &> /dev/null; then
+        warning "Основной docker-compose.yml содержит ошибки. Используем упрощенную версию."
+        if [[ -f "docker-compose-simple.yml" ]]; then
+            compose_file="docker-compose-simple.yml"
+        else
+            error "Файл docker-compose-simple.yml не найден"
+            return 1
+        fi
+    fi
+    
+    info "Используется файл: $compose_file"
+    
     # Останавливаем существующие контейнеры если есть
-    docker-compose down 2>/dev/null || true
+    $compose_cmd -f "$compose_file" down 2>/dev/null || true
     
     # Собираем образ с BuildKit для лучшей производительности
     info "Сборка Docker образа..."
     export DOCKER_BUILDKIT=1
-    docker-compose build --pull
+    $compose_cmd -f "$compose_file" build --pull
     
     # Запускаем контейнеры
     info "Запуск контейнеров..."
-    docker-compose up -d
+    $compose_cmd -f "$compose_file" up -d
     
     success "Контейнеры запущены"
 }
@@ -164,11 +191,21 @@ wait_for_health() {
 # Функция показа статуса
 show_status() {
     info "Статус контейнеров:"
-    docker-compose ps
+    
+    # Определяем команду docker-compose
+    local compose_cmd="docker-compose"
+    if ! command -v docker-compose &> /dev/null; then
+        if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+            compose_cmd="docker compose"
+        fi
+    fi
+    
+    # Показываем статус для основного файла, если не получается - для упрощенного
+    $compose_cmd ps 2>/dev/null || $compose_cmd -f docker-compose-simple.yml ps 2>/dev/null || echo "Контейнеры не найдены"
     
     echo ""
     info "Использование ресурсов:"
-    docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" | head -n 2
+    docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" | head -n 2 2>/dev/null || echo "Статистика недоступна"
 }
 
 # Функция справки
@@ -216,7 +253,18 @@ start_application() {
 # Функция остановки
 stop_application() {
     info "Остановка приложения..."
-    docker-compose down
+    
+    # Определяем команду docker-compose
+    local compose_cmd="docker-compose"
+    if ! command -v docker-compose &> /dev/null; then
+        if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+            compose_cmd="docker compose"
+        fi
+    fi
+    
+    # Останавливаем используя основной файл, если не получается - упрощенный
+    $compose_cmd down 2>/dev/null || $compose_cmd -f docker-compose-simple.yml down 2>/dev/null || true
+    
     success "Приложение остановлено"
 }
 
@@ -231,7 +279,17 @@ restart_application() {
 # Функция просмотра логов
 show_logs() {
     info "Логи приложения (Ctrl+C для выхода):"
-    docker-compose logs -f
+    
+    # Определяем команду docker-compose
+    local compose_cmd="docker-compose"
+    if ! command -v docker-compose &> /dev/null; then
+        if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+            compose_cmd="docker compose"
+        fi
+    fi
+    
+    # Показываем логи
+    $compose_cmd logs -f 2>/dev/null || $compose_cmd -f docker-compose-simple.yml logs -f 2>/dev/null || echo "Логи недоступны"
 }
 
 # Функция очистки
@@ -242,8 +300,20 @@ clean_application() {
     
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         info "Очистка..."
-        docker-compose down -v --rmi all 2>/dev/null || true
+        
+        # Определяем команду docker-compose
+        local compose_cmd="docker-compose"
+        if ! command -v docker-compose &> /dev/null; then
+            if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+                compose_cmd="docker compose"
+            fi
+        fi
+        
+        # Очищаем контейнеры и образы
+        $compose_cmd down -v --rmi all 2>/dev/null || true
+        $compose_cmd -f docker-compose-simple.yml down -v --rmi all 2>/dev/null || true
         docker system prune -f
+        
         success "Очистка завершена"
     else
         info "Очистка отменена"

@@ -37,14 +37,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
-          cpus: '0.5'
+          memory: ${MEMORY_LIMIT:-256M}
+          cpus: '${CPU_LIMIT:-0.5}'
         reservations:
-          memory: 128M
-          cpus: '0.25'
-    
-    # Политика перезапуска
-    restart: unless-stopped
+          memory: ${MEMORY_RESERVATION:-128M}
+          cpus: '${CPU_RESERVATION:-0.25}'
     
     # Health check с правильным endpoint
     healthcheck:
@@ -54,13 +51,10 @@ services:
       retries: 3
       start_period: 40s
     
-    # Метки для мониторинга и управления
+    # Метки для мониторинга
     labels:
       - "com.smokyapp.environment=production"
       - "com.smokyapp.version=${VERSION:-latest}"
-      - "traefik.enable=true"
-      - "traefik.http.routers.smokyapp.rule=Host(\"${DOMAIN:-localhost}\")"
-      - "traefik.http.services.smokyapp.loadbalancer.server.port=80"
     
     # Настройки безопасности
     security_opt:
@@ -70,8 +64,8 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "${LOG_MAX_SIZE:-10m}"
+        max-file: "${LOG_MAX_FILE:-3}"
         compress: "true"
 
 # Именованные тома для данных
@@ -106,4 +100,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: ${DOCKER_SUBNET:-172.20.0.0/16}
