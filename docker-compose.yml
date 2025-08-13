@@ -43,8 +43,7 @@ services:
           memory: 128M
           cpus: '0.25'
     
-    # Политика перезапуска
-    restart: unless-stopped
+
     
     # Health check с правильным endpoint
     healthcheck:
