@@ -164,6 +164,27 @@ clone_project() {
     success "Проект склонирован в $INSTALL_DIR"
 }
 
+# Функция безопасной загрузки .env файла
+load_env_safely() {
+    if [[ -f ".env" ]]; then
+        # Создаем временный файл только с валидными переменными
+        local temp_env=$(mktemp)
+        
+        # Фильтруем только строки с переменными, исключаем комментарии
+        grep -E '^[A-Za-z_][A-Za-z0-9_]*=' .env | grep -v '^[[:space:]]*#' > "$temp_env"
+        
+        # Загружаем переменные
+        set -a
+        source "$temp_env"
+        set +a
+        
+        # Удаляем временный файл
+        rm "$temp_env"
+        
+        info "Переменные окружения загружены из .env"
+    fi
+}
+
 # Функция настройки переменных окружения
 setup_environment() {
     info "Настройка переменных окружения..."
@@ -276,12 +297,7 @@ initial_deployment() {
     mkdir -p logs/nginx logs/app backups
     
     # Загружаем переменные окружения
-    if [[ -f ".env" ]]; then
-        info "Загрузка переменных окружения из .env"
-        set -a
-        source .env
-        set +a
-    fi
+    load_env_safely
     
     # Собираем и запускаем контейнеры с оптимизацией
     info "Сборка Docker образа..."

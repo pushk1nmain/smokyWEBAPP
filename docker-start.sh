@@ -53,6 +53,27 @@ check_dependencies() {
     success "Все зависимости найдены"
 }
 
+# Функция безопасной загрузки .env файла
+load_env_safely() {
+    if [[ -f ".env" ]]; then
+        # Создаем временный файл только с валидными переменными
+        local temp_env=$(mktemp)
+        
+        # Фильтруем только строки с переменными, исключаем комментарии
+        grep -E '^[A-Za-z_][A-Za-z0-9_]*=' .env | grep -v '^[[:space:]]*#' > "$temp_env"
+        
+        # Загружаем переменные
+        set -a
+        source "$temp_env"
+        set +a
+        
+        # Удаляем временный файл
+        rm "$temp_env"
+        
+        info "Переменные окружения загружены из .env"
+    fi
+}
+
 # Функция создания .env файла если его нет
 create_env_if_missing() {
     if [[ ! -f ".env" ]]; then
@@ -96,9 +117,7 @@ build_and_run() {
     info "Сборка и запуск приложения..."
     
     # Загружаем переменные окружения
-    if [[ -f ".env" ]]; then
-        export $(grep -v '^#' .env | xargs)
-    fi
+    load_env_safely
     
     # Останавливаем существующие контейнеры если есть
     docker-compose down 2>/dev/null || true
