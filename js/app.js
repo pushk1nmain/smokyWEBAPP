@@ -122,8 +122,16 @@ class SmokyApp {
     let telegramManagerLoaded = false;
     
     try {
-      // Увеличиваем таймаут для inline-клавиатуры
-      const timeout = isInlineMode ? 10000 : 5000;
+      // КРИТИЧЕСКИ ВАЖНО: сначала вызываем ready() если еще не вызывали
+      if (window.Telegram?.WebApp && typeof window.Telegram.WebApp.ready === 'function') {
+        console.log('📞 Вызываем Telegram.WebApp.ready() перед ожиданием TelegramManager...');
+        window.Telegram.WebApp.ready();
+        // Даем время на обработку ready()
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
+      // Уменьшаем таймаут и упрощаем проверку
+      const timeout = 3000; // Достаточно для простой проверки
       
       if (window.Utils?.waitForTelegramManager) {
         telegramManagerLoaded = await window.Utils.waitForTelegramManager(timeout);
@@ -168,6 +176,16 @@ class SmokyApp {
     
     try {
       console.log('   - Инициализируем TelegramManager...');
+      
+      // Проверяем версию Telegram перед инициализацией
+      if (window.Telegram?.WebApp?.isVersionAtLeast) {
+        const isModernVersion = window.Telegram.WebApp.isVersionAtLeast('6.0');
+        console.log(`   - Версия Telegram 6.0+: ${isModernVersion}`);
+        if (!isModernVersion) {
+          console.warn('⚠️ Старая версия Telegram может вызывать проблемы');
+        }
+      }
+      
       const telegramInitialized = await window.TelegramManager.initialize();
       
       if (!telegramInitialized) {
@@ -180,22 +198,32 @@ class SmokyApp {
       }
       
       console.log('✅ Telegram WebApp инициализирован успешно');
+      
+      // Проверяем критические данные после инициализации
+      if (window.TelegramManager.initData && window.TelegramManager.initData.length === 0) {
+        console.warn('⚠️ ВНИМАНИЕ: InitData пустые после инициализации!');
+        console.warn('   Это может указывать на проблему с настройкой бота');
+        console.warn('   Проверьте:');
+        console.warn('   • URL зарегистрирован в @BotFather');
+        console.warn('   • HTTPS корректно настроен');
+        console.warn('   • Бот отправляет правильный URL');
+      }
+      
     } catch (error) {
       console.error('❌ Ошибка инициализации Telegram WebApp:', error);
       
-      // Для inline-режима пытаемся создать упрощенную версию
-      if (isInlineMode) {
-        console.warn('⚠️ Создаем упрощенный TelegramManager для inline-режима из-за ошибки');
-        await this.setupInlineMode();
-        return;
-      }
+      // Не показываем критическую ошибку сразу - пытаемся fallback режимы
+      console.warn('⚠️ Пытаемся восстановиться...');
       
-      // Показываем ошибку только если мы в Telegram
-      if (isInTelegram) {
-        this.showTelegramManagerError();
-      } else {
+      // Сначала пытаемся режим разработки (более универсальный)
+      try {
         console.warn('⚠️ Переходим в режим разработки из-за ошибки');
         await this.setupDevelopmentMode();
+        return;
+      } catch (devError) {
+        console.error('❌ Ошибка даже в режиме разработки:', devError);
+        // Только теперь показываем критическую ошибку
+        this.showTelegramManagerError();
       }
     }
   }

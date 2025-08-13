@@ -30,42 +30,119 @@ class TelegramManager {
   }
 
   /**
-   * Инициализация Telegram WebApp
+   * Упрощенная инициализация Telegram WebApp
    * @returns {Promise<boolean>} Успешность инициализации
    */
   async initialize() {
     try {
+      console.log('🔄 TelegramManager: Начинаем упрощенную инициализацию...');
+      
       // Проверяем доступность Telegram WebApp
       if (!window.Telegram?.WebApp) {
-        console.warn('Telegram WebApp API недоступен');
+        console.error('❌ Telegram WebApp API недоступен');
         return false;
       }
 
       this.webApp = window.Telegram.WebApp;
+      console.log('✅ WebApp объект получен');
       
-      // Готовность WebApp
+      // КРИТИЧЕСКИ ВАЖНО: готовность WebApp должна быть первой!
+      console.log('📞 Вызываем WebApp.ready()...');
       this.webApp.ready();
+      console.log('✅ WebApp.ready() выполнен');
       
-      // Расширяем viewport
-      this.webApp.expand();
+      // Даем время на обработку ready()
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Получаем данные пользователя
-      this.initData = this.webApp.initData;
+      // Получаем данные пользователя ПОСЛЕ ready()
+      this.initData = this.webApp.initData || '';
       this.user = this.webApp.initDataUnsafe?.user || null;
       
-      // Настраиваем внешний вид
-      this.setupAppearance();
+      console.log('📊 Данные получены:', {
+        hasInitData: !!(this.initData && this.initData.length > 0),
+        hasUser: !!this.user,
+        initDataLength: this.initData ? this.initData.length : 0
+      });
       
-      // Настраиваем обработчики событий
-      this.setupEventHandlers();
+      // Проверяем критические данные
+      if (!this.initData || this.initData.length === 0) {
+        console.warn('⚠️ InitData пустые - возможна проблема с настройкой бота');
+      }
+      
+      if (!this.user) {
+        console.warn('⚠️ User данные недоступны');
+      }
+      
+      // Пытаемся расширить viewport (не критично если не получится)
+      try {
+        this.webApp.expand();
+        console.log('✅ Viewport расширен');
+      } catch (error) {
+        console.warn('⚠️ Не удалось расширить viewport:', error);
+      }
+      
+      // Минимальная настройка внешнего вида
+      this.setupMinimalAppearance();
+      
+      // Минимальная настройка событий
+      this.setupMinimalEventHandlers();
       
       this.isInitialized = true;
-      console.log('Telegram WebApp инициализирован успешно');
+      console.log('✅ TelegramManager инициализирован успешно');
       
       return true;
     } catch (error) {
-      console.error('Ошибка инициализации Telegram WebApp:', error);
+      console.error('❌ Критическая ошибка инициализации TelegramManager:', error);
       return false;
+    }
+  }
+
+  /**
+   * Минимальная настройка внешнего вида (упрощенная версия)
+   */
+  setupMinimalAppearance() {
+    if (!this.webApp) return;
+    
+    console.log('🎨 Минимальная настройка внешнего вида...');
+    
+    try {
+      // Скрываем все кнопки по умолчанию
+      if (this.webApp.MainButton) {
+        this.webApp.MainButton.hide();
+      }
+      if (this.webApp.BackButton) {
+        this.webApp.BackButton.hide();
+      }
+      console.log('✅ Кнопки скрыты');
+    } catch (error) {
+      console.warn('⚠️ Ошибка настройки кнопок:', error);
+    }
+  }
+
+  /**
+   * Минимальная настройка событий (упрощенная версия)
+   */
+  setupMinimalEventHandlers() {
+    if (!this.webApp) return;
+    
+    console.log('📡 Минимальная настройка событий...');
+    
+    try {
+      // Обработчик главной кнопки
+      this.webApp.onEvent('mainButtonClicked', () => {
+        console.log('🔘 MainButton clicked');
+        this.triggerEvent('mainButtonClicked');
+      });
+
+      // Обработчик кнопки назад
+      this.webApp.onEvent('backButtonClicked', () => {
+        console.log('◀️ BackButton clicked');
+        this.triggerEvent('backButtonClicked');
+      });
+      
+      console.log('✅ Основные события настроены');
+    } catch (error) {
+      console.warn('⚠️ Ошибка настройки событий:', error);
     }
   }
 
