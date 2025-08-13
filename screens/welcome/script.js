@@ -605,8 +605,6 @@ class DevConsole {
     constructor() {
         this.logs = [];
         this.maxLogs = 500;
-        this.isCollapsed = false;
-        this.isHidden = true; // Начинаем со скрытой консоли
         this.activeFilter = 'all';
         this.startTime = Date.now();
         
@@ -615,7 +613,6 @@ class DevConsole {
         this.contentElement = null;
         this.countElement = null;
         this.filtersElement = null;
-        this.fabElement = null;
         
         // Оригинальные методы console
         this.originalConsole = {
@@ -649,14 +646,6 @@ class DevConsole {
         this.interceptConsoleMethods();
         this.logToConsole('info', '🔧 Встроенная консоль разработчика активирована');
         
-        // Показываем плавающую кнопку
-        this.showFab();
-        
-        // Добавляем пульсацию к FAB через 3 секунды
-        setTimeout(() => {
-            this.addFabPulse();
-        }, 3000);
-        
         console.log('✅ DevConsole инициализирована успешно');
     }
     
@@ -670,23 +659,16 @@ class DevConsole {
         this.contentElement = document.getElementById('consoleContent');
         this.countElement = document.getElementById('logCount');
         this.filtersElement = document.getElementById('consoleFilters');
-        this.fabElement = document.getElementById('devConsoleFab');
         
         console.log('📊 Найденные элементы:', {
             consoleElement: !!this.consoleElement,
             contentElement: !!this.contentElement,
             countElement: !!this.countElement,
-            filtersElement: !!this.filtersElement,
-            fabElement: !!this.fabElement
+            filtersElement: !!this.filtersElement
         });
         
         if (!this.consoleElement) {
             console.error('❌ DevConsole: Элемент консоли не найден');
-            return false;
-        }
-        
-        if (!this.fabElement) {
-            console.error('❌ DevConsole: Плавающая кнопка не найдена');
             return false;
         }
         
@@ -699,37 +681,6 @@ class DevConsole {
      */
     setupEventListeners() {
         console.log('🎮 Настраиваем обработчики событий...');
-        
-        // Плавающая кнопка для открытия консоли
-        if (this.fabElement) {
-            console.log('✅ Добавляем обработчик клика для плавающей кнопки');
-            this.fabElement.addEventListener('click', (e) => {
-                console.log('🔧 Клик по плавающей кнопке!');
-                e.preventDefault();
-                e.stopPropagation();
-                this.show();
-                this.removeFabPulse();
-            });
-            
-            // Дополнительный обработчик для отладки
-            this.fabElement.addEventListener('touchstart', (e) => {
-                console.log('📱 Touch start на плавающей кнопке');
-            });
-        } else {
-            console.error('❌ fabElement не найден, обработчик не добавлен');
-        }
-        
-        // Переключение сворачивания консоли
-        const toggleBtn = document.getElementById('consoleToggle');
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => this.toggleCollapse());
-        }
-        
-        // Закрытие консоли
-        const closeBtn = document.getElementById('consoleClose');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => this.hide());
-        }
         
         // Очистка логов
         const clearBtn = document.getElementById('clearLogs');
@@ -752,16 +703,7 @@ class DevConsole {
             });
         });
         
-        // Клик по заголовку для сворачивания
-        const header = document.querySelector('.dev-console-header');
-        if (header) {
-            header.addEventListener('click', (e) => {
-                // Игнорируем клики по кнопкам
-                if (!e.target.closest('.dev-console-btn')) {
-                    this.toggleCollapse();
-                }
-            });
-        }
+        console.log('✅ Обработчики событий настроены');
     }
     
     /**
@@ -960,18 +902,13 @@ class DevConsole {
         if (this.countElement) {
             this.countElement.textContent = this.logs.length;
         }
-        
-        // Добавляем пульсацию к FAB если консоль скрыта и появляются новые логи
-        if (this.isHidden && this.logs.length > 1) {
-            this.addFabPulse();
-        }
     }
     
     /**
      * Прокрутка в конец
      */
     scrollToBottom() {
-        if (this.contentElement && !this.isCollapsed) {
+        if (this.contentElement) {
             setTimeout(() => {
                 this.contentElement.scrollTop = this.contentElement.scrollHeight;
             }, 50);
@@ -1017,83 +954,6 @@ class DevConsole {
     }
     
     /**
-     * Показать консоль
-     */
-    show() {
-        console.log('📺 Показываем консоль разработчика');
-        if (this.consoleElement) {
-            this.consoleElement.classList.remove('hidden');
-            this.isHidden = false;
-            this.hideFab();
-            this.scrollToBottom();
-            console.log('✅ Консоль разработчика показана');
-        } else {
-            console.error('❌ consoleElement не найден в show');
-        }
-    }
-    
-    /**
-     * Скрыть консоль
-     */
-    hide() {
-        if (this.consoleElement) {
-            this.consoleElement.classList.add('hidden');
-            this.isHidden = true;
-            this.showFab();
-        }
-    }
-    
-    /**
-     * Показать плавающую кнопку
-     */
-    showFab() {
-        console.log('🔧 Показываем плавающую кнопку');
-        if (this.fabElement) {
-            this.fabElement.classList.remove('hidden');
-            console.log('✅ Плавающая кнопка показана');
-        } else {
-            console.error('❌ fabElement не найден в showFab');
-        }
-    }
-    
-    /**
-     * Скрыть плавающую кнопку
-     */
-    hideFab() {
-        if (this.fabElement) {
-            this.fabElement.classList.add('hidden');
-        }
-    }
-    
-    /**
-     * Добавить пульсацию к плавающей кнопке
-     */
-    addFabPulse() {
-        if (this.fabElement && this.isHidden) {
-            this.fabElement.classList.add('pulse');
-        }
-    }
-    
-    /**
-     * Убрать пульсацию с плавающей кнопки
-     */
-    removeFabPulse() {
-        if (this.fabElement) {
-            this.fabElement.classList.remove('pulse');
-        }
-    }
-    
-    /**
-     * Переключение сворачивания консоли
-     */
-    toggleCollapse() {
-        if (this.consoleElement) {
-            this.consoleElement.classList.toggle('collapsed');
-            this.isCollapsed = !this.isCollapsed;
-        }
-    }
-    
-    /**
      * Очистка логов
      */
     clear() {
@@ -1126,28 +986,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('🔧 Создаем экземпляр DevConsole...');
             window.devConsole = new DevConsole();
             
-            // Добавляем глобальные функции для ручного управления
-            window.showDevConsole = () => {
-                console.log('🔧 Принудительное открытие консоли');
-                if (window.devConsole) {
-                    window.devConsole.show();
-                } else {
-                    console.error('❌ devConsole не инициализирована');
-                }
-            };
-            
-            window.hideDevConsole = () => {
-                console.log('🔧 Принудительное закрытие консоли');
-                if (window.devConsole) {
-                    window.devConsole.hide();
-                } else {
-                    console.error('❌ devConsole не инициализирована');
-                }
-            };
-            
-            console.log('✅ Глобальные функции управления консолью добавлены:');
-            console.log('   - showDevConsole() - открыть консоль');
-            console.log('   - hideDevConsole() - закрыть консоль');
+            console.log('✅ Консоль разработчика всегда видна сверху экрана');
             
             // Логируем информацию о Telegram WebApp
             if (window.Telegram?.WebApp) {
