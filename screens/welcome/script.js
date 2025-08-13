@@ -276,7 +276,37 @@ const getUserData = async () => {
     console.log('📊 tg.initDataUnsafe:', tg?.initDataUnsafe);
     
     if (!tg?.initDataUnsafe) {
-        console.warn('⚠️ tg.initDataUnsafe недоступен, возвращаем null');
+        console.warn('⚠️ tg.initDataUnsafe недоступен');
+        // Вместо возврата null, попробуем получить данные из URL параметров
+        const urlParams = new URLSearchParams(window.location.hash.substring(1));
+        const tgWebAppData = urlParams.get('tgWebAppData');
+        
+        if (tgWebAppData) {
+            try {
+                const decodedData = decodeURIComponent(tgWebAppData);
+                const dataParams = new URLSearchParams(decodedData);
+                const userDataStr = dataParams.get('user');
+                
+                if (userDataStr) {
+                    const user = JSON.parse(decodeURIComponent(userDataStr));
+                    console.log('✅ Данные пользователя получены из URL:', user);
+                    
+                    // Проверяем пользователя в API
+                    const apiResult = await checkUserInAPI(user.id);
+                    
+                    // Персонализируем приветствие
+                    await personalizeGreeting(user, apiResult);
+                    
+                    hideLoading();
+                    return { telegramUser: user, apiResult };
+                }
+            } catch (error) {
+                console.error('❌ Ошибка парсинга данных из URL:', error);
+            }
+        }
+        
+        console.warn('⚠️ Данные пользователя недоступны, используем fallback');
+        hideLoading();
         return null;
     }
     
