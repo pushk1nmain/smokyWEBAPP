@@ -10,7 +10,10 @@ class SmokyApp {
   constructor() {
     this.isInitialized = false;
     this.version = '1.0.0';
-    this.debug = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    // Определяем debug режим по hostname или отсутствию Telegram WebApp
+    this.debug = window.location.hostname === 'localhost' || 
+                window.location.hostname === '127.0.0.1' ||
+                !window.Telegram?.WebApp?.initData;
   }
 
   /**
@@ -89,44 +92,61 @@ class SmokyApp {
   async initializeTelegram() {
     console.log('🔄 Инициализация Telegram WebApp...');
     
+    // Дождемся полной загрузки Telegram WebApp API
+    let telegramCheckAttempts = 0;
+    const maxTelegramChecks = 20; // 2 секунды
+    
+    while (!window.Telegram?.WebApp && telegramCheckAttempts < maxTelegramChecks) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      telegramCheckAttempts++;
+      if (telegramCheckAttempts % 5 === 0) {
+        console.log(`   - Ожидание Telegram WebApp API... ${telegramCheckAttempts * 100}ms`);
+      }
+    }
+    
     // Проверяем наличие Telegram WebApp API
     const hasTelegramAPI = !!(window.Telegram?.WebApp);
     const initData = window.Telegram?.WebApp?.initData;
-    const isInTelegram = hasTelegramAPI && (window.location.href.includes('telegram') || 
+    const hasValidInitData = initData && initData !== '' && initData !== 'test_data';
+    const isInTelegram = hasTelegramAPI && (
+      hasValidInitData ||
+      window.location.href.includes('telegram') || 
       navigator.userAgent.includes('Telegram') || 
       window.TelegramWebviewProxy || 
-      window.parent !== window);
+      window.parent !== window
+    );
     
     console.log('   - Telegram API доступен:', hasTelegramAPI);
-    console.log('   - InitData:', initData ? 'есть' : 'нет');
+    console.log('   - InitData:', initData ? `есть (${initData.length} символов)` : 'нет');
+    console.log('   - Валидный InitData:', hasValidInitData);
     console.log('   - User Agent:', navigator.userAgent);
     console.log('   - URL:', window.location.href);
     console.log('   - Запущено в Telegram:', isInTelegram);
     console.log('   - Режим разработки:', this.debug);
     
-    // Если это локальная разработка - сразу в dev режим
-    if (this.debug) {
-      console.warn('🔧 Переходим в режим разработки (localhost)');
+    // Если это локальная разработка или нет валидных данных Telegram - в dev режим
+    if ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') || 
+        !hasTelegramAPI || !isInTelegram) {
+      console.warn('🔧 Переходим в режим разработки:', {
+        localhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+        noTelegramAPI: !hasTelegramAPI,
+        notInTelegram: !isInTelegram
+      });
       await this.setupDevelopmentMode();
       return;
     }
     
-    // Если нет Telegram API - тоже в dev режим
-    if (!hasTelegramAPI) {
-      console.warn('🔧 Нет Telegram API, переходим в режим разработки');
-      await this.setupDevelopmentMode();
-      return;
-    }
-    
-    // Ждем инициализации TelegramManager с таймаутом
+    // Ждем инициализации TelegramManager с увеличенным таймаутом
     console.log('   - Ожидание TelegramManager...');
-    const maxWaitTime = 3000; // 3 секунды
+    const maxWaitTime = 10000; // 10 секунд для Telegram WebApp
     const checkInterval = 100; // 100 мс
     let waitTime = 0;
     
     while (!window.TelegramManager || typeof window.TelegramManager.initialize !== 'function') {
       if (waitTime >= maxWaitTime) {
-        console.warn('⚠️ TelegramManager не инициализирован за отведенное время');
+        console.error('❌ TelegramManager не инициализирован за отведенное время');
+        console.error('   - Доступные глобальные объекты:', Object.keys(window).filter(key => key.includes('Telegram')));
+        console.error('   - window.TelegramManager:', typeof window.TelegramManager);
         await this.setupDevelopmentMode();
         return;
       }
@@ -134,8 +154,10 @@ class SmokyApp {
       await new Promise(resolve => setTimeout(resolve, checkInterval));
       waitTime += checkInterval;
       
-      if (waitTime % 500 === 0) { // Логируем каждые 500мс
+      if (waitTime % 1000 === 0) { // Логируем каждую секунду
         console.log(`   - Ожидание TelegramManager... ${waitTime}ms`);
+        console.log(`   - window.TelegramManager существует:`, !!window.TelegramManager);
+        console.log(`   - TelegramManager.initialize доступен:`, typeof window.TelegramManager?.initialize);
       }
     }
 

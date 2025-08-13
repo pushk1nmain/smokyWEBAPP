@@ -415,10 +415,10 @@ console.log('🔧 TelegramManager экспортирован:', {
   keys: Object.keys(window.TelegramManager)
 });
 
-// Немедленная инициализация без ожидания DOMContentLoaded
+// Автоинициализация TelegramManager только если запущено в Telegram
 (async () => {
   try {
-    console.log('📡 Запуск автоинициализации TelegramManager...');
+    console.log('📡 Проверка возможности автоинициализации TelegramManager...');
     
     // Ждем загрузки DOM если это необходимо
     if (document.readyState === 'loading') {
@@ -427,8 +427,41 @@ console.log('🔧 TelegramManager экспортирован:', {
       });
     }
     
-    await telegramManager.initialize();
-    console.log('✅ TelegramManager автоинициализирован');
+    // Ждем загрузки Telegram WebApp API
+    let waitAttempts = 0;
+    const maxWaitAttempts = 30; // 3 секунды
+    
+    while (!window.Telegram?.WebApp && waitAttempts < maxWaitAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      waitAttempts++;
+    }
+    
+    // Проверяем, действительно ли мы в Telegram WebApp
+    const hasTelegramAPI = !!(window.Telegram?.WebApp);
+    const hasInitData = !!(window.Telegram?.WebApp?.initData);
+    const isInTelegram = hasTelegramAPI && (
+      hasInitData ||
+      window.location.href.includes('telegram') ||
+      navigator.userAgent.includes('Telegram') ||
+      window.TelegramWebviewProxy ||
+      window.parent !== window
+    );
+    
+    console.log('📡 Результат проверки автоинициализации:', {
+      hasTelegramAPI,
+      hasInitData,
+      isInTelegram,
+      hostname: window.location.hostname
+    });
+    
+    // Автоинициализируем только в реальной среде Telegram
+    if (isInTelegram && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      console.log('📡 Запуск автоинициализации TelegramManager...');
+      await telegramManager.initialize();
+      console.log('✅ TelegramManager автоинициализирован');
+    } else {
+      console.log('📡 Автоинициализация пропущена (не в Telegram или localhost)');
+    }
   } catch (error) {
     console.warn('⚠️ Ошибка автоинициализации TelegramManager:', error);
   }
