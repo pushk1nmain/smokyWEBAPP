@@ -28,8 +28,6 @@ services:
       # Логи для мониторинга
       - nginx_logs:/var/log/nginx
       - app_logs:/var/log/smokyapp
-      # Резервные копии
-      - backups:/app/backups
       # Кэш nginx для производительности
       - nginx_cache:/var/cache/nginx
     
@@ -88,13 +86,6 @@ volumes:
       type: none
       o: bind
       device: ${LOG_DIR:-./logs}/app
-  
-  backups:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${BACKUP_DIR:-./backups}
   
   nginx_cache:
     driver: local

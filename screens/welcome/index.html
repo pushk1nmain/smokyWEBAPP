@@ -89,6 +89,45 @@
             <div class="loading-spinner"></div>
             <p class="loading-text">Подключаемся к Telegram...</p>
         </div>
+        
+        <!-- Встроенная консоль разработчика -->
+        <div class="dev-console" id="devConsole">
+            <div class="dev-console-header">
+                <div class="dev-console-title">
+                    <span class="dev-console-icon">🔧</span>
+                    <span>Консоль разработчика</span>
+                    <span class="dev-console-count" id="logCount">0</span>
+                </div>
+                <div class="dev-console-controls">
+                    <button class="dev-console-btn" id="clearLogs" title="Очистить логи">
+                        🗑️
+                    </button>
+                    <button class="dev-console-btn" id="filterToggle" title="Фильтры">
+                        🔍
+                    </button>
+                    <button class="dev-console-btn" id="consoleToggle" title="Скрыть/Показать">
+                        ⬇️
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dev-console-filters" id="consoleFilters">
+                <button class="filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn" data-filter="log">📝 Log</button>
+                <button class="filter-btn" data-filter="info">ℹ️ Info</button>
+                <button class="filter-btn" data-filter="warn">⚠️ Warn</button>
+                <button class="filter-btn" data-filter="error">❌ Error</button>
+                <button class="filter-btn" data-filter="api">🌐 API</button>
+            </div>
+            
+            <div class="dev-console-content" id="consoleContent">
+                <div class="dev-console-log startup" data-type="info">
+                    <span class="log-time">00:00:00</span>
+                    <span class="log-type">ℹ️</span>
+                    <span class="log-message">🚀 Консоль разработчика инициализирована</span>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- JavaScript -->
