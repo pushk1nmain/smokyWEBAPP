@@ -100,12 +100,14 @@ class SmokyApp {
     // Определяем рабочую среду
     const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const isInTelegram = hasTelegramAPI && hasValidInitData;
+    const isInlineMode = hasTelegramAPI && !hasValidInitData; // inline-клавиатура может не иметь initData
     
     console.log('   - Telegram API доступен:', hasTelegramAPI);
     console.log('   - InitData присутствует:', !!initData);
     console.log('   - InitData валидные:', hasValidInitData);
     console.log('   - Локальная разработка:', isLocalDev);
     console.log('   - Запущено в Telegram:', isInTelegram);
+    console.log('   - Inline режим:', isInlineMode);
     
     // Если локальная разработка или нет Telegram API
     if (isLocalDev || !hasTelegramAPI) {
@@ -114,28 +116,25 @@ class SmokyApp {
       return;
     }
     
-    // Проверяем доступность TelegramManager с ожиданием
-    console.log('   - Проверяем доступность TelegramManager...');
+    // Ждем загрузки TelegramManager с увеличенным таймаутом
+    console.log('   - Ожидаем загрузки TelegramManager...');
     
     let telegramManagerLoaded = false;
     
-    // Сначала проверяем, загружен ли уже
-    if (window.TelegramManager && typeof window.TelegramManager.initialize === 'function') {
-      telegramManagerLoaded = true;
-      console.log('✅ TelegramManager уже загружен');
-    } else {
-      // Ждем загрузки TelegramManager
-      console.log('   - Ожидаем загрузки TelegramManager...');
+    try {
+      // Увеличиваем таймаут для inline-клавиатуры
+      const timeout = isInlineMode ? 10000 : 5000;
       
-      try {
-        if (window.Utils?.waitForTelegramManager) {
-          telegramManagerLoaded = await window.Utils.waitForTelegramManager(3000);
-        } else if (window.waitForTelegramManager) {
-          telegramManagerLoaded = await window.waitForTelegramManager(3000);
-        }
-      } catch (error) {
-        console.error('❌ Ошибка ожидания TelegramManager:', error);
+      if (window.Utils?.waitForTelegramManager) {
+        telegramManagerLoaded = await window.Utils.waitForTelegramManager(timeout);
+      } else if (window.waitForTelegramManager) {
+        telegramManagerLoaded = await window.waitForTelegramManager(timeout);
+      } else {
+        // Базовая проверка без Utils
+        telegramManagerLoaded = !!(window.TelegramManager && typeof window.TelegramManager.initialize === 'function');
       }
+    } catch (error) {
+      console.error('❌ Ошибка ожидания TelegramManager:', error);
     }
     
     if (!telegramManagerLoaded) {
@@ -147,6 +146,13 @@ class SmokyApp {
         telegramManagerType: typeof window.TelegramManager,
         telegramManagerMethods: window.TelegramManager ? Object.keys(window.TelegramManager) : []
       });
+      
+      // Для inline-режима создаем упрощенный TelegramManager
+      if (isInlineMode) {
+        console.warn('⚠️ Создаем упрощенный TelegramManager для inline-режима');
+        await this.setupInlineMode();
+        return;
+      }
       
       // Показываем ошибку только если мы в Telegram
       if (isInTelegram) {
@@ -168,12 +174,21 @@ class SmokyApp {
         throw new Error('TelegramManager не удалось инициализировать');
       }
       
-      // Важно: НЕ вызываем ready() здесь!
-      // TelegramManager.initialize() уже вызывает ready() внутри себя
+      // Для inline-режима может потребоваться дополнительная настройка
+      if (isInlineMode) {
+        this.setupInlineModeEnhancements();
+      }
       
       console.log('✅ Telegram WebApp инициализирован успешно');
     } catch (error) {
       console.error('❌ Ошибка инициализации Telegram WebApp:', error);
+      
+      // Для inline-режима пытаемся создать упрощенную версию
+      if (isInlineMode) {
+        console.warn('⚠️ Создаем упрощенный TelegramManager для inline-режима из-за ошибки');
+        await this.setupInlineMode();
+        return;
+      }
       
       // Показываем ошибку только если мы в Telegram
       if (isInTelegram) {
@@ -265,6 +280,180 @@ class SmokyApp {
     
     // Также скрываем загрузку
     Utils.toggleLoading(false);
+  }
+
+  /**
+   * Настройка inline-режима для работы через inline-клавиатуру
+   */
+  async setupInlineMode() {
+    console.log('🔧 Inline режим: настройка упрощенного Telegram WebApp');
+    
+    // Создаем упрощенный mock объект для inline-клавиатуры
+    window.Telegram = window.Telegram || {};
+    window.Telegram.WebApp = window.Telegram.WebApp || {
+      ready: () => console.log('📱 Inline Mock: WebApp ready'),
+      expand: () => console.log('📱 Inline Mock: WebApp expand'),
+      close: () => console.log('📱 Inline Mock: WebApp close'),
+      sendData: (data) => console.log('📱 Inline Mock sendData:', data),
+      disableVerticalSwipes: () => console.log('📱 Inline Mock: disableVerticalSwipes'),
+      setHeaderColor: (color) => console.log('📱 Inline Mock: setHeaderColor:', color),
+      setBackgroundColor: (color) => console.log('📱 Inline Mock: setBackgroundColor:', color),
+      MainButton: {
+        show: () => {
+          console.log('🔘 Inline Mock: MainButton show');
+          this.showMockMainButton();
+        },
+        hide: () => {
+          console.log('🔘 Inline Mock: MainButton hide');
+          this.hideMockMainButton();
+        },
+        setText: (text) => {
+          console.log('🔘 Inline Mock: MainButton setText:', text);
+          this.updateMockMainButton(text);
+        },
+        enable: () => console.log('🔘 Inline Mock: MainButton enable'),
+        disable: () => console.log('🔘 Inline Mock: MainButton disable')
+      },
+      BackButton: {
+        show: () => {
+          console.log('◀️ Inline Mock: BackButton show');
+          this.showMockBackButton();
+        },
+        hide: () => {
+          console.log('◀️ Inline Mock: BackButton hide');
+          this.hideMockBackButton();
+        }
+      },
+      HapticFeedback: {
+        impactOccurred: (type) => console.log('📳 Inline Mock haptic impact:', type),
+        notificationOccurred: (type) => console.log('📳 Inline Mock haptic notification:', type)
+      },
+      initDataUnsafe: {
+        user: {
+          id: 999999999,
+          first_name: 'Inline',
+          last_name: 'Пользователь',
+          username: 'inlineuser',
+          language_code: 'ru'
+        }
+      },
+      initData: '', // Inline-клавиатуры могут не иметь initData
+      onEvent: (event, handler) => {
+        console.log(`📡 Inline Mock event listener: ${event}`);
+        this.mockEventHandlers = this.mockEventHandlers || {};
+        this.mockEventHandlers[event] = handler;
+      },
+      isVersionAtLeast: (version) => true,
+      themeParams: {},
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+      viewportStableHeight: window.innerHeight
+    };
+
+    // Инициализируем mock UI для кнопок
+    this.setupMockUI();
+    
+    // Создаем упрощенный TelegramManager специально для inline-режима
+    const self = this;
+    window.TelegramManager = {
+      webApp: window.Telegram.WebApp,
+      user: window.Telegram.WebApp.initDataUnsafe.user,
+      initData: window.Telegram.WebApp.initData,
+      isInitialized: true,
+      isReady: () => true,
+      isRunningInTelegram: () => true, // В inline-режиме мы все же в Telegram
+      initialize: async () => {
+        console.log('✅ Inline TelegramManager инициализирован');
+        return true;
+      },
+      showMainButton: (text, enabled) => {
+        console.log('🔘 Inline: showMainButton:', text, enabled);
+        if (self.showMockMainButton) {
+          self.showMockMainButton();
+          if (text && self.updateMockMainButton) {
+            self.updateMockMainButton(text);
+          }
+        }
+      },
+      hideMainButton: () => {
+        console.log('🔘 Inline: hideMainButton');
+        if (self.hideMockMainButton) {
+          self.hideMockMainButton();
+        }
+      },
+      updateMainButtonText: (text) => {
+        console.log('🔘 Inline: updateMainButtonText:', text);
+        if (self.updateMockMainButton) {
+          self.updateMockMainButton(text);
+        }
+      },
+      setMainButtonEnabled: (enabled) => console.log('🔘 Inline: setMainButtonEnabled:', enabled),
+      showBackButton: () => {
+        console.log('◀️ Inline: showBackButton');
+        if (self.showMockBackButton) {
+          self.showMockBackButton();
+        }
+      },
+      hideBackButton: () => {
+        console.log('◀️ Inline: hideBackButton');
+        if (self.hideMockBackButton) {
+          self.hideMockBackButton();
+        }
+      },
+      hapticFeedback: (type) => console.log('📳 Inline: hapticFeedback:', type),
+      addEventListener: (event, handler) => {
+        console.log('📡 Inline: addEventListener:', event);
+        if (!self.mockEventHandlers) {
+          self.mockEventHandlers = {};
+        }
+        self.mockEventHandlers[event] = handler;
+      },
+      removeEventListener: (event, handler) => console.log('📡 Inline: removeEventListener:', event),
+      sendData: (data) => {
+        console.log('📱 Inline: sendData:', data);
+        // В inline-режиме отправка данных может работать по-другому
+        if (window.Telegram?.WebApp?.sendData) {
+          window.Telegram.WebApp.sendData(data);
+        }
+      },
+      close: () => {
+        console.log('📱 Inline: close');
+        if (window.Telegram?.WebApp?.close) {
+          window.Telegram.WebApp.close();
+        }
+      },
+      getUserData: () => window.Telegram.WebApp.initDataUnsafe.user,
+      getUserId: () => window.Telegram.WebApp.initDataUnsafe.user.id,
+      getViewportSize: () => ({ width: window.innerWidth, height: window.innerHeight }),
+      isVersionAtLeast: () => true,
+      getThemeParams: () => ({})
+    };
+    
+    console.log('✅ Inline режим настроен успешно');
+  }
+
+  /**
+   * Дополнительные настройки для inline-режима
+   */
+  setupInlineModeEnhancements() {
+    console.log('🔧 Применяем дополнительные настройки для inline-режима');
+    
+    // Убираем некоторые ограничения, характерные для inline-клавиатур
+    if (window.TelegramManager?.webApp) {
+      try {
+        // Пытаемся расширить viewport если возможно
+        if (typeof window.TelegramManager.webApp.expand === 'function') {
+          window.TelegramManager.webApp.expand();
+        }
+        
+        // Настраиваем тему для inline-режима
+        if (typeof window.TelegramManager.webApp.ready === 'function') {
+          window.TelegramManager.webApp.ready();
+        }
+      } catch (error) {
+        console.warn('⚠️ Некоторые настройки inline-режима недоступны:', error);
+      }
+    }
   }
 
   /**

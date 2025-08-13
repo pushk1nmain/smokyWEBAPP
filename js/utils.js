@@ -298,12 +298,12 @@ const safeExecute = async (func, fallback = null) => {
 const safeTelegramManagerCall = (method, args = [], fallback = null) => {
   try {
     if (!window.TelegramManager) {
-      console.warn(`TelegramManager недоступен для вызова ${method}`);
+      console.debug(`TelegramManager недоступен для вызова ${method}`);
       return fallback;
     }
     
     if (typeof window.TelegramManager[method] !== 'function') {
-      console.warn(`Метод ${method} недоступен в TelegramManager`);
+      console.debug(`Метод ${method} недоступен в TelegramManager`);
       return fallback;
     }
     
@@ -315,15 +315,33 @@ const safeTelegramManagerCall = (method, args = [], fallback = null) => {
     ];
     
     if (methodsRequiringReady.includes(method)) {
-      if (typeof window.TelegramManager.isReady !== 'function' || !window.TelegramManager.isReady()) {
-        console.warn(`TelegramManager не готов для вызова ${method}`);
-        return fallback;
+      // Используем улучшенную проверку готовности
+      if (!isTelegramManagerReady()) {
+        console.debug(`TelegramManager не готов для вызова ${method}`);
+        
+        // Для некоторых критичных методов пытаемся вызвать даже если isReady возвращает false
+        const criticalMethods = ['addEventListener', 'removeEventListener'];
+        if (!criticalMethods.includes(method)) {
+          return fallback;
+        }
+        
+        console.debug(`Пытаемся вызвать критичный метод ${method} несмотря на неготовность`);
       }
     }
     
-    return window.TelegramManager[method](...args);
+    const result = window.TelegramManager[method](...args);
+    console.debug(`Успешный вызов TelegramManager.${method}`, { args, result });
+    
+    return result;
   } catch (error) {
-    console.error(`Ошибка вызова TelegramManager.${method}:`, error);
+    console.warn(`Ошибка вызова TelegramManager.${method}:`, error);
+    
+    // Для некоторых методов ошибки не критичны
+    const nonCriticalMethods = ['hapticFeedback', 'setMainButtonEnabled', 'updateMainButtonText'];
+    if (nonCriticalMethods.includes(method)) {
+      console.debug(`Некритичная ошибка для ${method}, продолжаем работу`);
+    }
+    
     return fallback;
   }
 };
@@ -333,11 +351,41 @@ const safeTelegramManagerCall = (method, args = [], fallback = null) => {
  * @returns {boolean} Готовность TelegramManager
  */
 const isTelegramManagerReady = () => {
-  return !!(
-    window.TelegramManager && 
-    typeof window.TelegramManager.isReady === 'function' && 
-    window.TelegramManager.isReady()
-  );
+  try {
+    // Базовая проверка наличия объекта
+    if (!window.TelegramManager) {
+      console.debug('TelegramManager отсутствует');
+      return false;
+    }
+    
+    // Проверяем наличие метода isReady
+    if (typeof window.TelegramManager.isReady !== 'function') {
+      console.debug('Метод isReady недоступен в TelegramManager');
+      
+      // Fallback: проверяем базовые свойства для определения готовности
+      const hasBasicMethods = !!(
+        typeof window.TelegramManager.initialize === 'function' &&
+        typeof window.TelegramManager.showMainButton === 'function' &&
+        typeof window.TelegramManager.hideMainButton === 'function'
+      );
+      
+      if (hasBasicMethods) {
+        console.debug('TelegramManager имеет базовые методы, считаем готовым');
+        return true;
+      }
+      
+      return false;
+    }
+    
+    // Вызываем метод isReady
+    const isReady = window.TelegramManager.isReady();
+    console.debug('TelegramManager.isReady() возвратил:', isReady);
+    
+    return isReady;
+  } catch (error) {
+    console.warn('Ошибка проверки готовности TelegramManager:', error);
+    return false;
+  }
 };
 
 /**
@@ -348,8 +396,15 @@ const isTelegramManagerReady = () => {
 const waitForTelegramManager = (timeout = 5000) => {
   return new Promise((resolve) => {
     // Сначала проверяем, готов ли уже TelegramManager
+    if (isTelegramManagerReady()) {
+      console.log('✅ TelegramManager уже готов');
+      resolve(true);
+      return;
+    }
+    
+    // Проверяем, есть ли хотя бы базовые методы
     if (window.TelegramManager && typeof window.TelegramManager.initialize === 'function') {
-      console.log('✅ TelegramManager уже доступен');
+      console.log('✅ TelegramManager базово доступен');
       resolve(true);
       return;
     }

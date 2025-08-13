@@ -292,7 +292,17 @@ class BaseScreen {
     console.log('   - TelegramManager готов:', Utils.isTelegramManagerReady());
     
     if (!Utils.isTelegramManagerReady()) {
-      console.warn('⚠️ TelegramManager не готов');
+      console.warn('⚠️ TelegramManager не готов, пропускаем настройку кнопок');
+      
+      // Для режима разработки или inline-режима, где TelegramManager может быть недоступен,
+      // не считаем это критичной ошибкой
+      if (window.location.hostname === 'localhost' || 
+          window.location.hostname === '127.0.0.1' ||
+          !window.Telegram?.WebApp?.initData) {
+        console.debug('Режим разработки или inline-режим, кнопки Telegram недоступны');
+        return;
+      }
+      
       return;
     }
 
