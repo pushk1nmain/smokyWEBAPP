@@ -91,16 +91,30 @@ class SmokyApp {
     
     // Проверяем наличие Telegram WebApp API
     const hasTelegramAPI = !!(window.Telegram?.WebApp);
-    const isInTelegram = hasTelegramAPI && !!window.Telegram.WebApp.initData;
+    const initData = window.Telegram?.WebApp?.initData;
+    const isInTelegram = hasTelegramAPI && (window.location.href.includes('telegram') || 
+      navigator.userAgent.includes('Telegram') || 
+      window.TelegramWebviewProxy || 
+      window.parent !== window);
     
     console.log('   - Telegram API доступен:', hasTelegramAPI);
+    console.log('   - InitData:', initData ? 'есть' : 'нет');
+    console.log('   - User Agent:', navigator.userAgent);
+    console.log('   - URL:', window.location.href);
     console.log('   - Запущено в Telegram:', isInTelegram);
     console.log('   - Режим разработки:', this.debug);
     
-    // Если нет Telegram API или запущено не в Telegram - используем режим разработки
-    if (!hasTelegramAPI || !isInTelegram || this.debug) {
-      console.warn('🔧 Переходим в режим разработки');
-      this.setupDevelopmentMode();
+    // Если это локальная разработка - сразу в dev режим
+    if (this.debug) {
+      console.warn('🔧 Переходим в режим разработки (localhost)');
+      await this.setupDevelopmentMode();
+      return;
+    }
+    
+    // Если нет Telegram API - тоже в dev режим
+    if (!hasTelegramAPI) {
+      console.warn('🔧 Нет Telegram API, переходим в режим разработки');
+      await this.setupDevelopmentMode();
       return;
     }
     
@@ -113,7 +127,7 @@ class SmokyApp {
     while (!window.TelegramManager || typeof window.TelegramManager.initialize !== 'function') {
       if (waitTime >= maxWaitTime) {
         console.warn('⚠️ TelegramManager не инициализирован за отведенное время');
-        this.setupDevelopmentMode();
+        await this.setupDevelopmentMode();
         return;
       }
       
@@ -131,7 +145,7 @@ class SmokyApp {
       
       if (!telegramInitialized) {
         console.warn('⚠️ Telegram WebApp не инициализирован, используем режим разработки');
-        this.setupDevelopmentMode();
+        await this.setupDevelopmentMode();
         return;
       }
       
@@ -139,14 +153,14 @@ class SmokyApp {
     } catch (error) {
       console.error('❌ Ошибка инициализации Telegram WebApp:', error);
       console.warn('⚠️ Переходим в режим разработки из-за ошибки');
-      this.setupDevelopmentMode();
+      await this.setupDevelopmentMode();
     }
   }
 
   /**
    * Настройка режима разработки
    */
-  setupDevelopmentMode() {
+  async setupDevelopmentMode() {
     console.log('🔧 Режим разработки: настройка mock Telegram WebApp');
     
     // Создаем mock объект для эмуляции Telegram WebApp
@@ -156,6 +170,9 @@ class SmokyApp {
         expand: () => console.log('📱 Mock: WebApp expand'),
         close: () => console.log('📱 Mock: WebApp close'),
         sendData: (data) => console.log('📱 Mock sendData:', data),
+        disableVerticalSwipes: () => console.log('📱 Mock: disableVerticalSwipes'),
+        setHeaderColor: (color) => console.log('📱 Mock: setHeaderColor:', color),
+        setBackgroundColor: (color) => console.log('📱 Mock: setBackgroundColor:', color),
         MainButton: {
           show: () => {
             console.log('🔘 Mock: MainButton show');
@@ -671,8 +688,11 @@ window.SmokyApp = app;
 // Автоматический запуск приложения
 (async () => {
   try {
+    console.log('🚀 Запуск SmokyApp...');
     await app.initialize();
+    console.log('🚀 SmokyApp запущен успешно');
   } catch (error) {
-    console.error('Фатальная ошибка запуска приложения:', error);
+    console.error('💥 Фатальная ошибка запуска приложения:', error);
+    console.error('💥 Stack trace:', error.stack);
   }
 })();

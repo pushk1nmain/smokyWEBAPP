@@ -68,17 +68,33 @@ class TelegramManager {
   setupAppearance() {
     if (!this.webApp) return;
 
-    // Отключаем стандартное контекстное меню
-    this.webApp.disableVerticalSwipes();
+    // Отключаем стандартное контекстное меню (только если метод доступен)
+    if (typeof this.webApp.disableVerticalSwipes === 'function') {
+      try {
+        this.webApp.disableVerticalSwipes();
+      } catch (error) {
+        console.warn('Не удалось отключить вертикальные свайпы:', error);
+      }
+    } else {
+      console.warn('Метод disableVerticalSwipes недоступен в данной версии Telegram WebApp');
+    }
     
     // Настраиваем цвета заголовка
-    if (this.webApp.setHeaderColor) {
-      this.webApp.setHeaderColor('#FAFAFA'); // Цвет фона
+    if (typeof this.webApp.setHeaderColor === 'function') {
+      try {
+        this.webApp.setHeaderColor('#FAFAFA'); // Цвет фона
+      } catch (error) {
+        console.warn('Не удалось установить цвет заголовка:', error);
+      }
     }
     
     // Настраиваем цвет фона
-    if (this.webApp.setBackgroundColor) {
-      this.webApp.setBackgroundColor('#FAFAFA');
+    if (typeof this.webApp.setBackgroundColor === 'function') {
+      try {
+        this.webApp.setBackgroundColor('#FAFAFA');
+      } catch (error) {
+        console.warn('Не удалось установить цвет фона:', error);
+      }
     }
 
     // Скрываем кнопки по умолчанию

@@ -529,9 +529,9 @@ class ScreenRouter {
         // Обновляем прогресс-бар
         Utils.updateProgressBar(this.currentStep, this.totalSteps);
 
-              // Переходим на стартовый экран
-      console.log('   - Переходим на стартовый экран:', startScreenName);
-      await this.navigateToScreen(startScreenName);
+        // Переходим на стартовый экран
+        console.log('   - Переходим на стартовый экран:', startScreenName);
+        await this.navigateToScreen(startScreenName);
         
         console.log('✅ Инициализация роутера завершена успешно');
       } catch (apiError) {
