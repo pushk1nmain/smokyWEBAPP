@@ -6,14 +6,16 @@
 
 set -euo pipefail  # Строгий режим выполнения
 
-# Конфигурация
+# Конфигурация для Docker окружения
 REPO_URL="${REPO_URL:-https://github.com/smokyapp/webapp.git}"
 BRANCH="${BRANCH:-main}"
-APP_DIR="${APP_DIR:-/app}"
-BACKUP_DIR="${BACKUP_DIR:-/app/backups}"
-LOG_FILE="${LOG_FILE:-/var/log/smokyapp/update.log}"
+APP_DIR="${APP_DIR:-$(pwd)}"
+BACKUP_DIR="${BACKUP_DIR:-$(pwd)/backups}"
+LOG_FILE="${LOG_FILE:-$(pwd)/logs/update.log}"
 CONTAINER_NAME="${CONTAINER_NAME:-smokyapp-web}"
 COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.yml}"
+IMAGE_NAME="${IMAGE_NAME:-smokyapp}"
+VERSION="${VERSION:-latest}"
 
 # Цвета для вывода
 RED='\033[0;31m'
@@ -162,50 +164,91 @@ update_repository() {
     fi
 }
 
-# Функция пересборки Docker образа
+# Функция пересборки Docker образа для продакшн
 rebuild_docker() {
     info "Пересборка Docker образа..."
     
-    cd "$(dirname "${APP_DIR}")"
+    cd "${APP_DIR}"
+    
+    # Проверяем наличие docker-compose файла
+    if [[ ! -f "${COMPOSE_FILE}" ]]; then
+        error "Файл ${COMPOSE_FILE} не найден в директории ${APP_DIR}"
+        return 1
+    fi
     
     # Останавливаем контейнеры
     info "Остановка контейнеров..."
     docker-compose -f "${COMPOSE_FILE}" down || true
     
-    # Удаляем старый образ
-    info "Удаление старого образа..."
-    docker rmi smokyapp-web:latest 2>/dev/null || true
+    # Очищаем старые образы и кэш
+    info "Очистка старых образов..."
+    docker rmi "${IMAGE_NAME}:${VERSION}" 2>/dev/null || true
+    docker rmi "${IMAGE_NAME}:latest" 2>/dev/null || true
     
-    # Собираем новый образ
+    # Очищаем build кэш для полной пересборки
+    info "Очистка Docker build кэша..."
+    docker builder prune -f || true
+    
+    # Собираем новый образ с оптимизацией для продакшн
     info "Сборка нового образа..."
-    docker-compose -f "${COMPOSE_FILE}" build --no-cache
+    export DOCKER_BUILDKIT=1
+    docker-compose -f "${COMPOSE_FILE}" build \
+        --no-cache \
+        --pull \
+        --parallel
+    
+    # Тегируем образ
+    info "Тегирование образа..."
+    docker tag "${IMAGE_NAME}:${VERSION}" "${IMAGE_NAME}:latest" || true
     
     # Запускаем контейнеры
     info "Запуск контейнеров..."
     docker-compose -f "${COMPOSE_FILE}" up -d
     
+    # Ждем запуска
+    sleep 15
+    
+    # Проверяем статус контейнеров
+    info "Проверка статуса контейнеров..."
+    docker-compose -f "${COMPOSE_FILE}" ps
+    
     success "Docker образ пересобран и запущен"
 }
 
-# Функция проверки здоровья приложения
+# Функция проверки здоровья приложения в Docker
 health_check() {
     info "Проверка здоровья приложения..."
     
     local max_attempts=30
     local attempt=1
+    local health_url="http://localhost:${HOST_PORT:-80}/health.html"
     
     while [[ $attempt -le $max_attempts ]]; do
-        if curl -f -s http://localhost/health > /dev/null 2>&1; then
+        # Проверяем как через curl, так и через docker health check
+        if curl -f -s "$health_url" > /dev/null 2>&1 && \
+           docker ps --filter "name=${CONTAINER_NAME}" --filter "health=healthy" --format "table {{.Names}}" | grep -q "${CONTAINER_NAME}"; then
             success "Приложение работает корректно"
             return 0
         fi
         
         info "Попытка ${attempt}/${max_attempts}: ожидание запуска приложения..."
+        
+        # Показываем статус контейнера для диагностики
+        local container_status=$(docker ps --filter "name=${CONTAINER_NAME}" --format "table {{.Names}}\t{{.Status}}" | tail -n +2)
+        if [[ -n "$container_status" ]]; then
+            info "Статус контейнера: $container_status"
+        fi
+        
         sleep 10
         ((attempt++))
     done
     
     error "Приложение не отвечает после обновления"
+    
+    # Показываем логи для диагностики
+    info "Последние логи контейнера:"
+    docker logs --tail 20 "${CONTAINER_NAME}" 2>&1 || true
+    
     return 1
 }
 

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmokyApp Health Check</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .health-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+        .status-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        .status-text {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .timestamp {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+        .details {
+            font-size: 16px;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: left;
+        }
+        .details dt {
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .details dd {
+            margin: 5px 0 0 20px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .health-container { padding: 20px; }
+            .status-text { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="health-container">
+        <div class="status-icon">✅</div>
+        <div class="status-text">Сервис работает</div>
+        <div>SmokyApp готово к работе</div>
+        
+        <dl class="details">
+            <dt>Статус:</dt>
+            <dd>OK (200)</dd>
+            
+            <dt>Сервис:</dt>
+            <dd>SmokyApp Telegram WebApp</dd>
+            
+            <dt>Версия:</dt>
+            <dd>1.0.1</dd>
+            
+            <dt>Окружение:</dt>
+            <dd>Production</dd>
+            
+            <dt>Время проверки:</dt>
+            <dd id="timestamp">Загрузка...</dd>
+        </dl>
+    </div>
+
+    <script>
+        // Обновляем timestamp при загрузке
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('ru-RU', {
+            timeZone: 'Europe/Moscow',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+
+        // Автообновление каждые 30 секунд для актуальности
+        setInterval(() => {
+            document.getElementById('timestamp').textContent = new Date().toLocaleString('ru-RU', {
+                timeZone: 'Europe/Moscow',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }, 30000);
+    </script>
+</body>
+</html>

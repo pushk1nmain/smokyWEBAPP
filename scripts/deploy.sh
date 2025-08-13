@@ -266,39 +266,72 @@ setup_firewall() {
     fi
 }
 
-# Функция первоначального запуска
+# Функция первоначального запуска для Docker
 initial_deployment() {
     info "Первоначальное развертывание..."
     
     cd "$INSTALL_DIR"
     
-    # Создаем необходимые директории
-    mkdir -p logs backups
+    # Создаем необходимые директории для логов и бэкапов
+    mkdir -p logs/nginx logs/app backups
     
-    # Собираем и запускаем контейнеры
-    docker-compose build
+    # Загружаем переменные окружения
+    if [[ -f ".env" ]]; then
+        info "Загрузка переменных окружения из .env"
+        set -a
+        source .env
+        set +a
+    fi
+    
+    # Собираем и запускаем контейнеры с оптимизацией
+    info "Сборка Docker образа..."
+    export DOCKER_BUILDKIT=1
+    docker-compose build --pull --parallel
+    
+    info "Запуск контейнеров..."
     docker-compose up -d
     
     # Ждем запуска приложения
     info "Ожидание запуска приложения..."
     sleep 30
     
-    # Проверяем здоровье
-    local max_attempts=10
+    # Проверяем здоровье с правильным endpoint
+    local max_attempts=15
     local attempt=1
+    local health_url="http://localhost:${HOST_PORT:-80}/health.html"
     
     while [[ $attempt -le $max_attempts ]]; do
-        if curl -f -s http://localhost/health > /dev/null 2>&1; then
-            success "Приложение успешно запущено!"
-            return 0
+        if curl -f -s "$health_url" > /dev/null 2>&1; then
+            # Дополнительно проверяем Docker health check
+            if docker ps --filter "name=${CONTAINER_NAME:-smokyapp-web}" --filter "health=healthy" --format "{{.Names}}" | grep -q "${CONTAINER_NAME:-smokyapp-web}"; then
+                success "Приложение успешно запущено!"
+                
+                # Показываем информацию о контейнере
+                info "Информация о контейнере:"
+                docker-compose ps
+                
+                return 0
+            fi
         fi
         
         info "Попытка ${attempt}/${max_attempts}: ожидание..."
-        sleep 10
+        
+        # Показываем статус для диагностики
+        local container_status=$(docker ps --filter "name=${CONTAINER_NAME:-smokyapp-web}" --format "table {{.Names}}\t{{.Status}}" | tail -n +2)
+        if [[ -n "$container_status" ]]; then
+            info "Статус контейнера: $container_status"
+        fi
+        
+        sleep 15
         ((attempt++))
     done
     
     error "Приложение не отвечает"
+    
+    # Показываем логи для диагностики
+    info "Логи контейнера для диагностики:"
+    docker logs --tail 30 "${CONTAINER_NAME:-smokyapp-web}" 2>&1 || true
+    
     return 1
 }
 
