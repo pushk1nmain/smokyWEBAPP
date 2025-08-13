@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SmokyApp - Добро пожаловать</title>
+    
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css?v=3.0">
+    
+    <!-- Отключение кэширования для разработки -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Дополнительные мета-теги для борьбы с кэшированием -->
+    <meta name="cache-control" content="no-cache">
+    <meta name="expires" content="0">
+    <meta name="pragma" content="no-cache">
+    
+    <!-- Meta теги для Telegram WebApp -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Парящие смайлики на фоне -->
+        <div class="floating-emojis">
+            <span class="emoji emoji-1">🔥</span>
+            <span class="emoji emoji-2">🚀</span>
+            <span class="emoji emoji-3">🚭</span>
+            <span class="emoji emoji-4">💨</span>
+            <span class="emoji emoji-5">🌿</span>
+            <span class="emoji emoji-6">💚</span>
+            <span class="emoji emoji-7">🤝</span>
+            <span class="emoji emoji-8">📈</span>
+            <span class="emoji emoji-9">🪴</span>
+            <span class="emoji emoji-10">⏳</span>
+            <span class="emoji emoji-11">🏆</span>
+        </div>
+        
+        <!-- Экран приветствия -->
+        <main class="welcome-screen">
+            <div class="character-section">
+                <div class="character-container">
+                    <img src="../../elements/photo/smoky_basic.svg" 
+                         alt="Смоки - ваш гид к здоровой жизни" 
+                         class="smoky-character"
+                         loading="eager">
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h1 class="welcome-title">Привет! Я Смоки — ваш робот-друг на пути к жизни без сигарет</h1>
+                
+                <p class="welcome-description">
+                    Готовы начать путь к здоровой жизни?
+                </p>
+                
+                <div class="action-section">
+                    <button class="start-button" 
+                            id="startButton"
+                            tabindex="0" 
+                            aria-label="Начать путь к здоровой жизни">
+                        <span class="button-text">Поехали!</span>
+                        <span class="arrow-icon"></span>
+                    </button>
+                </div>
+                
+                <div class="info-section">
+                    <p class="info-text">
+                        <span class="info-icon">🔒</span>
+                        Ваши данные надежно защищены
+                    </p>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Индикатор загрузки -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Подключаемся к Telegram...</p>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# SmokyApp Navigation Rules
+# Правила навигации для автоматического перенаправления на welcome экран
+
+# Главная страница перенаправляется на welcome экран
+/   /screens/welcome/index.html   200
+
+# Обработка прямых запросов к корню приложения
+/index.html   /screens/welcome/index.html   200
+
+# Fallback для любых неизвестных маршрутов на welcome экран
+/*  /screens/welcome/index.html   404

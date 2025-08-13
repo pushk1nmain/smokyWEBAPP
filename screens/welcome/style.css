@@ -1,6 +1,6 @@
 /**
- * SmokyApp - Telegram WebApp Styles
- * Стили оптимизированы для Telegram WebApp с поддержкой тематизации
+ * SmokyApp - Welcome Screen Styles
+ * Стили экрана приветствия оптимизированы для Telegram WebApp
  */
 
 /* CSS Custom Properties для Telegram Theme */
@@ -55,8 +55,8 @@ body {
     overflow: hidden; /* Убираем прокрутку */
 }
 
-/* Главный экран */
-.main-screen {
+/* Экран приветствия */
+.welcome-screen {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -99,7 +99,7 @@ body {
     min-height: 0; /* Предотвращаем переполнение */
 }
 
-.main-title {
+.welcome-title {
     font-size: 28px;
     font-weight: 700;
     color: #235BDF; /* Синий цвет заголовка */
@@ -107,7 +107,7 @@ body {
     line-height: 1.3;
 }
 
-.main-description {
+.welcome-description {
     font-size: 18px;
     color: #1C3D8C; /* Темно-синий цвет основного текста */
     line-height: 1.5;
@@ -274,8 +274,6 @@ body {
 
 /* Индивидуальные настройки для каждого смайлика */
 /* Размещаем смайлики только по краям экрана, избегая центральной зоны с контентом */
-/* Теперь используем уникальные смайлики без дублирования */
-
 .emoji-1 {
     top: 5%;
     left: 5%;
@@ -354,7 +352,6 @@ body {
 }
 
 /* Анимации для смайликов */
-/* Плавные и естественные движения с увеличенной продолжительностью */
 @keyframes floatSlow {
     0%, 100% {
         transform: translateY(0px) translateX(0px) rotate(0deg);
@@ -447,11 +444,11 @@ body {
         width: 160px;
     }
     
-    .main-title {
+    .welcome-title {
         font-size: 24px;
     }
     
-    .main-description {
+    .welcome-description {
         font-size: 16px;
     }
     
