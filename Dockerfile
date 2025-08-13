@@ -31,12 +31,13 @@ RUN mkdir -p /var/log/smokyapp \
              /var/cache/nginx \
              /var/run/nginx
 
-# Копируем статические файлы напрямую
-COPY *.html /usr/share/nginx/html/
-COPY css/ /usr/share/nginx/html/css/
-COPY js/ /usr/share/nginx/html/js/
-COPY screens/ /usr/share/nginx/html/screens/
+# Копируем основные файлы приложения
+COPY index.html health.html style.css script.js /usr/share/nginx/html/
+
+# Копируем директории
 COPY elements/ /usr/share/nginx/html/elements/
+
+# Копируем дополнительные файлы
 COPY robots.txt humans.txt /usr/share/nginx/html/
 
 # Копируем конфигурацию nginx
