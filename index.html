@@ -39,11 +39,78 @@
         <div id="notification-container" class="notification-container"></div>
     </div>
 
-    <!-- Core Scripts -->
-    <script src="js/utils.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/telegram.js"></script>
-    <script src="js/router.js"></script>
-    <script src="js/app.js"></script>
+    <!-- Ожидание загрузки Telegram WebApp API -->
+    <script>
+        (async function() {
+            // Ждем загрузки Telegram WebApp API
+            console.log('📱 Ожидание загрузки Telegram WebApp API...');
+            let attempts = 0;
+            const maxAttempts = 50; // 5 секунд
+            
+            while (!window.Telegram?.WebApp && attempts < maxAttempts) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+                if (attempts % 10 === 0) {
+                    console.log(`   Ожидание Telegram API... ${attempts * 100}ms`);
+                }
+            }
+            
+            if (window.Telegram?.WebApp) {
+                console.log('✅ Telegram WebApp API загружен, загружаем основные скрипты...');
+            } else {
+                console.warn('⚠️ Telegram WebApp API не загружен, продолжаем загрузку скриптов...');
+            }
+            
+            // Функция для загрузки скрипта
+            function loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            }
+            
+            try {
+                // Загружаем скрипты в правильном порядке
+                console.log('📦 Загрузка utils.js...');
+                await loadScript('js/utils.js');
+                
+                console.log('📦 Загрузка api.js...');
+                await loadScript('js/api.js');
+                
+                console.log('📦 Загрузка telegram.js...');
+                await loadScript('js/telegram.js');
+                
+                console.log('📦 Загрузка router.js...');
+                await loadScript('js/router.js');
+                
+                // Дополнительное ожидание инициализации TelegramManager
+                console.log('⏳ Ожидание готовности TelegramManager...');
+                let managerWait = 0;
+                const maxManagerWait = 30; // 3 секунды
+                
+                while (!window.TelegramManager && managerWait < maxManagerWait) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    managerWait++;
+                }
+                
+                if (window.TelegramManager) {
+                    console.log('✅ TelegramManager готов, загружаем app.js...');
+                } else {
+                    console.warn('⚠️ TelegramManager не готов, но продолжаем загрузку app.js...');
+                }
+                
+                console.log('📦 Загрузка app.js...');
+                await loadScript('js/app.js');
+                
+                console.log('🚀 Все скрипты загружены успешно');
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки скриптов:', error);
+            }
+        })();
+    </script>
 </body>
 </html>
