@@ -149,7 +149,7 @@ const getUserData = () => {
 const personalizeGreeting = (user) => {
     const titleElement = document.querySelector('.main-title');
     if (titleElement && user.first_name) {
-        titleElement.textContent = `Привет, ${user.first_name}! Меня зовут Смоки`;
+        titleElement.textContent = `Привет, ${user.first_name}! Я Смоки — ваш робот-друг на пути к жизни без сигарет!`;
     }
 };
 
