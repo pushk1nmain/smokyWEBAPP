@@ -88,31 +88,41 @@ class SmokyApp {
    */
   async initializeTelegram() {
     console.log('🔄 Инициализация Telegram WebApp...');
-    console.log('   - TelegramManager доступен:', !!window.TelegramManager);
-    console.log('   - initialize доступен:', typeof window.TelegramManager?.initialize);
     
-    // В режиме разработки сразу настраиваем mock
-    if (this.debug) {
-      console.warn('🔧 Запуск в режиме разработки');
+    // Проверяем наличие Telegram WebApp API
+    const hasTelegramAPI = !!(window.Telegram?.WebApp);
+    const isInTelegram = hasTelegramAPI && !!window.Telegram.WebApp.initData;
+    
+    console.log('   - Telegram API доступен:', hasTelegramAPI);
+    console.log('   - Запущено в Telegram:', isInTelegram);
+    console.log('   - Режим разработки:', this.debug);
+    
+    // Если нет Telegram API или запущено не в Telegram - используем режим разработки
+    if (!hasTelegramAPI || !isInTelegram || this.debug) {
+      console.warn('🔧 Переходим в режим разработки');
       this.setupDevelopmentMode();
       return;
     }
     
     // Ждем инициализации TelegramManager с таймаутом
-    const maxWaitTime = 5000; // 5 секунд
+    console.log('   - Ожидание TelegramManager...');
+    const maxWaitTime = 3000; // 3 секунды
     const checkInterval = 100; // 100 мс
     let waitTime = 0;
     
     while (!window.TelegramManager || typeof window.TelegramManager.initialize !== 'function') {
       if (waitTime >= maxWaitTime) {
-        console.warn('⚠️ TelegramManager не инициализирован за отведенное время, переходим в режим разработки');
+        console.warn('⚠️ TelegramManager не инициализирован за отведенное время');
         this.setupDevelopmentMode();
         return;
       }
       
       await new Promise(resolve => setTimeout(resolve, checkInterval));
       waitTime += checkInterval;
-      console.log(`   - Ожидание TelegramManager... ${waitTime}ms`);
+      
+      if (waitTime % 500 === 0) { // Логируем каждые 500мс
+        console.log(`   - Ожидание TelegramManager... ${waitTime}ms`);
+      }
     }
 
     try {
@@ -125,7 +135,7 @@ class SmokyApp {
         return;
       }
       
-      console.log('✅ Telegram WebApp инициализирован');
+      console.log('✅ Telegram WebApp инициализирован успешно');
     } catch (error) {
       console.error('❌ Ошибка инициализации Telegram WebApp:', error);
       console.warn('⚠️ Переходим в режим разработки из-за ошибки');
@@ -204,7 +214,7 @@ class SmokyApp {
     this.setupMockUI();
     
     // Ждем инициализации TelegramManager, если он еще не готов
-    let maxWait = 30; // 3 секунды
+    let maxWait = 50; // 5 секунд
     while (!window.TelegramManager && maxWait > 0) {
       await new Promise(resolve => setTimeout(resolve, 100));
       maxWait--;
@@ -224,6 +234,36 @@ class SmokyApp {
       console.log('   - isInitialized:', window.TelegramManager.isInitialized);
     } else {
       console.warn('⚠️ TelegramManager не найден даже в режиме разработки');
+      console.warn('   - Создаем минимальный TelegramManager stub...');
+      
+      // Создаем минимальный stub для TelegramManager
+      window.TelegramManager = {
+        webApp: window.Telegram.WebApp,
+        user: window.Telegram.WebApp.initDataUnsafe.user,
+        initData: window.Telegram.WebApp.initData,
+        isInitialized: true,
+        isReady: () => true,
+        isRunningInTelegram: () => false,
+        initialize: async () => true,
+        showMainButton: () => console.log('🔘 Stub: showMainButton'),
+        hideMainButton: () => console.log('🔘 Stub: hideMainButton'),
+        updateMainButtonText: (text) => console.log('🔘 Stub: updateMainButtonText:', text),
+        setMainButtonEnabled: (enabled) => console.log('🔘 Stub: setMainButtonEnabled:', enabled),
+        showBackButton: () => console.log('◀️ Stub: showBackButton'),
+        hideBackButton: () => console.log('◀️ Stub: hideBackButton'),
+        hapticFeedback: (type) => console.log('📳 Stub: hapticFeedback:', type),
+        addEventListener: (event, handler) => console.log('📡 Stub: addEventListener:', event),
+        removeEventListener: (event, handler) => console.log('📡 Stub: removeEventListener:', event),
+        sendData: (data) => console.log('📱 Stub: sendData:', data),
+        close: () => console.log('📱 Stub: close'),
+        getUserData: () => window.Telegram.WebApp.initDataUnsafe.user,
+        getUserId: () => window.Telegram.WebApp.initDataUnsafe.user.id,
+        getViewportSize: () => ({ width: window.innerWidth, height: window.innerHeight }),
+        isVersionAtLeast: () => true,
+        getThemeParams: () => ({})
+      };
+      
+      console.log('✅ Минимальный TelegramManager stub создан');
     }
   }
 

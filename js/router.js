@@ -30,26 +30,156 @@ class BaseScreen {
     if (this.isLoaded) return;
 
     try {
-      // Загружаем HTML
-      const htmlResponse = await fetch(`screens/${this.name}/${this.name}.html`);
-      if (!htmlResponse.ok) throw new Error(`HTML файл не найден: ${this.name}`);
-      const html = await htmlResponse.text();
+      let html;
+      
+      try {
+        // Пытаемся загрузить HTML файл экрана
+        const htmlResponse = await fetch(`screens/${this.name}/${this.name}.html`);
+        if (!htmlResponse.ok) throw new Error(`HTML файл не найден: ${this.name}`);
+        html = await htmlResponse.text();
+      } catch (htmlError) {
+        console.warn(`⚠️ Не удалось загрузить HTML для экрана ${this.name}, используем fallback`);
+        html = this.generateFallbackHTML();
+      }
 
-      // Загружаем CSS
-      await this.loadCSS();
+      // Пытаемся загрузить CSS (не критично если не получится)
+      try {
+        await this.loadCSS();
+      } catch (cssError) {
+        console.warn(`⚠️ Не удалось загрузить CSS для экрана ${this.name}:`, cssError);
+      }
 
       // Создаем контейнер экрана
       this.container = document.createElement('div');
       this.container.className = 'screen';
       this.container.innerHTML = html;
 
-      // Загружаем JS логику экрана
-      await this.loadJS();
+      // Пытаемся загрузить JS логику экрана (не критично если не получится)
+      try {
+        await this.loadJS();
+      } catch (jsError) {
+        console.warn(`⚠️ Не удалось загрузить JS для экрана ${this.name}:`, jsError);
+      }
 
       this.isLoaded = true;
     } catch (error) {
-      console.error(`Ошибка загрузки экрана ${this.name}:`, error);
+      console.error(`❌ Критическая ошибка загрузки экрана ${this.name}:`, error);
       throw error;
+    }
+  }
+
+  /**
+   * Генерация fallback HTML для экрана
+   * @returns {string} HTML содержимое
+   */
+  generateFallbackHTML() {
+    const screenTitles = {
+      'welcome': 'Добро пожаловать в SmokyApp!',
+      'name-input': 'Как вас зовут?',
+      'city-selection': 'Выберите ваш город',
+      'progress-tracker': 'Ваш прогресс'
+    };
+
+    const screenDescriptions = {
+      'welcome': 'Начните свой путь к жизни без курения',
+      'name-input': 'Введите ваше имя для персонализации опыта',
+      'city-selection': 'Выберите город для настройки часового пояса',
+      'progress-tracker': 'Отслеживайте свой прогресс в отказе от курения'
+    };
+
+    const title = screenTitles[this.name] || `Экран: ${this.title}`;
+    const description = screenDescriptions[this.name] || 'Данный экран временно недоступен';
+
+    return `
+      <div class="screen__header">
+        <h1 class="screen__title">${title}</h1>
+        <p class="screen__subtitle">${description}</p>
+      </div>
+      <div class="screen__content">
+        <div class="card">
+          <div class="card__content">
+            ${this.generateScreenContent()}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Генерация содержимого экрана в зависимости от типа
+   * @returns {string} HTML содержимое
+   */
+  generateScreenContent() {
+    switch (this.name) {
+      case 'welcome':
+        return `
+          <div class="text-center">
+            <div style="font-size: 64px; margin-bottom: var(--spacing-4);">🚭</div>
+            <p class="text-lg" style="margin-bottom: var(--spacing-6);">
+              Присоединяйтесь к тысячам людей, которые уже начали свой путь к здоровой жизни.
+            </p>
+            <div style="background: var(--color-surface-variant); padding: var(--spacing-4); border-radius: var(--radius-lg);">
+              <p class="text-sm text-secondary">
+                ✅ Персональный план отказа от курения<br>
+                ✅ Отслеживание прогресса<br>
+                ✅ Мотивационная поддержка
+              </p>
+            </div>
+          </div>
+        `;
+      
+      case 'name-input':
+        return `
+          <div class="form-group">
+            <label for="user-name" class="form-label">Ваше имя</label>
+            <input 
+              type="text" 
+              id="user-name" 
+              class="form-input" 
+              placeholder="Введите ваше имя" 
+              maxlength="50"
+              autocomplete="given-name"
+            />
+            <div class="form-help">Это поможет нам персонализировать ваш опыт</div>
+          </div>
+        `;
+      
+      case 'city-selection':
+        return `
+          <div class="form-group">
+            <label for="user-city" class="form-label">Ваш город</label>
+            <input 
+              type="text" 
+              id="user-city" 
+              class="form-input" 
+              placeholder="Введите название города" 
+              autocomplete="address-level2"
+            />
+            <div class="form-help">Нужно для настройки правильного времени уведомлений</div>
+          </div>
+        `;
+      
+      case 'progress-tracker':
+        return `
+          <div class="text-center">
+            <div style="font-size: 48px; margin-bottom: var(--spacing-4);">🎯</div>
+            <h3 style="margin-bottom: var(--spacing-6); color: var(--color-primary);">Отличная работа!</h3>
+            <div style="background: var(--color-surface-variant); padding: var(--spacing-6); border-radius: var(--radius-lg); margin-bottom: var(--spacing-6);">
+              <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-primary); margin-bottom: var(--spacing-2);">
+                День 1
+              </div>
+              <p class="text-secondary">Вы начали свой путь!</p>
+            </div>
+          </div>
+        `;
+      
+      default:
+        return `
+          <div class="text-center">
+            <div style="font-size: 48px; margin-bottom: var(--spacing-4);">⚙️</div>
+            <p class="text-secondary">Экран находится в разработке</p>
+          </div>
+        `;
     }
   }
 
@@ -157,7 +287,50 @@ class BaseScreen {
    * @returns {Promise<void>}
    */
   async init() {
-    // Базовая инициализация
+    // Базовая инициализация для fallback экранов
+    this.setupInputHandlers();
+  }
+
+  /**
+   * Настройка обработчиков ввода для fallback экранов
+   */
+  setupInputHandlers() {
+    if (!this.container) return;
+
+    // Обработчики для поля имени
+    const nameInput = this.container.querySelector('#user-name');
+    if (nameInput) {
+      nameInput.addEventListener('input', () => {
+        this.validateAndUpdateButton();
+      });
+      
+      nameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && this.isValid()) {
+          this.handleMainButton();
+        }
+      });
+    }
+
+    // Обработчики для поля города
+    const cityInput = this.container.querySelector('#user-city');
+    if (cityInput) {
+      cityInput.addEventListener('input', () => {
+        this.validateAndUpdateButton();
+      });
+      
+      cityInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && this.isValid()) {
+          this.handleMainButton();
+        }
+      });
+    }
+  }
+
+  /**
+   * Валидация и обновление состояния главной кнопки
+   */
+  validateAndUpdateButton() {
+    this.updateMainButton();
   }
 
   /**
@@ -166,7 +339,19 @@ class BaseScreen {
    * @returns {boolean}
    */
   isValid() {
-    return true;
+    // Базовая валидация для fallback экранов
+    switch (this.name) {
+      case 'name-input':
+        const nameInput = this.container?.querySelector('#user-name');
+        return nameInput && Utils.isValidName(nameInput.value);
+      
+      case 'city-selection':
+        const cityInput = this.container?.querySelector('#user-city');
+        return cityInput && cityInput.value.trim().length >= 2;
+      
+      default:
+        return true;
+    }
   }
 
   /**
@@ -175,7 +360,26 @@ class BaseScreen {
    * @returns {Object}
    */
   getData() {
-    return this.data;
+    // Сбор данных из fallback экранов
+    const data = { ...this.data };
+    
+    switch (this.name) {
+      case 'name-input':
+        const nameInput = this.container?.querySelector('#user-name');
+        if (nameInput) {
+          data.name = nameInput.value.trim();
+        }
+        break;
+      
+      case 'city-selection':
+        const cityInput = this.container?.querySelector('#user-city');
+        if (cityInput) {
+          data.city = cityInput.value.trim();
+        }
+        break;
+    }
+    
+    return data;
   }
 
   /**
@@ -213,7 +417,20 @@ class BaseScreen {
    * @returns {Promise<void>}
    */
   async save() {
-    // Базовое сохранение данных
+    // Базовое сохранение данных для fallback экранов
+    const data = this.getData();
+    
+    // Сохраняем в localStorage как fallback
+    if (data && Object.keys(data).length > 0) {
+      try {
+        const currentData = Utils.getFromStorage('userData', {});
+        const updatedData = { ...currentData, ...data };
+        Utils.saveToStorage('userData', updatedData);
+        console.log('✅ Данные сохранены локально:', data);
+      } catch (error) {
+        console.error('❌ Ошибка сохранения данных локально:', error);
+      }
+    }
   }
 
   /**
@@ -273,37 +490,108 @@ class ScreenRouter {
       console.log('   - Telegram ID получен:', telegramId);
       
       if (!telegramId) {
-        throw new Error('Telegram ID недоступен');
+        console.warn('⚠️ Telegram ID недоступен, запускаем с настройками по умолчанию');
+        this.startWithDefaults();
+        return;
       }
 
-      // Инициализируем пользователя
-      console.log('   - Инициализируем пользователя...');
-      const initResult = await API.initializeUser(telegramId);
-      console.log('   - Результат инициализации:', initResult);
-      
-      this.userData = initResult;
-      this.currentStep = initResult.currentStep;
+      try {
+        // Инициализируем пользователя
+        console.log('   - Инициализируем пользователя...');
+        const initResult = await API.initializeUser(telegramId);
+        console.log('   - Результат инициализации:', initResult);
+        
+        this.userData = initResult;
+        this.currentStep = initResult.currentStep;
 
-      // Определяем стартовый экран
-      const startScreenName = this.getScreenNameByStep(this.currentStep);
-      console.log('   - Стартовый экран:', startScreenName, 'для шага', this.currentStep);
+        // Определяем стартовый экран
+        const startScreenName = this.getScreenNameByStep(this.currentStep);
+        console.log('   - Стартовый экран:', startScreenName, 'для шага', this.currentStep);
+        
+        // Обновляем прогресс-бар
+        Utils.updateProgressBar(this.currentStep, this.totalSteps);
+
+        // Переходим на стартовый экран
+        console.log('   - Переходим на стартовый экран...');
+        await this.navigateToScreen(startScreenName);
+        
+        console.log('✅ Инициализация роутера завершена успешно');
+      } catch (apiError) {
+        console.warn('⚠️ Ошибка API, запускаем с настройками по умолчанию:', apiError);
+        this.startWithDefaults();
+      }
+
+    } catch (error) {
+      console.error('❌ Критическая ошибка инициализации роутера:', error);
+      this.startWithDefaults();
+    }
+  }
+
+  /**
+   * Запуск с настройками по умолчанию
+   * @returns {Promise<void>}
+   */
+  async startWithDefaults() {
+    try {
+      console.log('🔄 Запуск роутера с настройками по умолчанию');
+      
+      // Устанавливаем базовые данные
+      this.currentStep = 0;
+      this.userData = {
+        isNewUser: true,
+        currentStep: 0,
+        user: null
+      };
       
       // Обновляем прогресс-бар
       Utils.updateProgressBar(this.currentStep, this.totalSteps);
-
-      // Переходим на стартовый экран
-      console.log('   - Переходим на стартовый экран...');
-      await this.navigateToScreen(startScreenName);
       
-      console.log('✅ Инициализация роутера завершена успешно');
-
-    } catch (error) {
-      console.error('❌ Ошибка инициализации роутера:', error);
-      Utils.showNotification('Ошибка инициализации приложения', 'error');
-      
-      // Fallback на экран приветствия
-      console.log('🔄 Fallback на экран приветствия');
+      // Переходим на экран приветствия
       await this.navigateToScreen('welcome');
+      
+      console.log('✅ Роутер запущен с настройками по умолчанию');
+    } catch (error) {
+      console.error('❌ Критическая ошибка fallback инициализации:', error);
+      // Показываем минимальный UI с кнопкой перезагрузки
+      this.showEmergencyUI();
+    }
+  }
+
+  /**
+   * Показ аварийного UI при критических ошибках
+   */
+  showEmergencyUI() {
+    const container = document.getElementById('screen-container');
+    if (container) {
+      container.innerHTML = `
+        <div class="screen screen--centered" style="padding: var(--spacing-6); text-align: center;">
+          <div style="background: var(--color-surface); padding: var(--spacing-6); border-radius: var(--radius-lg); box-shadow: var(--shadow-2);">
+            <h1 style="color: var(--color-error); margin-bottom: var(--spacing-4); font-size: var(--font-size-xl);">
+              Ошибка загрузки
+            </h1>
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-6); line-height: var(--line-height-relaxed);">
+              Произошла ошибка при инициализации приложения. Попробуйте перезагрузить страницу.
+            </p>
+            <button 
+              onclick="location.reload()" 
+              style="
+                background: var(--color-primary);
+                color: var(--color-text-inverse);
+                border: none;
+                padding: var(--spacing-3) var(--spacing-6);
+                border-radius: var(--radius-md);
+                font-size: var(--font-size-base);
+                cursor: pointer;
+                transition: var(--transition-fast);
+              "
+              onmouseover="this.style.background='var(--color-primary-dark)'"
+              onmouseout="this.style.background='var(--color-primary)'"
+            >
+              Перезагрузить
+            </button>
+          </div>
+        </div>
+      `;
     }
   }
 

@@ -399,12 +399,21 @@ console.log('🔧 TelegramManager экспортирован:', {
   keys: Object.keys(window.TelegramManager)
 });
 
-// Автоинициализация при загрузке
-document.addEventListener('DOMContentLoaded', async () => {
+// Немедленная инициализация без ожидания DOMContentLoaded
+(async () => {
   try {
+    console.log('📡 Запуск автоинициализации TelegramManager...');
+    
+    // Ждем загрузки DOM если это необходимо
+    if (document.readyState === 'loading') {
+      await new Promise(resolve => {
+        document.addEventListener('DOMContentLoaded', resolve, { once: true });
+      });
+    }
+    
     await telegramManager.initialize();
-    console.log('TelegramManager автоинициализирован');
+    console.log('✅ TelegramManager автоинициализирован');
   } catch (error) {
-    console.warn('Ошибка автоинициализации TelegramManager:', error);
+    console.warn('⚠️ Ошибка автоинициализации TelegramManager:', error);
   }
-});
+})();
