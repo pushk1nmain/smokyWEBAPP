@@ -123,8 +123,9 @@
             </div>
             
             <div class="debug-actions">
-                <button class="debug-btn" onclick="debugShowNotification()">Тест уведомления</button>
-                <button class="debug-btn" onclick="debugClearStorage()">Очистить данные</button>
+                <button class="debug-btn" onclick="debugShowNotification()">Тест</button>
+                <button class="debug-btn" onclick="debugClearStorage()">Очистить</button>
+                <button class="debug-btn" onclick="debugShowLogs()">Логи</button>
             </div>
         </div>
     </div>
@@ -190,6 +191,64 @@
                 window.Utils.showNotification('Данные очищены', 'info');
                 setTimeout(() => location.reload(), 1000);
             }
+        };
+        
+        // Функция для показа логов в режиме реального времени
+        const debugShowLogs = () => {
+            const logs = [];
+            const originalLog = console.log;
+            const originalError = console.error;
+            const originalWarn = console.warn;
+            
+            const logWindow = window.open('', 'logs', 'width=800,height=600');
+            logWindow.document.write(`
+                <html>
+                    <head><title>Логи SmokyApp</title></head>
+                    <body style="font-family: monospace; padding: 10px; background: #1e1e1e; color: #fff;">
+                        <h3>Логи в реальном времени</h3>
+                        <div id="logs"></div>
+                    </body>
+                </html>
+            `);
+            
+            const logContainer = logWindow.document.getElementById('logs');
+            
+            const addLog = (type, args) => {
+                const logEntry = document.createElement('div');
+                logEntry.style.marginBottom = '5px';
+                logEntry.style.padding = '5px';
+                
+                switch(type) {
+                    case 'log':
+                        logEntry.style.color = '#fff';
+                        break;
+                    case 'error':
+                        logEntry.style.color = '#ff6b6b';
+                        break;
+                    case 'warn':
+                        logEntry.style.color = '#ffd93d';
+                        break;
+                }
+                
+                logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${type.toUpperCase()}: ${args.join(' ')}`;
+                logContainer.appendChild(logEntry);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            };
+            
+            console.log = (...args) => {
+                originalLog(...args);
+                addLog('log', args);
+            };
+            
+            console.error = (...args) => {
+                originalError(...args);
+                addLog('error', args);
+            };
+            
+            console.warn = (...args) => {
+                originalWarn(...args);
+                addLog('warn', args);
+            };
         };
         
         // Обновление отладочной панели
