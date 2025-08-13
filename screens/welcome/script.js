@@ -6,34 +6,77 @@
 // Глобальные переменные
 let tg = null;
 let isReady = false;
+let config = null;
+
+/**
+ * Инициализация конфигурации
+ * Проверяет доступность конфигурации и валидирует ключи
+ */
+const initializeConfig = () => {
+    if (typeof window === 'undefined' || !window.SmokyConfig) {
+        console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: Конфигурация SmokyConfig не найдена!');
+        console.error('💡 Убедитесь что файл config.js подключен и содержит window.SmokyConfig');
+        throw new Error('Конфигурация приложения не загружена');
+    }
+    
+    config = window.SmokyConfig;
+    
+    // Валидация обязательных полей
+    if (!config.api?.baseUrl || !config.api?.apiKey) {
+        console.error('❌ ОШИБКА КОНФИГУРАЦИИ: Не заданы обязательные параметры API');
+        throw new Error('Неполная конфигурация API');
+    }
+    
+    // Проверка на тестовый ключ
+    if (config.api.apiKey === 'YOUR_API_KEY_HERE') {
+        console.warn('⚠️ ВНИМАНИЕ: Используется placeholder для API ключа!');
+    }
+    
+    console.log('✅ Конфигурация инициализирована:', {
+        apiBaseUrl: config.api.baseUrl,
+        hasApiKey: !!config.api.apiKey,
+        debugMode: config.development?.enableDebugLogs || false
+    });
+    
+    return config;
+};
 
 /**
  * Инициализация экрана приветствия
  * Проверяет доступность Telegram WebApp API и настраивает приложение
  */
-const initializeWelcomeScreen = () => {
+const initializeWelcomeScreen = async () => {
     console.log('🚀 Инициализация экрана приветствия SmokyApp...');
+    
+    // Инициализируем конфигурацию
+    try {
+        initializeConfig();
+    } catch (error) {
+        console.error('❌ Ошибка инициализации конфигурации:', error);
+        showNotification('Ошибка конфигурации приложения');
+        return;
+    }
     
     // Проверяем доступность Telegram WebApp API
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
         tg = window.Telegram.WebApp;
         console.log('✅ Telegram WebApp API доступен');
         
-        // Инициализируем Telegram WebApp
-        setupTelegramWebApp();
+        // Инициализируем Telegram WebApp (асинхронно)
+        await setupTelegramWebApp();
     } else {
         console.warn('⚠️ Telegram WebApp API недоступен, работаем в режиме браузера');
         
-        // Инициализируем в режиме браузера
-        setupBrowserMode();
+        // Инициализируем в режиме браузера (асинхронно)
+        await setupBrowserMode();
+        
+        // Скрываем загрузку в режиме браузера
+        hideLoading();
     }
     
     // Настраиваем UI и события
     setupUI();
     setupEventListeners();
-    
-    // Скрываем загрузку
-    hideLoading();
     
     isReady = true;
     console.log('✅ Экран приветствия SmokyApp инициализирован успешно');
@@ -43,7 +86,7 @@ const initializeWelcomeScreen = () => {
  * Настройка Telegram WebApp
  * Конфигурирует приложение для работы в Telegram
  */
-const setupTelegramWebApp = () => {
+const setupTelegramWebApp = async () => {
     try {
         // Готовность приложения
         tg.ready();
@@ -58,12 +101,13 @@ const setupTelegramWebApp = () => {
         // Настраиваем кнопки Telegram
         setupTelegramButtons();
         
-        // Получаем данные пользователя
-        getUserData();
+        // Получаем данные пользователя (асинхронно)
+        await getUserData();
         
         console.log('🎨 Telegram WebApp настроен');
     } catch (error) {
         console.error('❌ Ошибка настройки Telegram WebApp:', error);
+        hideLoading(); // Скрываем загрузку в случае ошибки
     }
 };
 
@@ -117,15 +161,53 @@ const setupTelegramButtons = () => {
 };
 
 /**
- * Получение данных пользователя
- * Извлекает информацию о пользователе из Telegram
+ * Проверка пользователя в API
+ * Отправляет запрос к backend API для проверки существования пользователя
  */
-const getUserData = () => {
+const checkUserInAPI = async (telegramId) => {
+    try {
+        if (!config?.api) {
+            console.error('❌ Конфигурация API недоступна');
+            return { found: false, userData: null, error: 'Конфигурация не загружена' };
+        }
+        
+        console.log(`🔍 Проверяем пользователя в API: ${telegramId}`);
+        
+        const response = await fetch(`${config.api.baseUrl}/user/${telegramId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': config.api.apiKey
+            }
+        });
+        
+        if (response.ok) {
+            const userData = await response.json();
+            console.log('✅ Пользователь найден в API:', userData);
+            return { found: true, userData };
+        } else if (response.status === 404) {
+            console.log('❌ Пользователь не найден в API (404)');
+            return { found: false, userData: null };
+        } else {
+            console.error('❌ Ошибка API запроса:', response.status, response.statusText);
+            return { found: false, userData: null, error: `HTTP ${response.status}` };
+        }
+    } catch (error) {
+        console.error('❌ Ошибка сети при запросе к API:', error);
+        return { found: false, userData: null, error: error.message };
+    }
+};
+
+/**
+ * Получение данных пользователя
+ * Извлекает информацию о пользователе из Telegram и проверяет в API
+ */
+const getUserData = async () => {
     if (!tg?.initDataUnsafe) return null;
     
     const user = tg.initDataUnsafe.user;
     if (user) {
-        console.log('👤 Данные пользователя:', {
+        console.log('👤 Данные пользователя из Telegram:', {
             id: user.id,
             firstName: user.first_name,
             lastName: user.last_name,
@@ -133,10 +215,19 @@ const getUserData = () => {
             languageCode: user.language_code
         });
         
-        // Персонализируем приветствие
-        personalizeGreeting(user);
+        // Показываем индикатор загрузки
+        showLoadingWithText('Проверяем ваш профиль...');
         
-        return user;
+        // Проверяем пользователя в API
+        const apiResult = await checkUserInAPI(user.id);
+        
+        // Персонализируем приветствие на основе результата API
+        await personalizeGreeting(user, apiResult);
+        
+        // Скрываем индикатор загрузки
+        hideLoading();
+        
+        return { telegramUser: user, apiResult };
     }
     
     return null;
@@ -144,12 +235,33 @@ const getUserData = () => {
 
 /**
  * Персонализация приветствия
- * Настраивает приветствие под конкретного пользователя
+ * Настраивает приветствие под конкретного пользователя на основе API данных или Telegram
  */
-const personalizeGreeting = (user) => {
+const personalizeGreeting = async (telegramUser, apiResult) => {
     const titleElement = document.querySelector('.welcome-title');
-    if (titleElement && user.first_name) {
-        titleElement.textContent = `Привет, ${user.first_name}! Я Смоки — ваш робот-друг на пути к жизни без сигарет`;
+    if (!titleElement) return;
+    
+    let userName = '';
+    
+    // Определяем имя пользователя в зависимости от результата API
+    if (apiResult.found && apiResult.userData?.name) {
+        // Пользователь найден в БД - используем имя из БД
+        userName = apiResult.userData.name;
+        console.log(`📝 Используем имя из БД: ${userName}`);
+    } else if (telegramUser?.first_name) {
+        // Пользователь не найден в БД - используем имя из Telegram
+        userName = telegramUser.first_name;
+        console.log(`📝 Используем имя из Telegram: ${userName}`);
+    }
+    
+    // Обновляем приветствие
+    if (userName) {
+        titleElement.textContent = `Привет, ${userName}! Я Смоки — ваш робот-друг на пути к жизни без сигарет`;
+        console.log(`👋 Персонализированное приветствие установлено для: ${userName}`);
+    } else {
+        // Fallback на стандартное приветствие
+        titleElement.textContent = 'Привет! Я Смоки — ваш робот-друг на пути к жизни без сигарет';
+        console.log('👋 Использовано стандартное приветствие');
     }
 };
 
@@ -157,7 +269,7 @@ const personalizeGreeting = (user) => {
  * Режим браузера
  * Настройка приложения для работы в обычном браузере (для отладки)
  */
-const setupBrowserMode = () => {
+const setupBrowserMode = async () => {
     console.log('🌐 Режим браузера активирован');
     
     // Применяем стандартную тему
@@ -168,6 +280,28 @@ const setupBrowserMode = () => {
     root.style.setProperty('--tg-theme-button-color', '#2196F3');
     root.style.setProperty('--tg-theme-button-text-color', '#ffffff');
     root.style.setProperty('--tg-theme-secondary-bg-color', '#f1f1f1');
+    
+    // Симулируем пользователя для тестирования в браузере
+    const testUser = config?.development?.testUser || {
+        id: 123456789,
+        first_name: 'Тест',
+        last_name: 'Пользователь',
+        username: 'testuser',
+        language_code: 'ru'
+    };
+    
+    console.log('🧪 Тестируем функциональность с тестовым пользователем');
+    
+    // Показываем индикатор загрузки
+    showLoadingWithText('Проверяем тестового пользователя...');
+    
+    // Тестируем API запрос
+    const apiResult = await checkUserInAPI(testUser.id);
+    
+    // Применяем персонализированное приветствие
+    await personalizeGreeting(testUser, apiResult);
+    
+    console.log('🧪 Тестирование в режиме браузера завершено');
 };
 
 /**
@@ -280,6 +414,24 @@ const showNotification = (message) => {
 };
 
 /**
+ * Показ индикатора загрузки с текстом
+ * Отображает экран загрузки с заданным текстом
+ */
+const showLoadingWithText = (text) => {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.querySelector('.loading-text');
+    
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('hidden');
+        console.log(`⏳ Показываем загрузку: ${text}`);
+    }
+    
+    if (loadingText) {
+        loadingText.textContent = text;
+    }
+};
+
+/**
  * Скрытие индикатора загрузки
  * Убирает экран загрузки после инициализации
  */
@@ -340,14 +492,14 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 // Инициализация при загрузке DOM
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('📄 DOM загружен, инициализируем экран приветствия...');
     
     // Выводим отладочную информацию
     logDebugInfo();
     
-    // Инициализируем экран приветствия
-    initializeWelcomeScreen();
+    // Инициализируем экран приветствия (асинхронно)
+    await initializeWelcomeScreen();
 });
 
 // Экспорт для использования в других модулях

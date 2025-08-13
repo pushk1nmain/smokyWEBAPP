@@ -36,6 +36,7 @@ COPY index.html health.html style.css script.js /usr/share/nginx/html/
 
 # Копируем директории
 COPY elements/ /usr/share/nginx/html/elements/
+COPY screens/ /usr/share/nginx/html/screens/ 
 
 # Копируем дополнительные файлы
 COPY robots.txt humans.txt /usr/share/nginx/html/

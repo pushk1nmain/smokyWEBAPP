@@ -1,9 +1,14 @@
-.gitignore# Environment variables
+# Environment variables
 .env
 .env.local
 .env.production
 .cursorignore
 .cursor/
+.API_ENDPOINTS.md
+
+# Configuration files with sensitive data
+config.js
+screens/*/config.js
 
 # Python
 __pycache__/
