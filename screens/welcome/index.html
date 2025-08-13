@@ -127,32 +127,159 @@
         </div>
     </div>
     
-    <!-- JavaScript - встроенный тест -->
+    <!-- JavaScript - встроенная функциональность -->
     <script>
-        console.log('🔥 ВСТРОЕННЫЙ JAVASCRIPT РАБОТАЕТ!');
-        console.log('📊 window.Telegram:', !!window.Telegram);
-        console.log('📊 window.SmokyConfig:', !!window.SmokyConfig);
+        console.log('🚀 Инициализация SmokyApp...');
         
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('📄 DOM готов во встроенном скрипте');
+        // Глобальные переменные
+        let tg = null;
+        
+        // Проверяем доступность Telegram WebApp API
+        if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+            tg = window.Telegram.WebApp;
+            console.log('✅ Telegram WebApp API доступен');
+            
+            // Инициализируем Telegram WebApp
+            tg.ready();
+            tg.expand();
+            console.log('📱 Telegram WebApp готов и развернут');
+        } else {
+            console.warn('⚠️ Telegram WebApp API недоступен, работаем в режиме браузера');
+        }
+        
+        // Получение данных пользователя и API запрос
+        const getUserDataAndPersonalize = async () => {
+            console.log('👤 Начинаем получение данных пользователя...');
+            
+            let user = null;
+            
+            // Пробуем получить из Telegram
+            if (tg?.initDataUnsafe?.user) {
+                user = tg.initDataUnsafe.user;
+                console.log('✅ Данные пользователя из Telegram:', user);
+            } else {
+                // Пробуем парсить из URL
+                const urlParams = new URLSearchParams(window.location.hash.substring(1));
+                const tgWebAppData = urlParams.get('tgWebAppData');
+                
+                if (tgWebAppData) {
+                    try {
+                        const decodedData = decodeURIComponent(tgWebAppData);
+                        const dataParams = new URLSearchParams(decodedData);
+                        const userDataStr = dataParams.get('user');
+                        
+                        if (userDataStr) {
+                            user = JSON.parse(decodeURIComponent(userDataStr));
+                            console.log('✅ Данные пользователя получены из URL:', user);
+                        }
+                    } catch (error) {
+                        console.error('❌ Ошибка парсинга данных из URL:', error);
+                    }
+                }
+            }
+            
+            if (user) {
+                // Показываем индикатор загрузки API
+                const loadingText = document.querySelector('.loading-text');
+                if (loadingText) {
+                    loadingText.textContent = 'Проверяем ваш профиль...';
+                }
+                
+                try {
+                    // API запрос
+                    console.log('🌐 Отправляем API запрос для пользователя:', user.id);
+                    const apiUrl = `/api/v1/user/${user.id}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-API-Key': window.SmokyConfig?.api?.apiKey || 'SMOKY-Oz5niTU0yVrHv892BGxotdo2lCK0KtKPp7ypYskFG9CqR2thpSEPgBnxHnkI7WBQ1jYRZLGQ2JJGKLUmV0zYiahamBjtU3DoUmY0Dnp7peZFLwUGMAcgFe0IkT'
+                        }
+                    });
+                    
+                    console.log('📥 Получен ответ от API:', response.status);
+                    
+                    if (response.ok) {
+                        const userData = await response.json();
+                        console.log('✅ Данные пользователя из API:', userData);
+                        
+                        // Персонализируем приветствие
+                        const titleElement = document.querySelector('.welcome-title');
+                        if (titleElement && userData.name) {
+                            titleElement.textContent = `Привет, ${userData.name}! Я Смоки — ваш робот-друг на пути к жизни без сигарет`;
+                            console.log(`👋 Персонализированное приветствие установлено для: ${userData.name}`);
+                        }
+                    } else {
+                        console.log('ℹ️ Пользователь не найден в API, используем имя из Telegram');
+                        // Используем имя из Telegram
+                        const titleElement = document.querySelector('.welcome-title');
+                        if (titleElement && user.first_name) {
+                            titleElement.textContent = `Привет, ${user.first_name}! Я Смоки — ваш робот-друг на пути к жизни без сигарет`;
+                            console.log(`👋 Персонализированное приветствие из Telegram для: ${user.first_name}`);
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Ошибка API запроса:', error);
+                    // Fallback на имя из Telegram
+                    const titleElement = document.querySelector('.welcome-title');
+                    if (titleElement && user.first_name) {
+                        titleElement.textContent = `Привет, ${user.first_name}! Я Смоки — ваш робот-друг на пути к жизни без сигарет`;
+                        console.log(`👋 Fallback приветствие из Telegram для: ${user.first_name}`);
+                    }
+                }
+            }
             
             // Скрываем загрузку
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) {
-                loadingOverlay.classList.add('hidden');
-                console.log('✅ Загрузка скрыта встроенным скриптом');
+                setTimeout(() => {
+                    loadingOverlay.classList.add('hidden');
+                    console.log('✅ Загрузка скрыта');
+                }, 500);
+            }
+        };
+        
+        // Обработчик кнопки "Поехали!"
+        const handleStartClick = () => {
+            console.log('🚀 Начинаем путь с Смоки!');
+            
+            // Haptic feedback для Telegram
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
             }
             
-            // Меняем заголовок
-            const titleElement = document.querySelector('.welcome-title');
-            if (titleElement) {
-                titleElement.textContent = '🔥 ВСТРОЕННЫЙ JAVASCRIPT РАБОТАЕТ! Файлы script.js не загружаются из Docker';
-                titleElement.style.color = 'red';
-                console.log('✅ Заголовок изменен встроенным скриптом');
+            // Показываем уведомление
+            if (tg?.showAlert) {
+                tg.showAlert('Добро пожаловать в SmokyApp! 🎉');
+            } else {
+                alert('Добро пожаловать в SmokyApp! 🎉');
             }
+        };
+        
+        // Инициализация при загрузке DOM
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('📄 DOM загружен, инициализируем приложение...');
+            
+            // Настраиваем обработчик кнопки
+            const startButton = document.getElementById('startButton');
+            if (startButton) {
+                startButton.addEventListener('click', handleStartClick);
+                startButton.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        handleStartClick();
+                    }
+                });
+            }
+            
+            // Получаем данные пользователя и выполняем API запрос
+            await getUserDataAndPersonalize();
+            
+            console.log('✅ Приложение инициализировано успешно');
         });
         
-        console.log('🔥 ВСТРОЕННЫЙ JAVASCRIPT ПОЛНОСТЬЮ ВЫПОЛНЕН!');
+        console.log('✅ SmokyApp JavaScript загружен');
     </script>
 </body>
 </html>
