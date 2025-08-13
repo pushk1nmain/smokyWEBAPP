@@ -127,7 +127,32 @@
         </div>
     </div>
     
-    <!-- JavaScript - временно тестовый скрипт -->
-    <script src="test-minimal.js"></script>
+    <!-- JavaScript - встроенный тест -->
+    <script>
+        console.log('🔥 ВСТРОЕННЫЙ JAVASCRIPT РАБОТАЕТ!');
+        console.log('📊 window.Telegram:', !!window.Telegram);
+        console.log('📊 window.SmokyConfig:', !!window.SmokyConfig);
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM готов во встроенном скрипте');
+            
+            // Скрываем загрузку
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('hidden');
+                console.log('✅ Загрузка скрыта встроенным скриптом');
+            }
+            
+            // Меняем заголовок
+            const titleElement = document.querySelector('.welcome-title');
+            if (titleElement) {
+                titleElement.textContent = '🔥 ВСТРОЕННЫЙ JAVASCRIPT РАБОТАЕТ! Файлы script.js не загружаются из Docker';
+                titleElement.style.color = 'red';
+                console.log('✅ Заголовок изменен встроенным скриптом');
+            }
+        });
+        
+        console.log('🔥 ВСТРОЕННЫЙ JAVASCRIPT ПОЛНОСТЬЮ ВЫПОЛНЕН!');
+    </script>
 </body>
 </html>
