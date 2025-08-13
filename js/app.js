@@ -86,7 +86,7 @@ class SmokyApp {
   }
 
   /**
-   * Инициализация Telegram WebApp согласно документации Telegram Mini Apps
+   * Инициализация Telegram WebApp с проверкой доступности TelegramManager
    * @returns {Promise<void>}
    */
   async initializeTelegram() {
@@ -114,12 +114,29 @@ class SmokyApp {
       return;
     }
     
-    try {
-      // Инициализируем TelegramManager
-      if (!window.TelegramManager) {
-        throw new Error('TelegramManager не загружен');
-      }
+    // Проверяем доступность TelegramManager
+    console.log('   - Проверяем доступность TelegramManager...');
+    if (!window.TelegramManager) {
+      console.error('❌ TelegramManager не загружен');
+      console.error('   Диагностика:', {
+        telegramScriptLoaded: !!document.querySelector('script[src*="telegram.js"]'),
+        windowKeys: Object.keys(window).filter(k => k.toLowerCase().includes('telegram')),
+        scriptsInHead: Array.from(document.querySelectorAll('script')).map(s => s.src || s.textContent.substring(0, 50))
+      });
       
+      // Показываем ошибку только если мы в Telegram
+      if (isInTelegram) {
+        this.showTelegramManagerError();
+        return;
+      } else {
+        // В браузере переходим в режим разработки
+        console.warn('⚠️ Переходим в режим разработки из-за отсутствия TelegramManager');
+        await this.setupDevelopmentMode();
+        return;
+      }
+    }
+    
+    try {
       console.log('   - Инициализируем TelegramManager...');
       const telegramInitialized = await window.TelegramManager.initialize();
       
@@ -127,15 +144,20 @@ class SmokyApp {
         throw new Error('TelegramManager не удалось инициализировать');
       }
       
-      // Важно: вызываем ready() ТОЛЬКО после полной инициализации!
-      console.log('   - Вызываем Telegram.WebApp.ready()...');
-      window.Telegram.WebApp.ready();
+      // Важно: НЕ вызываем ready() здесь!
+      // TelegramManager.initialize() уже вызывает ready() внутри себя
       
       console.log('✅ Telegram WebApp инициализирован успешно');
     } catch (error) {
       console.error('❌ Ошибка инициализации Telegram WebApp:', error);
-      console.warn('⚠️ Переходим в режим разработки из-за ошибки');
-      await this.setupDevelopmentMode();
+      
+      // Показываем ошибку только если мы в Telegram
+      if (isInTelegram) {
+        this.showTelegramManagerError();
+      } else {
+        console.warn('⚠️ Переходим в режим разработки из-за ошибки');
+        await this.setupDevelopmentMode();
+      }
     }
   }
 

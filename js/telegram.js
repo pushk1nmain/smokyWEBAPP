@@ -430,5 +430,16 @@ console.log('📡 Диагностика Telegram WebApp окружения:', {
 // Установка глобального флага готовности
 window.TelegramManagerLoaded = true;
 
-// TelegramManager готов
+// TelegramManager готов - выполняем проверку
 console.log('📡 TelegramManager загружен и готов к использованию');
+
+// Проверяем, что TelegramManager действительно доступен
+setTimeout(() => {
+    if (!window.TelegramManager) {
+        console.error('🔴 КРИТИЧЕСКАЯ ОШИБКА: TelegramManager не экспортирован в window!');
+    } else if (typeof window.TelegramManager.initialize !== 'function') {
+        console.error('🔴 КРИТИЧЕСКАЯ ОШИБКА: TelegramManager.initialize не является функцией!');
+    } else {
+        console.log('✅ TelegramManager прошел проверку экспорта');
+    }
+}, 10);

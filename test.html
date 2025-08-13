@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmokyApp - Тест</title>
+    
+    <!-- Telegram WebApp Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js" onerror="console.warn('Telegram WebApp script не загружен')"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div id="app" class="app">
+        <!-- Прогресс-бар -->
+        <div id="progress-bar" class="progress-bar">
+            <div class="progress-bar__fill" id="progress-fill"></div>
+        </div>
+        
+        <!-- Контейнер для экранов -->
+        <main id="screen-container" class="screen-container">
+            <div style="padding: 2rem; text-align: center;">
+                <h1>Тестирование загрузки...</h1>
+                <p>Проверяем компоненты приложения</p>
+                <div id="test-results" style="margin-top: 2rem;"></div>
+            </div>
+        </main>
+        
+        <!-- Overlay для загрузки -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Загрузка...</p>
+        </div>
+        
+        <!-- Уведомления -->
+        <div id="notification-container" class="notification-container"></div>
+    </div>
+
+    <!-- Core Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/telegram.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Тестирование -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Запуск тестирования...');
+            
+            const results = document.getElementById('test-results');
+            const tests = [];
+            
+            // Тест загрузки компонентов
+            tests.push({
+                name: 'Utils',
+                passed: !!window.Utils,
+                details: window.Utils ? 'Загружен' : 'Не найден'
+            });
+            
+            tests.push({
+                name: 'API',
+                passed: !!window.API,
+                details: window.API ? 'Загружен' : 'Не найден'
+            });
+            
+            tests.push({
+                name: 'TelegramManager',
+                passed: !!window.TelegramManager,
+                details: window.TelegramManager ? 'Загружен' : 'Не найден'
+            });
+            
+            tests.push({
+                name: 'Router',
+                passed: !!window.Router,
+                details: window.Router ? 'Загружен' : 'Не найден'
+            });
+            
+            tests.push({
+                name: 'SmokyApp',
+                passed: !!window.SmokyApp,
+                details: window.SmokyApp ? 'Загружен' : 'Не найден'
+            });
+            
+            // Тест методов TelegramManager
+            if (window.TelegramManager) {
+                tests.push({
+                    name: 'TelegramManager.initialize',
+                    passed: typeof window.TelegramManager.initialize === 'function',
+                    details: typeof window.TelegramManager.initialize === 'function' ? 'Метод доступен' : 'Метод недоступен'
+                });
+            }
+            
+            // Отображение результатов
+            let html = '<div style="text-align: left; max-width: 500px; margin: 0 auto;">';
+            html += '<h2>Результаты тестирования:</h2>';
+            
+            tests.forEach(test => {
+                const icon = test.passed ? '✅' : '❌';
+                const color = test.passed ? 'green' : 'red';
+                html += `<div style="margin: 0.5rem 0; padding: 0.5rem; border-left: 3px solid ${color};">`;
+                html += `${icon} <strong>${test.name}:</strong> ${test.details}`;
+                html += '</div>';
+            });
+            
+            const passedCount = tests.filter(t => t.passed).length;
+            const totalCount = tests.length;
+            const allPassed = passedCount === totalCount;
+            
+            html += `<div style="margin-top: 1rem; padding: 1rem; background: ${allPassed ? '#d4edda' : '#f8d7da'}; border-radius: 0.5rem;">`;
+            html += `<strong>Итого: ${passedCount}/${totalCount} тестов прошли ${allPassed ? '✅' : '❌'}</strong>`;
+            html += '</div>';
+            
+            if (allPassed) {
+                html += '<div style="margin-top: 1rem;">';
+                html += '<button onclick="startApp()" style="background: #28a745; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer;">Запустить приложение</button>';
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            results.innerHTML = html;
+            
+            console.log('🧪 Тестирование завершено:', { passedCount, totalCount, allPassed });
+        });
+        
+        async function startApp() {
+            try {
+                console.log('🚀 Запуск приложения из тестовой страницы...');
+                await window.SmokyApp.initialize();
+                console.log('✅ Приложение запущено успешно');
+            } catch (error) {
+                console.error('❌ Ошибка запуска:', error);
+                alert('Ошибка запуска: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
