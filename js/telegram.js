@@ -431,3 +431,19 @@ window.TelegramManagerLoaded = true;
 
 // Отключаем автоинициализацию - она будет управляться из app.js
 console.log('📡 TelegramManager готов к ручной инициализации из app.js');
+
+// Дополнительная проверка и диагностика для системы ожидания
+setTimeout(() => {
+  const telegramManagerOk = !!(window.TelegramManager && window.TelegramManagerLoaded);
+  console.log(`📡 Финальная проверка TelegramManager: ${telegramManagerOk ? '✅ готов' : '❌ проблема'}`);
+  
+  if (!telegramManagerOk) {
+    console.error('🔴 КРИТИЧЕСКАЯ ОШИБКА: TelegramManager не готов после загрузки telegram.js');
+    console.error('   Состояние:', {
+      hasTelegramManager: !!window.TelegramManager,
+      hasTelegramManagerLoaded: !!window.TelegramManagerLoaded,
+      telegramManagerType: typeof window.TelegramManager,
+      telegramManagerKeys: window.TelegramManager ? Object.keys(window.TelegramManager).slice(0, 10) : 'none'
+    });
+  }
+}, 50); // Небольшая задержка для проверки

@@ -814,14 +814,17 @@ const app = new SmokyApp();
 // Экспорт для использования в других модулях
 window.SmokyApp = app;
 
-// Автоматический запуск приложения
-(async () => {
+// Убираем автоматический запуск - он теперь контролируется из index.html
+// через систему SmokyAppLoader
+
+// Экспорт функции инициализации для ручного запуска
+window.SmokyApp.manualInitialize = async () => {
   try {
-    console.log('🚀 Запуск SmokyApp...');
-    await app.initialize();
+    console.log('🚀 Ручной запуск SmokyApp...');
+    await window.SmokyApp.initialize();
     console.log('🚀 SmokyApp запущен успешно');
   } catch (error) {
     console.error('💥 Фатальная ошибка запуска приложения:', error);
     console.error('💥 Stack trace:', error.stack);
   }
-})();
+};
