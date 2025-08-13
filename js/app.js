@@ -99,12 +99,12 @@ class SmokyApp {
     }
     
     // Проверяем доступность TelegramManager
-    if (!window.TelegramManager || typeof TelegramManager.initialize !== 'function') {
+    if (!window.TelegramManager || typeof window.TelegramManager.initialize !== 'function') {
       throw new Error('TelegramManager недоступен');
     }
 
     try {
-      const telegramInitialized = await TelegramManager.initialize();
+      const telegramInitialized = await window.TelegramManager.initialize();
       
       if (!telegramInitialized) {
         throw new Error('Telegram WebApp не инициализирован');
@@ -190,15 +190,15 @@ class SmokyApp {
     // Принудительно настраиваем TelegramManager для режима разработки
     if (window.TelegramManager) {
       // Устанавливаем mock данные в TelegramManager
-      TelegramManager.webApp = window.Telegram.WebApp;
-      TelegramManager.user = window.Telegram.WebApp.initDataUnsafe.user;
-      TelegramManager.initData = window.Telegram.WebApp.initData;
-      TelegramManager.isInitialized = true;
+      window.TelegramManager.webApp = window.Telegram.WebApp;
+      window.TelegramManager.user = window.Telegram.WebApp.initDataUnsafe.user;
+      window.TelegramManager.initData = window.Telegram.WebApp.initData;
+      window.TelegramManager.isInitialized = true;
       
       console.log('✅ TelegramManager настроен для режима разработки');
-      console.log('   - webApp:', !!TelegramManager.webApp);
-      console.log('   - user:', TelegramManager.user);
-      console.log('   - isInitialized:', TelegramManager.isInitialized);
+      console.log('   - webApp:', !!window.TelegramManager.webApp);
+      console.log('   - user:', window.TelegramManager.user);
+      console.log('   - isInitialized:', window.TelegramManager.isInitialized);
     }
   }
 
@@ -384,8 +384,8 @@ class SmokyApp {
     this.updateViewportSize();
 
     // Обработка изменений viewport в Telegram
-    if (TelegramManager && typeof TelegramManager.isReady === 'function' && TelegramManager.isReady()) {
-      TelegramManager.addEventListener('viewportChanged', () => {
+    if (window.TelegramManager && typeof window.TelegramManager.isReady === 'function' && window.TelegramManager.isReady()) {
+      window.TelegramManager.addEventListener('viewportChanged', () => {
         this.updateViewportSize();
       });
     }
@@ -407,8 +407,8 @@ class SmokyApp {
     // Обновляем CSS переменные для viewport
     let viewportSize;
     
-    if (TelegramManager && typeof TelegramManager.isReady === 'function' && TelegramManager.isReady()) {
-      viewportSize = TelegramManager.getViewportSize();
+    if (window.TelegramManager && typeof window.TelegramManager.isReady === 'function' && window.TelegramManager.isReady()) {
+      viewportSize = window.TelegramManager.getViewportSize();
       if (this.debug) {
         console.log('   - Используем Telegram viewport:', viewportSize);
       }

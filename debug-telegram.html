@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug TelegramManager</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .debug-section {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007AFF;
+        }
+        .success { border-left-color: #34C759; }
+        .error { border-left-color: #FF3B30; }
+        .warning { border-left-color: #FF9500; }
+        
+        button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        pre {
+            background: #000;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Debug TelegramManager</h1>
+    
+    <div class="debug-section">
+        <h3>Состояние загрузки скриптов</h3>
+        <div id="script-status"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>TelegramManager Status</h3>
+        <div id="telegram-manager-status"></div>
+        <button onclick="checkTelegramManager()">🔄 Проверить TelegramManager</button>
+        <button onclick="testInitialize()">🚀 Тест инициализации</button>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Telegram WebApp API</h3>
+        <div id="telegram-api-status"></div>
+        <button onclick="checkTelegramAPI()">🔄 Проверить Telegram API</button>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Консольные логи</h3>
+        <pre id="console-logs"></pre>
+    </div>
+
+    <!-- Подключаем скрипты в том же порядке что и в основном приложении -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/telegram.js"></script>
+    
+    <script>
+        // Перехват консольных логов для отображения
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const logsContainer = document.getElementById('console-logs');
+        
+        function addLog(type, message, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message} ${args.length ? JSON.stringify(args) : ''}`;
+            logsContainer.textContent += logEntry + '\n';
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+        
+        console.log = function(message, ...args) {
+            addLog('log', message, ...args);
+            originalLog.apply(console, [message, ...args]);
+        };
+        
+        console.error = function(message, ...args) {
+            addLog('error', message, ...args);
+            originalError.apply(console, [message, ...args]);
+        };
+        
+        console.warn = function(message, ...args) {
+            addLog('warn', message, ...args);
+            originalWarn.apply(console, [message, ...args]);
+        };
+
+        /**
+         * Проверка состояния загрузки скриптов
+         */
+        function checkScriptStatus() {
+            const status = document.getElementById('script-status');
+            
+            const checks = [
+                { name: 'Telegram WebApp API', check: () => !!window.Telegram?.WebApp },
+                { name: 'Utils', check: () => !!window.Utils },
+                { name: 'API', check: () => !!window.API },
+                { name: 'TelegramManager', check: () => !!window.TelegramManager }
+            ];
+            
+            let html = '<ul>';
+            checks.forEach(item => {
+                const result = item.check();
+                const icon = result ? '✅' : '❌';
+                const className = result ? 'success' : 'error';
+                html += `<li class="${className}">${icon} ${item.name}: ${result}</li>`;
+            });
+            html += '</ul>';
+            
+            status.innerHTML = html;
+        }
+
+        /**
+         * Проверка состояния TelegramManager
+         */
+        function checkTelegramManager() {
+            const status = document.getElementById('telegram-manager-status');
+            
+            if (!window.TelegramManager) {
+                status.innerHTML = '<div class="error">❌ TelegramManager не доступен</div>';
+                return;
+            }
+            
+            const checks = [
+                { name: 'Объект существует', value: !!window.TelegramManager },
+                { name: 'initialize доступен', value: typeof window.TelegramManager.initialize === 'function' },
+                { name: 'isReady доступен', value: typeof window.TelegramManager.isReady === 'function' },
+                { name: 'webApp доступен', value: window.TelegramManager.webApp !== null },
+                { name: 'isInitialized', value: window.TelegramManager.isInitialized },
+                { name: 'user данные', value: !!window.TelegramManager.user }
+            ];
+            
+            let html = '<ul>';
+            checks.forEach(item => {
+                const icon = item.value ? '✅' : '❌';
+                const className = item.value ? 'success' : 'warning';
+                html += `<li class="${className}">${icon} ${item.name}: ${item.value}</li>`;
+            });
+            html += '</ul>';
+            
+            status.innerHTML = html;
+        }
+
+        /**
+         * Тест инициализации TelegramManager
+         */
+        async function testInitialize() {
+            console.log('🧪 Запуск теста инициализации TelegramManager...');
+            
+            if (!window.TelegramManager) {
+                console.error('❌ TelegramManager не доступен для тестирования');
+                return;
+            }
+            
+            try {
+                console.log('📞 Вызов TelegramManager.initialize()...');
+                const result = await window.TelegramManager.initialize();
+                console.log('✅ Результат инициализации:', result);
+                
+                // Обновляем статус после инициализации
+                setTimeout(() => {
+                    checkTelegramManager();
+                    checkTelegramAPI();
+                }, 100);
+                
+            } catch (error) {
+                console.error('❌ Ошибка при тестировании инициализации:', error);
+            }
+        }
+
+        /**
+         * Проверка Telegram WebApp API
+         */
+        function checkTelegramAPI() {
+            const status = document.getElementById('telegram-api-status');
+            
+            if (!window.Telegram?.WebApp) {
+                status.innerHTML = '<div class="error">❌ Telegram WebApp API не доступен</div>';
+                return;
+            }
+            
+            const webApp = window.Telegram.WebApp;
+            
+            const apiInfo = [
+                { name: 'ready()', available: typeof webApp.ready === 'function' },
+                { name: 'expand()', available: typeof webApp.expand === 'function' },
+                { name: 'close()', available: typeof webApp.close === 'function' },
+                { name: 'MainButton', available: !!webApp.MainButton },
+                { name: 'BackButton', available: !!webApp.BackButton },
+                { name: 'HapticFeedback', available: !!webApp.HapticFeedback },
+                { name: 'initData', available: !!webApp.initData || webApp.initData === '' },
+                { name: 'initDataUnsafe', available: !!webApp.initDataUnsafe }
+            ];
+            
+            let html = '<ul>';
+            apiInfo.forEach(item => {
+                const icon = item.available ? '✅' : '❌';
+                const className = item.available ? 'success' : 'warning';
+                html += `<li class="${className}">${icon} ${item.name}</li>`;
+            });
+            html += '</ul>';
+            
+            status.innerHTML = html;
+        }
+
+        // Автоматическая проверка при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🔧 Debug страница загружена');
+            
+            // Ждем немного чтобы все скрипты загрузились
+            setTimeout(() => {
+                checkScriptStatus();
+                checkTelegramManager();
+                checkTelegramAPI();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
