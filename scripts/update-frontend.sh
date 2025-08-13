@@ -4,8 +4,9 @@ set -e
 
 echo "🚀 Проверяем обновления Smoky WebApp Frontend..."
 
-# Переменные (автоматически определяем текущую папку)
-APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Переменные (автоматически определяем основную папку проекта)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Определяем какой docker-compose файл использовать
 if [ -f "$APP_DIR/docker-compose-proxy.yml" ] && docker network ls | grep -q nginx-proxy; then
@@ -17,7 +18,8 @@ else
     PROXY_MODE=false
 fi
 
-echo "📁 Работаем в директории: $APP_DIR"
+echo "📁 Основная папка проекта: $APP_DIR"
+echo "📄 Скрипт запущен из: $SCRIPT_DIR"
 
 cd $APP_DIR
 
