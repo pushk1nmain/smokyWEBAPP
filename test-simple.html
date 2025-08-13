@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой тест</title>
+</head>
+<body style="font-family: Arial; padding: 20px; background: #f0f0f0;">
+    <h1 style="color: red;">🔥 ЭТОТ HTML РАБОТАЕТ</h1>
+    <p>Если вы видите этот текст, значит HTML загружается.</p>
+    
+    <div id="js-test" style="color: gray;">JavaScript НЕ работает</div>
+    
+    <script>
+        // Этот JavaScript должен изменить текст выше
+        document.getElementById('js-test').innerHTML = '<span style="color: green;">✅ JavaScript РАБОТАЕТ!</span>';
+        document.getElementById('js-test').style.background = 'lightgreen';
+    </script>
+</body>
+</html>
