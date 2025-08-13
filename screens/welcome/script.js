@@ -637,7 +637,14 @@ class DevConsole {
      * Инициализация консоли разработчика
      */
     init() {
-        this.findDOMElements();
+        console.log('🚀 Инициализация DevConsole начата');
+        
+        const elementsFound = this.findDOMElements();
+        if (!elementsFound) {
+            console.error('❌ Не удалось найти необходимые элементы DOM');
+            return;
+        }
+        
         this.setupEventListeners();
         this.interceptConsoleMethods();
         this.logToConsole('info', '🔧 Встроенная консоль разработчика активирована');
@@ -649,39 +656,67 @@ class DevConsole {
         setTimeout(() => {
             this.addFabPulse();
         }, 3000);
+        
+        console.log('✅ DevConsole инициализирована успешно');
     }
     
     /**
      * Поиск элементов DOM
      */
     findDOMElements() {
+        console.log('🔍 Ищем элементы DOM для консоли...');
+        
         this.consoleElement = document.getElementById('devConsole');
         this.contentElement = document.getElementById('consoleContent');
         this.countElement = document.getElementById('logCount');
         this.filtersElement = document.getElementById('consoleFilters');
         this.fabElement = document.getElementById('devConsoleFab');
         
+        console.log('📊 Найденные элементы:', {
+            consoleElement: !!this.consoleElement,
+            contentElement: !!this.contentElement,
+            countElement: !!this.countElement,
+            filtersElement: !!this.filtersElement,
+            fabElement: !!this.fabElement
+        });
+        
         if (!this.consoleElement) {
             console.error('❌ DevConsole: Элемент консоли не найден');
-            return;
+            return false;
         }
         
         if (!this.fabElement) {
             console.error('❌ DevConsole: Плавающая кнопка не найдена');
-            return;
+            return false;
         }
+        
+        console.log('✅ Все элементы DOM найдены успешно');
+        return true;
     }
     
     /**
      * Настройка обработчиков событий
      */
     setupEventListeners() {
+        console.log('🎮 Настраиваем обработчики событий...');
+        
         // Плавающая кнопка для открытия консоли
         if (this.fabElement) {
-            this.fabElement.addEventListener('click', () => {
+            console.log('✅ Добавляем обработчик клика для плавающей кнопки');
+            this.fabElement.addEventListener('click', (e) => {
+                console.log('🔧 Клик по плавающей кнопке!');
+                e.preventDefault();
+                e.stopPropagation();
                 this.show();
                 this.removeFabPulse();
             });
+            
+            // Дополнительный обработчик для отладки
+            this.fabElement.addEventListener('touchstart', (e) => {
+                console.log('📱 Touch start на плавающей кнопке');
+            });
+        } else {
+            console.error('❌ fabElement не найден, обработчик не добавлен');
         }
         
         // Переключение сворачивания консоли
@@ -985,11 +1020,15 @@ class DevConsole {
      * Показать консоль
      */
     show() {
+        console.log('📺 Показываем консоль разработчика');
         if (this.consoleElement) {
             this.consoleElement.classList.remove('hidden');
             this.isHidden = false;
             this.hideFab();
             this.scrollToBottom();
+            console.log('✅ Консоль разработчика показана');
+        } else {
+            console.error('❌ consoleElement не найден в show');
         }
     }
     
@@ -1008,8 +1047,12 @@ class DevConsole {
      * Показать плавающую кнопку
      */
     showFab() {
+        console.log('🔧 Показываем плавающую кнопку');
         if (this.fabElement) {
             this.fabElement.classList.remove('hidden');
+            console.log('✅ Плавающая кнопка показана');
+        } else {
+            console.error('❌ fabElement не найден в showFab');
         }
     }
     
@@ -1080,7 +1123,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Небольшая задержка для инициализации после основного скрипта
     setTimeout(() => {
         if (typeof window !== 'undefined') {
+            console.log('🔧 Создаем экземпляр DevConsole...');
             window.devConsole = new DevConsole();
+            
+            // Добавляем глобальные функции для ручного управления
+            window.showDevConsole = () => {
+                console.log('🔧 Принудительное открытие консоли');
+                if (window.devConsole) {
+                    window.devConsole.show();
+                } else {
+                    console.error('❌ devConsole не инициализирована');
+                }
+            };
+            
+            window.hideDevConsole = () => {
+                console.log('🔧 Принудительное закрытие консоли');
+                if (window.devConsole) {
+                    window.devConsole.hide();
+                } else {
+                    console.error('❌ devConsole не инициализирована');
+                }
+            };
+            
+            console.log('✅ Глобальные функции управления консолью добавлены:');
+            console.log('   - showDevConsole() - открыть консоль');
+            console.log('   - hideDevConsole() - закрыть консоль');
             
             // Логируем информацию о Telegram WebApp
             if (window.Telegram?.WebApp) {
