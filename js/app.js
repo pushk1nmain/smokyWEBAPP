@@ -10,10 +10,10 @@ class SmokyApp {
   constructor() {
     this.isInitialized = false;
     this.version = '1.0.0';
-    // Определяем debug режим по hostname или отсутствию Telegram WebApp
+    // Определяем debug режим только по hostname в конструкторе
+    // Окончательное определение среды будет в initializeTelegram()
     this.debug = window.location.hostname === 'localhost' || 
-                window.location.hostname === '127.0.0.1' ||
-                !window.Telegram?.WebApp?.initData;
+                window.location.hostname === '127.0.0.1';
   }
 
   /**
@@ -124,24 +124,59 @@ class SmokyApp {
     console.log('   - Запущено в Telegram:', isInTelegram);
     console.log('   - Режим разработки:', this.debug);
     
-    // Если это локальная разработка или нет валидных данных Telegram - в dev режим
-    if ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') || 
-        !hasTelegramAPI || !isInTelegram) {
-      console.warn('🔧 Переходим в режим разработки:', {
-        localhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
-        noTelegramAPI: !hasTelegramAPI,
-        notInTelegram: !isInTelegram
-      });
+    // Если это локальная разработка - в dev режим
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      console.warn('🔧 Переходим в режим разработки (localhost)');
       await this.setupDevelopmentMode();
       return;
     }
     
+    // Если нет Telegram API - в dev режим
+    if (!hasTelegramAPI) {
+      console.warn('🔧 Нет Telegram API, переходим в режим разработки');
+      await this.setupDevelopmentMode();
+      return;
+    }
+    
+    // Если нет валидных данных Telegram, но есть API - попробуем подождать
+    if (!isInTelegram) {
+      console.warn('🔧 Нет валидных Telegram данных, но API доступен. Попытка ожидания...');
+      // Дополнительное ожидание для случаев, когда initData загружается асинхронно
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Перепроверяем после ожидания
+      const updatedInitData = window.Telegram?.WebApp?.initData;
+      const updatedHasValidInitData = updatedInitData && updatedInitData !== '' && updatedInitData !== 'test_data';
+      const updatedIsInTelegram = hasTelegramAPI && (
+        updatedHasValidInitData ||
+        window.location.href.includes('telegram') || 
+        navigator.userAgent.includes('Telegram') || 
+        window.TelegramWebviewProxy || 
+        window.parent !== window
+      );
+      
+      console.log('   - Повторная проверка после ожидания:');
+      console.log('   - Обновленный InitData:', updatedInitData ? `есть (${updatedInitData.length} символов)` : 'нет');
+      console.log('   - Обновленный isInTelegram:', updatedIsInTelegram);
+      
+      if (!updatedIsInTelegram) {
+        console.warn('🔧 После ожидания всё ещё нет валидных данных Telegram, переходим в режим разработки');
+        await this.setupDevelopmentMode();
+        return;
+      }
+      
+      // Обновляем переменные для дальнейшего использования
+      isInTelegram = updatedIsInTelegram;
+      hasValidInitData = updatedHasValidInitData;
+    }
+    
     // Ждем инициализации TelegramManager с увеличенным таймаутом
     console.log('   - Ожидание TelegramManager...');
-    const maxWaitTime = 10000; // 10 секунд для Telegram WebApp
+    const maxWaitTime = 15000; // 15 секунд для Telegram WebApp
     const checkInterval = 100; // 100 мс
     let waitTime = 0;
     
+    // Ждем загрузки TelegramManager
     while (!window.TelegramManager || typeof window.TelegramManager.initialize !== 'function') {
       if (waitTime >= maxWaitTime) {
         console.error('❌ TelegramManager не инициализирован за отведенное время');
@@ -159,6 +194,29 @@ class SmokyApp {
         console.log(`   - window.TelegramManager существует:`, !!window.TelegramManager);
         console.log(`   - TelegramManager.initialize доступен:`, typeof window.TelegramManager?.initialize);
       }
+    }
+    
+    // Дополнительно ждем готовности TelegramManager
+    console.log('   - TelegramManager найден, проверяем готовность...');
+    let readyWaitTime = 0;
+    const maxReadyWaitTime = 5000; // 5 секунд для готовности
+    
+    while ((!window.TelegramManager.isReady || !window.TelegramManager.isReady()) && readyWaitTime < maxReadyWaitTime) {
+      await new Promise(resolve => setTimeout(resolve, checkInterval));
+      readyWaitTime += checkInterval;
+      
+      if (readyWaitTime % 1000 === 0) {
+        console.log(`   - Ожидание готовности TelegramManager... ${readyWaitTime}ms`);
+        console.log(`   - isReady доступен:`, typeof window.TelegramManager?.isReady);
+        console.log(`   - isReady результат:`, window.TelegramManager?.isReady ? window.TelegramManager.isReady() : 'не доступен');
+      }
+    }
+    
+    const isManagerReady = window.TelegramManager.isReady && window.TelegramManager.isReady();
+    console.log(`   - TelegramManager готовность: ${isManagerReady ? '✅' : '⚠️'}`);
+    
+    if (!isManagerReady) {
+      console.warn('⚠️ TelegramManager не готов, попытка принудительной инициализации...');
     }
 
     try {
