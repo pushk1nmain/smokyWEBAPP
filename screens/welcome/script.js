@@ -13,17 +13,31 @@ let config = null;
  * Проверяет доступность конфигурации и валидирует ключи
  */
 const initializeConfig = () => {
+    console.log('⚙️ === НАЧАЛО ИНИЦИАЛИЗАЦИИ КОНФИГУРАЦИИ ===');
+    console.log('📊 typeof window:', typeof window);
+    console.log('📊 window.SmokyConfig существует:', !!window.SmokyConfig);
+    
     if (typeof window === 'undefined' || !window.SmokyConfig) {
         console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: Конфигурация SmokyConfig не найдена!');
         console.error('💡 Убедитесь что файл config.js подключен и содержит window.SmokyConfig');
+        console.log('⚙️ === КОНЕЦ ИНИЦИАЛИЗАЦИИ - ОШИБКА ===');
         throw new Error('Конфигурация приложения не загружена');
     }
     
     config = window.SmokyConfig;
+    console.log('📊 Загруженная конфигурация:', config);
     
     // Валидация обязательных полей
+    console.log('🔍 Валидируем конфигурацию API...');
+    console.log('📊 config.api:', config.api);
+    console.log('📊 config.api.baseUrl:', config.api?.baseUrl);
+    console.log('📊 config.api.apiKey существует:', !!config.api?.apiKey);
+    
     if (!config.api?.baseUrl || !config.api?.apiKey) {
         console.error('❌ ОШИБКА КОНФИГУРАЦИИ: Не заданы обязательные параметры API');
+        console.error('❌ baseUrl:', config.api?.baseUrl);
+        console.error('❌ apiKey:', !!config.api?.apiKey);
+        console.log('⚙️ === КОНЕЦ ИНИЦИАЛИЗАЦИИ - ОШИБКА ВАЛИДАЦИИ ===');
         throw new Error('Неполная конфигурация API');
     }
     
@@ -32,12 +46,14 @@ const initializeConfig = () => {
         console.warn('⚠️ ВНИМАНИЕ: Используется placeholder для API ключа!');
     }
     
-    console.log('✅ Конфигурация инициализирована:', {
+    console.log('✅ Конфигурация успешно валидирована:', {
         apiBaseUrl: config.api.baseUrl,
         hasApiKey: !!config.api.apiKey,
+        apiKeyStart: config.api.apiKey?.substring(0, 10) + '...',
         debugMode: config.development?.enableDebugLogs || false
     });
     
+    console.log('⚙️ === КОНЕЦ ИНИЦИАЛИЗАЦИИ КОНФИГУРАЦИИ - УСПЕХ ===');
     return config;
 };
 
@@ -51,6 +67,7 @@ const initializeWelcomeScreen = async () => {
     // Инициализируем конфигурацию
     try {
         initializeConfig();
+        console.log('✅ Конфигурация успешно инициализирована');
     } catch (error) {
         console.error('❌ Ошибка инициализации конфигурации:', error);
         showNotification('Ошибка конфигурации приложения');
@@ -58,9 +75,13 @@ const initializeWelcomeScreen = async () => {
     }
     
     // Проверяем доступность Telegram WebApp API
+    console.log('🔍 Проверяем доступность Telegram WebApp API...');
+    console.log('📱 window.Telegram:', !!window.Telegram);
+    console.log('📱 window.Telegram.WebApp:', !!window.Telegram?.WebApp);
+    
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
         tg = window.Telegram.WebApp;
-        console.log('✅ Telegram WebApp API доступен');
+        console.log('✅ Telegram WebApp API доступен, инициализируем Telegram режим');
         
         // Инициализируем Telegram WebApp (асинхронно)
         await setupTelegramWebApp();
@@ -88,23 +109,30 @@ const initializeWelcomeScreen = async () => {
  */
 const setupTelegramWebApp = async () => {
     try {
+        console.log('🔧 Начинаем настройку Telegram WebApp...');
+        
         // Готовность приложения
         tg.ready();
         console.log('📱 Telegram WebApp готов');
         
         // Разворачиваем приложение на весь экран
         tg.expand();
+        console.log('📱 Приложение развернуто на весь экран');
         
         // Применяем тему Telegram
         applyTelegramTheme();
+        console.log('🎨 Тема Telegram применена');
         
         // Настраиваем кнопки Telegram
         setupTelegramButtons();
+        console.log('🔘 Кнопки Telegram настроены');
         
         // Получаем данные пользователя (асинхронно)
-        await getUserData();
+        console.log('👤 Начинаем получение данных пользователя...');
+        const userData = await getUserData();
+        console.log('👤 Получение данных пользователя завершено:', userData);
         
-        console.log('🎨 Telegram WebApp настроен');
+        console.log('✅ Telegram WebApp полностью настроен');
     } catch (error) {
         console.error('❌ Ошибка настройки Telegram WebApp:', error);
         hideLoading(); // Скрываем загрузку в случае ошибки
@@ -165,35 +193,67 @@ const setupTelegramButtons = () => {
  * Отправляет запрос к backend API для проверки существования пользователя
  */
 const checkUserInAPI = async (telegramId) => {
+    console.log('🔍 === НАЧАЛО ПРОВЕРКИ ПОЛЬЗОВАТЕЛЯ В API ===');
+    console.log('📊 telegramId:', telegramId);
+    console.log('📊 config объект:', config);
+    console.log('📊 config.api:', config?.api);
+    
     try {
         if (!config?.api) {
             console.error('❌ Конфигурация API недоступна');
             return { found: false, userData: null, error: 'Конфигурация не загружена' };
         }
         
-        console.log(`🔍 Проверяем пользователя в API: ${telegramId}`);
+        const apiUrl = `${config.api.baseUrl}/user/${telegramId}`;
+        const apiKey = config.api.apiKey;
         
-        const response = await fetch(`${config.api.baseUrl}/user/${telegramId}`, {
+        console.log('🌐 URL для API запроса:', apiUrl);
+        console.log('🔑 API ключ (первые 20 символов):', apiKey?.substring(0, 20) + '...');
+        
+        console.log('📤 Отправляем API запрос...');
+        const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-API-Key': config.api.apiKey
+                'X-API-Key': apiKey
             }
         });
+        
+        console.log('📥 Получен ответ от сервера:');
+        console.log('📊 response.ok:', response.ok);
+        console.log('📊 response.status:', response.status);
+        console.log('📊 response.statusText:', response.statusText);
+        console.log('📊 response.headers:', Object.fromEntries(response.headers.entries()));
         
         if (response.ok) {
             const userData = await response.json();
             console.log('✅ Пользователь найден в API:', userData);
+            console.log('🔍 === КОНЕЦ ПРОВЕРКИ API - ПОЛЬЗОВАТЕЛЬ НАЙДЕН ===');
             return { found: true, userData };
         } else if (response.status === 404) {
             console.log('❌ Пользователь не найден в API (404)');
+            console.log('🔍 === КОНЕЦ ПРОВЕРКИ API - ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН ===');
             return { found: false, userData: null };
         } else {
             console.error('❌ Ошибка API запроса:', response.status, response.statusText);
+            
+            // Попытаемся прочитать тело ответа для дополнительной информации
+            try {
+                const errorText = await response.text();
+                console.error('📄 Тело ответа:', errorText);
+            } catch (e) {
+                console.error('❌ Не удалось прочитать тело ответа:', e);
+            }
+            
+            console.log('🔍 === КОНЕЦ ПРОВЕРКИ API - ОШИБКА HTTP ===');
             return { found: false, userData: null, error: `HTTP ${response.status}` };
         }
     } catch (error) {
         console.error('❌ Ошибка сети при запросе к API:', error);
+        console.error('📊 Тип ошибки:', error.constructor.name);
+        console.error('📊 Сообщение ошибки:', error.message);
+        console.error('📊 Stack trace:', error.stack);
+        console.log('🔍 === КОНЕЦ ПРОВЕРКИ API - СЕТЕВАЯ ОШИБКА ===');
         return { found: false, userData: null, error: error.message };
     }
 };
@@ -203,11 +263,20 @@ const checkUserInAPI = async (telegramId) => {
  * Извлекает информацию о пользователе из Telegram и проверяет в API
  */
 const getUserData = async () => {
-    if (!tg?.initDataUnsafe) return null;
+    console.log('🔍 Получаем данные пользователя...');
+    console.log('📊 tg объект:', tg);
+    console.log('📊 tg.initDataUnsafe:', tg?.initDataUnsafe);
+    
+    if (!tg?.initDataUnsafe) {
+        console.warn('⚠️ tg.initDataUnsafe недоступен, возвращаем null');
+        return null;
+    }
     
     const user = tg.initDataUnsafe.user;
+    console.log('👤 Пользователь из initDataUnsafe:', user);
+    
     if (user) {
-        console.log('👤 Данные пользователя из Telegram:', {
+        console.log('✅ Данные пользователя из Telegram получены:', {
             id: user.id,
             firstName: user.first_name,
             lastName: user.last_name,
@@ -216,20 +285,28 @@ const getUserData = async () => {
         });
         
         // Показываем индикатор загрузки
+        console.log('⏳ Показываем индикатор загрузки...');
         showLoadingWithText('Проверяем ваш профиль...');
         
         // Проверяем пользователя в API
+        console.log('🌐 Начинаем проверку пользователя в API...');
         const apiResult = await checkUserInAPI(user.id);
+        console.log('🌐 Результат проверки API:', apiResult);
         
         // Персонализируем приветствие на основе результата API
+        console.log('✍️ Персонализируем приветствие...');
         await personalizeGreeting(user, apiResult);
         
         // Скрываем индикатор загрузки
+        console.log('✅ Скрываем индикатор загрузки');
         hideLoading();
         
         return { telegramUser: user, apiResult };
+    } else {
+        console.warn('⚠️ Объект user пустой в initDataUnsafe');
     }
     
+    console.warn('⚠️ Данные пользователя не получены, возвращаем null');
     return null;
 };
 
@@ -280,6 +357,7 @@ const setupBrowserMode = async () => {
     root.style.setProperty('--tg-theme-button-color', '#2196F3');
     root.style.setProperty('--tg-theme-button-text-color', '#ffffff');
     root.style.setProperty('--tg-theme-secondary-bg-color', '#f1f1f1');
+    console.log('🎨 Стандартная тема браузера применена');
     
     // Симулируем пользователя для тестирования в браузере
     const testUser = config?.development?.testUser || {
@@ -290,18 +368,22 @@ const setupBrowserMode = async () => {
         language_code: 'ru'
     };
     
-    console.log('🧪 Тестируем функциональность с тестовым пользователем');
+    console.log('🧪 Используем тестового пользователя для браузера:', testUser);
     
     // Показываем индикатор загрузки
+    console.log('⏳ Показываем индикатор загрузки для браузера...');
     showLoadingWithText('Проверяем тестового пользователя...');
     
     // Тестируем API запрос
+    console.log('🌐 Начинаем тестовый API запрос...');
     const apiResult = await checkUserInAPI(testUser.id);
+    console.log('🌐 Результат тестового API запроса:', apiResult);
     
     // Применяем персонализированное приветствие
+    console.log('✍️ Применяем персонализированное приветствие в браузере...');
     await personalizeGreeting(testUser, apiResult);
     
-    console.log('🧪 Тестирование в режиме браузера завершено');
+    console.log('✅ Тестирование в режиме браузера завершено успешно');
 };
 
 /**
@@ -524,7 +606,7 @@ class DevConsole {
         this.logs = [];
         this.maxLogs = 500;
         this.isCollapsed = false;
-        this.isHidden = false;
+        this.isHidden = true; // Начинаем со скрытой консоли
         this.activeFilter = 'all';
         this.startTime = Date.now();
         
@@ -533,6 +615,7 @@ class DevConsole {
         this.contentElement = null;
         this.countElement = null;
         this.filtersElement = null;
+        this.fabElement = null;
         
         // Оригинальные методы console
         this.originalConsole = {
@@ -559,8 +642,13 @@ class DevConsole {
         this.interceptConsoleMethods();
         this.logToConsole('info', '🔧 Встроенная консоль разработчика активирована');
         
-        // Показываем консоль для разработки
-        this.show();
+        // Показываем плавающую кнопку
+        this.showFab();
+        
+        // Добавляем пульсацию к FAB через 3 секунды
+        setTimeout(() => {
+            this.addFabPulse();
+        }, 3000);
     }
     
     /**
@@ -571,9 +659,15 @@ class DevConsole {
         this.contentElement = document.getElementById('consoleContent');
         this.countElement = document.getElementById('logCount');
         this.filtersElement = document.getElementById('consoleFilters');
+        this.fabElement = document.getElementById('devConsoleFab');
         
         if (!this.consoleElement) {
             console.error('❌ DevConsole: Элемент консоли не найден');
+            return;
+        }
+        
+        if (!this.fabElement) {
+            console.error('❌ DevConsole: Плавающая кнопка не найдена');
             return;
         }
     }
@@ -582,10 +676,24 @@ class DevConsole {
      * Настройка обработчиков событий
      */
     setupEventListeners() {
-        // Переключение видимости консоли
+        // Плавающая кнопка для открытия консоли
+        if (this.fabElement) {
+            this.fabElement.addEventListener('click', () => {
+                this.show();
+                this.removeFabPulse();
+            });
+        }
+        
+        // Переключение сворачивания консоли
         const toggleBtn = document.getElementById('consoleToggle');
         if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => this.toggle());
+            toggleBtn.addEventListener('click', () => this.toggleCollapse());
+        }
+        
+        // Закрытие консоли
+        const closeBtn = document.getElementById('consoleClose');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.hide());
         }
         
         // Очистка логов
@@ -817,6 +925,11 @@ class DevConsole {
         if (this.countElement) {
             this.countElement.textContent = this.logs.length;
         }
+        
+        // Добавляем пульсацию к FAB если консоль скрыта и появляются новые логи
+        if (this.isHidden && this.logs.length > 1) {
+            this.addFabPulse();
+        }
     }
     
     /**
@@ -875,6 +988,8 @@ class DevConsole {
         if (this.consoleElement) {
             this.consoleElement.classList.remove('hidden');
             this.isHidden = false;
+            this.hideFab();
+            this.scrollToBottom();
         }
     }
     
@@ -885,23 +1000,43 @@ class DevConsole {
         if (this.consoleElement) {
             this.consoleElement.classList.add('hidden');
             this.isHidden = true;
+            this.showFab();
         }
     }
     
     /**
-     * Переключение видимости консоли
+     * Показать плавающую кнопку
      */
-    toggle() {
-        if (this.isHidden) {
-            this.show();
-        } else {
-            this.hide();
+    showFab() {
+        if (this.fabElement) {
+            this.fabElement.classList.remove('hidden');
         }
-        
-        // Обновляем иконку кнопки
-        const toggleBtn = document.getElementById('consoleToggle');
-        if (toggleBtn) {
-            toggleBtn.textContent = this.isHidden ? '⬆️' : '⬇️';
+    }
+    
+    /**
+     * Скрыть плавающую кнопку
+     */
+    hideFab() {
+        if (this.fabElement) {
+            this.fabElement.classList.add('hidden');
+        }
+    }
+    
+    /**
+     * Добавить пульсацию к плавающей кнопке
+     */
+    addFabPulse() {
+        if (this.fabElement && this.isHidden) {
+            this.fabElement.classList.add('pulse');
+        }
+    }
+    
+    /**
+     * Убрать пульсацию с плавающей кнопки
+     */
+    removeFabPulse() {
+        if (this.fabElement) {
+            this.fabElement.classList.remove('pulse');
         }
     }
     

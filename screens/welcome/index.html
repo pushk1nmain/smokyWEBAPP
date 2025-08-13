@@ -90,8 +90,13 @@
             <p class="loading-text">Подключаемся к Telegram...</p>
         </div>
         
+        <!-- Плавающая кнопка открытия консоли -->
+        <button class="dev-console-fab" id="devConsoleFab" title="Открыть консоль разработчика">
+            🔧
+        </button>
+        
         <!-- Встроенная консоль разработчика -->
-        <div class="dev-console" id="devConsole">
+        <div class="dev-console hidden" id="devConsole">
             <div class="dev-console-header">
                 <div class="dev-console-title">
                     <span class="dev-console-icon">🔧</span>
@@ -105,8 +110,11 @@
                     <button class="dev-console-btn" id="filterToggle" title="Фильтры">
                         🔍
                     </button>
-                    <button class="dev-console-btn" id="consoleToggle" title="Скрыть/Показать">
+                    <button class="dev-console-btn" id="consoleToggle" title="Свернуть/Развернуть">
                         ⬇️
+                    </button>
+                    <button class="dev-console-btn dev-console-close" id="consoleClose" title="Закрыть консоль">
+                        ✕
                     </button>
                 </div>
             </div>
