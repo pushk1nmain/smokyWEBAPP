@@ -3,6 +3,13 @@
  * Обработка специфичных для Telegram функций и UI элементов
  */
 
+// Добавляем отладочную информацию о загрузке скрипта
+console.log('📡 Telegram.js начинает загрузку...');
+console.log('   - Текущее время:', new Date().toISOString());
+console.log('   - window.Telegram доступен:', !!window.Telegram);
+console.log('   - window.Telegram.WebApp доступен:', !!window.Telegram?.WebApp);
+console.log('   - Статус DOM:', document.readyState);
+
 /**
  * Менеджер Telegram WebApp интеграции
  */
@@ -404,17 +411,39 @@ const TelegramManagerProxy = {
   _instance: telegramManager
 };
 
-// Экспортируем прокси
-window.TelegramManager = TelegramManagerProxy;
-
-// Отладочная информация для проверки экспорта
-console.log('🔧 TelegramManager экспортирован:', {
-  type: typeof window.TelegramManager,
-  hasInitialize: typeof window.TelegramManager.initialize,
-  hasIsReady: typeof window.TelegramManager.isReady,
-  hasGetUserData: typeof window.TelegramManager.getUserData,
-  keys: Object.keys(window.TelegramManager)
-});
+// Безопасный экспорт TelegramManager с проверкой
+try {
+  // Экспортируем прокси
+  window.TelegramManager = TelegramManagerProxy;
+  
+  // Проверяем, что экспорт успешен
+  if (!window.TelegramManager) {
+    throw new Error('Экспорт TelegramManager не удался');
+  }
+  
+  // Делаем объект неизменяемым для защиты от случайной перезаписи
+  Object.freeze(window.TelegramManager);
+  
+  // Отладочная информация для проверки экспорта
+  console.log('🔧 TelegramManager экспортирован успешно:', {
+    type: typeof window.TelegramManager,
+    hasInitialize: typeof window.TelegramManager.initialize,
+    hasIsReady: typeof window.TelegramManager.isReady,
+    hasGetUserData: typeof window.TelegramManager.getUserData,
+    keys: Object.keys(window.TelegramManager),
+    isFrozen: Object.isFrozen(window.TelegramManager)
+  });
+} catch (error) {
+  console.error('🔴 КРИТИЧЕСКАЯ ОШИБКА экспорта TelegramManager:', error);
+  
+  // Создаем минимальный fallback
+  window.TelegramManager = {
+    initialize: async () => false,
+    isReady: () => false,
+    isRunningInTelegram: () => false,
+    _error: 'Ошибка экспорта TelegramManager'
+  };
+}
 
 // Дополнительная диагностика для Telegram WebApp контекста
 console.log('📡 Диагностика Telegram WebApp окружения:', {
@@ -437,9 +466,21 @@ console.log('📡 TelegramManager загружен и готов к исполь
 setTimeout(() => {
     if (!window.TelegramManager) {
         console.error('🔴 КРИТИЧЕСКАЯ ОШИБКА: TelegramManager не экспортирован в window!');
+        // Отправляем событие ошибки
+        window.dispatchEvent(new CustomEvent('telegramManagerError', {
+            detail: { error: 'TelegramManager не экспортирован' }
+        }));
     } else if (typeof window.TelegramManager.initialize !== 'function') {
         console.error('🔴 КРИТИЧЕСКАЯ ОШИБКА: TelegramManager.initialize не является функцией!');
+        // Отправляем событие ошибки
+        window.dispatchEvent(new CustomEvent('telegramManagerError', {
+            detail: { error: 'TelegramManager.initialize недоступен' }
+        }));
     } else {
         console.log('✅ TelegramManager прошел проверку экспорта');
+        // Отправляем событие готовности
+        window.dispatchEvent(new CustomEvent('telegramManagerReady', {
+            detail: { telegramManager: window.TelegramManager }
+        }));
     }
 }, 10);

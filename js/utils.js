@@ -340,6 +340,102 @@ const isTelegramManagerReady = () => {
   );
 };
 
+/**
+ * Ожидание загрузки TelegramManager с таймаутом и событиями
+ * @param {number} timeout Таймаут ожидания в мс (по умолчанию 5000)
+ * @returns {Promise<boolean>} Promise, который разрешается когда TelegramManager готов
+ */
+const waitForTelegramManager = (timeout = 5000) => {
+  return new Promise((resolve) => {
+    // Сначала проверяем, готов ли уже TelegramManager
+    if (window.TelegramManager && typeof window.TelegramManager.initialize === 'function') {
+      console.log('✅ TelegramManager уже доступен');
+      resolve(true);
+      return;
+    }
+    
+    const startTime = Date.now();
+    let resolved = false;
+    
+    // Слушаем событие готовности
+    const handleReady = () => {
+      if (!resolved) {
+        resolved = true;
+        console.log('✅ TelegramManager готов (событие)');
+        cleanup();
+        resolve(true);
+      }
+    };
+    
+    // Слушаем событие ошибки
+    const handleError = (event) => {
+      if (!resolved) {
+        resolved = true;
+        console.error('❌ TelegramManager ошибка (событие):', event.detail?.error);
+        cleanup();
+        resolve(false);
+      }
+    };
+    
+    // Таймаут
+    const timeoutId = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        console.warn('⏰ Таймаут ожидания TelegramManager');
+        cleanup();
+        resolve(false);
+      }
+    }, timeout);
+    
+    // Очистка слушателей
+    const cleanup = () => {
+      window.removeEventListener('telegramManagerReady', handleReady);
+      window.removeEventListener('telegramManagerError', handleError);
+      clearTimeout(timeoutId);
+    };
+    
+    // Добавляем слушатели событий
+    window.addEventListener('telegramManagerReady', handleReady, { once: true });
+    window.addEventListener('telegramManagerError', handleError, { once: true });
+    
+    // Дополнительная проверка через polling (как fallback)
+    const checkAvailability = () => {
+      if (resolved) return;
+      
+      // Проверяем, доступен ли TelegramManager
+      if (window.TelegramManager && typeof window.TelegramManager.initialize === 'function') {
+        if (!resolved) {
+          resolved = true;
+          console.log('✅ TelegramManager загружен (polling)');
+          cleanup();
+          resolve(true);
+        }
+        return;
+      }
+      
+      // Проверяем таймаут
+      if (Date.now() - startTime >= timeout) {
+        if (!resolved) {
+          resolved = true;
+          console.warn('⏰ Таймаут ожидания TelegramManager (polling)');
+          cleanup();
+          resolve(false);
+        }
+        return;
+      }
+      
+      // Продолжаем проверку через 100мс
+      setTimeout(checkAvailability, 100);
+    };
+    
+    // Начинаем проверку через 50мс (даем время событиям)
+    setTimeout(checkAvailability, 50);
+  });
+};
+
+// Экспорт функции ожидания в глобальное пространство имен
+window.waitForTelegramManager = waitForTelegramManager;
+
 // Экспорт для использования в других модулях
 window.Utils = {
   generateId,
@@ -362,5 +458,6 @@ window.Utils = {
   isRunningInTelegram,
   safeExecute,
   safeTelegramManagerCall,
-  isTelegramManagerReady
+  isTelegramManagerReady,
+  waitForTelegramManager
 };

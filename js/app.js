@@ -114,14 +114,38 @@ class SmokyApp {
       return;
     }
     
-    // Проверяем доступность TelegramManager
+    // Проверяем доступность TelegramManager с ожиданием
     console.log('   - Проверяем доступность TelegramManager...');
-    if (!window.TelegramManager) {
-      console.error('❌ TelegramManager не загружен');
+    
+    let telegramManagerLoaded = false;
+    
+    // Сначала проверяем, загружен ли уже
+    if (window.TelegramManager && typeof window.TelegramManager.initialize === 'function') {
+      telegramManagerLoaded = true;
+      console.log('✅ TelegramManager уже загружен');
+    } else {
+      // Ждем загрузки TelegramManager
+      console.log('   - Ожидаем загрузки TelegramManager...');
+      
+      try {
+        if (window.Utils?.waitForTelegramManager) {
+          telegramManagerLoaded = await window.Utils.waitForTelegramManager(3000);
+        } else if (window.waitForTelegramManager) {
+          telegramManagerLoaded = await window.waitForTelegramManager(3000);
+        }
+      } catch (error) {
+        console.error('❌ Ошибка ожидания TelegramManager:', error);
+      }
+    }
+    
+    if (!telegramManagerLoaded) {
+      console.error('❌ TelegramManager не загружен после ожидания');
       console.error('   Диагностика:', {
         telegramScriptLoaded: !!document.querySelector('script[src*="telegram.js"]'),
         windowKeys: Object.keys(window).filter(k => k.toLowerCase().includes('telegram')),
-        scriptsInHead: Array.from(document.querySelectorAll('script')).map(s => s.src || s.textContent.substring(0, 50))
+        scriptsInHead: Array.from(document.querySelectorAll('script')).map(s => s.src || s.textContent.substring(0, 50)),
+        telegramManagerType: typeof window.TelegramManager,
+        telegramManagerMethods: window.TelegramManager ? Object.keys(window.TelegramManager) : []
       });
       
       // Показываем ошибку только если мы в Telegram
@@ -316,26 +340,42 @@ class SmokyApp {
     // Инициализируем mock UI для кнопок
     this.setupMockUI();
     
-    // Ждем инициализации TelegramManager используя глобальную функцию
-    const telegramManagerReady = await window.waitForTelegramManager();
+    // Ждем инициализации TelegramManager с помощью Utils функции
+    let telegramManagerReady = false;
+    if (window.Utils?.waitForTelegramManager) {
+      telegramManagerReady = await window.Utils.waitForTelegramManager();
+    } else if (window.waitForTelegramManager) {
+      telegramManagerReady = await window.waitForTelegramManager();
+    } else {
+      console.warn('⚠️ Функция waitForTelegramManager недоступна, используем простую проверку');
+      // Простая проверка доступности
+      telegramManagerReady = !!(window.TelegramManager && typeof window.TelegramManager.initialize === 'function');
+    }
     
     // Принудительно настраиваем TelegramManager для режима разработки
     if (telegramManagerReady && window.TelegramManager) {
-      // Устанавливаем mock данные в TelegramManager
-      window.TelegramManager.webApp = window.Telegram.WebApp;
-      window.TelegramManager.user = window.Telegram.WebApp.initDataUnsafe.user;
-      window.TelegramManager.initData = window.Telegram.WebApp.initData;
-      window.TelegramManager.isInitialized = true;
+      try {
+        // Устанавливаем mock данные в TelegramManager
+        window.TelegramManager.webApp = window.Telegram.WebApp;
+        window.TelegramManager.user = window.Telegram.WebApp.initDataUnsafe.user;
+        window.TelegramManager.initData = window.Telegram.WebApp.initData;
+        window.TelegramManager.isInitialized = true;
+        
+        console.log('✅ TelegramManager настроен для режима разработки');
+        console.log('   - webApp:', !!window.TelegramManager.webApp);
+        console.log('   - user:', window.TelegramManager.user);
+        console.log('   - isInitialized:', window.TelegramManager.isInitialized);
+      } catch (error) {
+        console.error('❌ Ошибка настройки TelegramManager для разработки:', error);
+        telegramManagerReady = false;
+      }
+    } 
+    
+    if (!telegramManagerReady) {
+      console.warn('⚠️ TelegramManager не найден, создаем минимальный stub...');
       
-      console.log('✅ TelegramManager настроен для режима разработки');
-      console.log('   - webApp:', !!window.TelegramManager.webApp);
-      console.log('   - user:', window.TelegramManager.user);
-      console.log('   - isInitialized:', window.TelegramManager.isInitialized);
-    } else {
-      console.warn('⚠️ TelegramManager не найден даже в режиме разработки');
-      console.warn('   - Создаем минимальный TelegramManager stub...');
-      
-      // Создаем минимальный stub для TelegramManager
+      // Создаем минимальный stub для TelegramManager с правильным контекстом
+      const self = this; // Сохраняем ссылку на контекст
       window.TelegramManager = {
         webApp: window.Telegram.WebApp,
         user: window.Telegram.WebApp.initDataUnsafe.user,
@@ -344,14 +384,49 @@ class SmokyApp {
         isReady: () => true,
         isRunningInTelegram: () => false,
         initialize: async () => true,
-        showMainButton: () => console.log('🔘 Stub: showMainButton'),
-        hideMainButton: () => console.log('🔘 Stub: hideMainButton'),
-        updateMainButtonText: (text) => console.log('🔘 Stub: updateMainButtonText:', text),
+        showMainButton: (text, enabled) => {
+          console.log('🔘 Stub: showMainButton:', text, enabled);
+          if (self.showMockMainButton) {
+            self.showMockMainButton();
+            if (text && self.updateMockMainButton) {
+              self.updateMockMainButton(text);
+            }
+          }
+        },
+        hideMainButton: () => {
+          console.log('🔘 Stub: hideMainButton');
+          if (self.hideMockMainButton) {
+            self.hideMockMainButton();
+          }
+        },
+        updateMainButtonText: (text) => {
+          console.log('🔘 Stub: updateMainButtonText:', text);
+          if (self.updateMockMainButton) {
+            self.updateMockMainButton(text);
+          }
+        },
         setMainButtonEnabled: (enabled) => console.log('🔘 Stub: setMainButtonEnabled:', enabled),
-        showBackButton: () => console.log('◀️ Stub: showBackButton'),
-        hideBackButton: () => console.log('◀️ Stub: hideBackButton'),
+        showBackButton: () => {
+          console.log('◀️ Stub: showBackButton');
+          if (self.showMockBackButton) {
+            self.showMockBackButton();
+          }
+        },
+        hideBackButton: () => {
+          console.log('◀️ Stub: hideBackButton');
+          if (self.hideMockBackButton) {
+            self.hideMockBackButton();
+          }
+        },
         hapticFeedback: (type) => console.log('📳 Stub: hapticFeedback:', type),
-        addEventListener: (event, handler) => console.log('📡 Stub: addEventListener:', event),
+        addEventListener: (event, handler) => {
+          console.log('📡 Stub: addEventListener:', event);
+          // Сохраняем обработчики для mock кнопок
+          if (!self.mockEventHandlers) {
+            self.mockEventHandlers = {};
+          }
+          self.mockEventHandlers[event] = handler;
+        },
         removeEventListener: (event, handler) => console.log('📡 Stub: removeEventListener:', event),
         sendData: (data) => console.log('📱 Stub: sendData:', data),
         close: () => console.log('📱 Stub: close'),
