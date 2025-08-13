@@ -170,14 +170,24 @@ class SmokyApp {
       hasValidInitData = updatedHasValidInitData;
     }
     
-    // Простое ожидание TelegramManager (он должен быть доступен сразу после загрузки telegram.js)
-    console.log('   - Проверка TelegramManager...');
+    // Ожидание загрузки TelegramManager с использованием глобальной функции
+    console.log('   - Ожидание загрузки TelegramManager...');
     
-    if (!window.TelegramManager) {
-      console.error('❌ TelegramManager не найден после загрузки telegram.js');
-      // Но НЕ переходим в dev режим в Telegram WebApp!
-      console.log('⚠️ Продолжаем инициализацию без TelegramManager...');
-      return;
+    const telegramManagerAvailable = await window.waitForTelegramManager();
+    
+    if (!telegramManagerAvailable) {
+      console.error('❌ TelegramManager недоступен после ожидания');
+      
+      // В контексте Telegram WebApp показываем пользователю ошибку
+      if (hasTelegramAPI && isInTelegram) {
+        this.showTelegramManagerError();
+        return;
+      } else {
+        // В браузере переходим в режим разработки
+        console.log('⚠️ Переходим в режим разработки из-за недоступности TelegramManager');
+        await this.setupDevelopmentMode();
+        return;
+      }
     }
 
     try {
@@ -196,6 +206,88 @@ class SmokyApp {
       console.warn('⚠️ Переходим в режим разработки из-за ошибки');
       await this.setupDevelopmentMode();
     }
+  }
+
+  /**
+   * Показ ошибки недоступности TelegramManager
+   */
+  showTelegramManagerError() {
+    console.error('💥 Показываем ошибку недоступности TelegramManager');
+    
+    const container = document.getElementById('screen-container');
+    if (container) {
+      container.innerHTML = `
+        <div class="screen screen--centered" style="padding: var(--spacing-6); text-align: center;">
+          <div style="background: var(--color-surface); padding: var(--spacing-6); border-radius: var(--radius-lg); box-shadow: var(--shadow-2);">
+            <div style="font-size: 64px; margin-bottom: var(--spacing-4);">⚠️</div>
+            <h1 style="color: var(--color-error); margin-bottom: var(--spacing-4); font-size: var(--font-size-xl);">
+              TelegramManager недоступен
+            </h1>
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-6); line-height: var(--line-height-relaxed);">
+              Произошла ошибка при загрузке компонентов приложения. 
+              Убедитесь, что у вас установлена последняя версия Telegram и попробуйте перезапустить приложение.
+            </p>
+            <div style="margin-bottom: var(--spacing-6); padding: var(--spacing-4); background: var(--color-surface-variant); border-radius: var(--radius-md);">
+              <h3 style="margin-bottom: var(--spacing-3); color: var(--color-text-primary);">Возможные решения:</h3>
+              <ul style="text-align: left; margin: 0; color: var(--color-text-secondary);">
+                <li style="margin-bottom: var(--spacing-2);">• <strong>Обновите Telegram</strong> до последней версии</li>
+                <li style="margin-bottom: var(--spacing-2);">• <strong>Windows пользователи:</strong> установите Microsoft Edge WebView2</li>
+                <li style="margin-bottom: var(--spacing-2);">• <strong>Мобильные устройства:</strong> освободите память и перезапустите Telegram</li>
+                <li style="margin-bottom: var(--spacing-2);">• Отключите VPN и блокировщики рекламы</li>
+                <li style="margin-bottom: var(--spacing-2);">• Очистите кэш Telegram</li>
+                <li>• Попробуйте через 30-60 секунд еще раз</li>
+              </ul>
+            </div>
+            <div style="margin-bottom: var(--spacing-4); padding: var(--spacing-3); background: var(--color-warning-bg, #fff3cd); border: 1px solid var(--color-warning, #ffc107); border-radius: var(--radius-md);">
+              <p style="margin: 0; font-size: var(--font-size-sm); color: var(--color-warning-text, #856404);">
+                <strong>Для Windows 10/11:</strong> Скачайте WebView2 с сайта 
+                <a href="https://developer.microsoft.com/microsoft-edge/webview2/" target="_blank" style="color: var(--color-primary);">
+                  Microsoft
+                </a>
+              </p>
+            </div>
+            <button 
+              onclick="location.reload()" 
+              style="
+                background: var(--color-primary);
+                color: var(--color-text-inverse);
+                border: none;
+                padding: var(--spacing-3) var(--spacing-6);
+                border-radius: var(--radius-md);
+                font-size: var(--font-size-base);
+                cursor: pointer;
+                transition: var(--transition-fast);
+                margin-right: var(--spacing-3);
+              "
+              onmouseover="this.style.background='var(--color-primary-dark)'"
+              onmouseout="this.style.background='var(--color-primary)'"
+            >
+              Перезагрузить
+            </button>
+            <button 
+              onclick="window.Telegram?.WebApp?.close?.()" 
+              style="
+                background: var(--color-surface-variant);
+                color: var(--color-text-secondary);
+                border: 1px solid var(--color-border);
+                padding: var(--spacing-3) var(--spacing-6);
+                border-radius: var(--radius-md);
+                font-size: var(--font-size-base);
+                cursor: pointer;
+                transition: var(--transition-fast);
+              "
+              onmouseover="this.style.background='var(--color-surface-hover)'"
+              onmouseout="this.style.background='var(--color-surface-variant)'"
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Также скрываем загрузку
+    Utils.toggleLoading(false);
   }
 
   /**
@@ -271,15 +363,11 @@ class SmokyApp {
     // Инициализируем mock UI для кнопок
     this.setupMockUI();
     
-    // Ждем инициализации TelegramManager, если он еще не готов
-    let maxWait = 50; // 5 секунд
-    while (!window.TelegramManager && maxWait > 0) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      maxWait--;
-    }
+    // Ждем инициализации TelegramManager используя глобальную функцию
+    const telegramManagerReady = await window.waitForTelegramManager();
     
     // Принудительно настраиваем TelegramManager для режима разработки
-    if (window.TelegramManager) {
+    if (telegramManagerReady && window.TelegramManager) {
       // Устанавливаем mock данные в TelegramManager
       window.TelegramManager.webApp = window.Telegram.WebApp;
       window.TelegramManager.user = window.Telegram.WebApp.initDataUnsafe.user;

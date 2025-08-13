@@ -39,17 +39,65 @@
         <div id="notification-container" class="notification-container"></div>
     </div>
 
-    <!-- Core Scripts СНАЧАЛА -->
+    <!-- Core Scripts СНАЧАЛА - загружаются синхронно -->
     <script src="js/utils.js"></script>
     <script src="js/api.js"></script>
     <script src="js/telegram.js"></script>
     <script src="js/router.js"></script>
     
-    <!-- Telegram готовность ПОСЛЕ загрузки скриптов -->
+    <!-- Telegram готовность и проверка доступности -->
     <script>
+        // Обработка готовности Telegram WebApp
         if (window.Telegram?.WebApp) {
+            console.log('🔄 Telegram WebApp готов к инициализации');
             window.Telegram.WebApp.ready();
+        } else {
+            console.warn('⚠️ Telegram WebApp API недоступен при загрузке страницы');
         }
+        
+        // Глобальная проверка доступности TelegramManager
+        function waitForTelegramManager() {
+            return new Promise((resolve) => {
+                // Проверяем и объект, и флаг загрузки
+                if (window.TelegramManager && window.TelegramManagerLoaded) {
+                    console.log('✅ TelegramManager доступен сразу');
+                    resolve(true);
+                    return;
+                }
+                
+                console.log('⏳ Ожидание загрузки TelegramManager...');
+                let attempts = 0;
+                const maxAttempts = 50; // 5 секунд
+                
+                const checkInterval = setInterval(() => {
+                    attempts++;
+                    
+                    // Проверяем каждые 10 попыток для диагностики
+                    if (attempts % 10 === 0) {
+                        console.log(`   Попытка ${attempts}: TelegramManager=${!!window.TelegramManager}, флаг=${!!window.TelegramManagerLoaded}`);
+                    }
+                    
+                    if (window.TelegramManager && window.TelegramManagerLoaded) {
+                        console.log(`✅ TelegramManager загружен через ${attempts * 100}ms`);
+                        clearInterval(checkInterval);
+                        resolve(true);
+                    } else if (attempts >= maxAttempts) {
+                        console.error('❌ TelegramManager недоступен после 5 секунд ожидания');
+                        console.error('   Финальная диагностика:', {
+                            hasTelegramManager: !!window.TelegramManager,
+                            hasTelegramManagerLoaded: !!window.TelegramManagerLoaded,
+                            hasWindow: !!window,
+                            documentReady: document.readyState
+                        });
+                        clearInterval(checkInterval);
+                        resolve(false);
+                    }
+                }, 100);
+            });
+        }
+        
+        // Делаем функцию глобально доступной
+        window.waitForTelegramManager = waitForTelegramManager;
     </script>
     
     <!-- app.js ПОСЛЕДНИМ -->

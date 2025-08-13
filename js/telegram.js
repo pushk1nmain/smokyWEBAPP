@@ -415,5 +415,19 @@ console.log('🔧 TelegramManager экспортирован:', {
   keys: Object.keys(window.TelegramManager)
 });
 
+// Дополнительная диагностика для Telegram WebApp контекста
+console.log('📡 Диагностика Telegram WebApp окружения:', {
+  hasTelegramObject: !!window.Telegram,
+  hasWebApp: !!window.Telegram?.WebApp,
+  hasInitData: !!(window.Telegram?.WebApp?.initData),
+  initDataLength: window.Telegram?.WebApp?.initData?.length || 0,
+  userAgent: navigator.userAgent.includes('Telegram') ? 'Telegram' : 'Другой',
+  isInFrame: window.parent !== window,
+  hasWebviewProxy: !!window.TelegramWebviewProxy
+});
+
+// Установка глобального флага готовности
+window.TelegramManagerLoaded = true;
+
 // Отключаем автоинициализацию - она будет управляться из app.js
 console.log('📡 TelegramManager готов к ручной инициализации из app.js');
