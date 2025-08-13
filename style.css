@@ -37,21 +37,22 @@
 /* Основной контейнер */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: linear-gradient(180deg, #C6FFDD 0%, #C6FFDD 40%, var(--tg-theme-bg-color) 60%);
+    background: #ffffff;
     color: var(--tg-theme-text-color);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow: hidden; /* Убираем прокрутку */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh;
+    height: 100vh; /* Фиксированная высота viewport */
 }
 
 .app-container {
-    min-height: 100vh;
+    height: 100vh; /* Фиксированная высота viewport */
     display: flex;
     flex-direction: column;
     position: relative;
     background: transparent;
+    overflow: hidden; /* Убираем прокрутку */
 }
 
 /* Главный экран */
@@ -63,14 +64,16 @@ body {
     max-width: 400px;
     margin: 0 auto;
     width: 100%;
+    overflow: hidden; /* Убираем прокрутку внутри секции */
+    justify-content: space-between; /* Равномерное распределение контента */
 }
 
 /* Секция персонажа */
 .character-section {
     flex: 0 0 auto;
     text-align: center;
-    margin-bottom: 30px;
-    margin-top: 20px;
+    margin-bottom: 20px; /* Уменьшаем отступ */
+    margin-top: 10px; /* Уменьшаем отступ */
 }
 
 .character-container {
@@ -92,20 +95,21 @@ body {
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    gap: 20px;
+    gap: 15px; /* Уменьшаем отступы между элементами */
+    min-height: 0; /* Предотвращаем переполнение */
 }
 
 .main-title {
     font-size: 28px;
     font-weight: 700;
-    color: var(--tg-theme-text-color);
+    color: #000000; /* Черный цвет заголовка */
     margin-bottom: 10px;
     line-height: 1.3;
 }
 
 .main-description {
     font-size: 18px;
-    color: var(--tg-theme-hint-color);
+    color: #606060; /* Серый цвет основного текста */
     line-height: 1.5;
     margin-bottom: 20px;
     max-width: 300px;
@@ -191,12 +195,13 @@ body {
 /* Информационная секция */
 .info-section {
     margin-top: auto;
-    padding-top: 20px;
+    padding-top: 10px; /* Уменьшаем отступ */
+    flex-shrink: 0; /* Предотвращаем сжатие */
 }
 
 .info-text {
     font-size: 14px;
-    color: var(--tg-theme-hint-color);
+    color: #606060; /* Серый цвет текста */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -240,7 +245,7 @@ body {
 }
 
 .loading-text {
-    color: var(--tg-theme-hint-color);
+    color: #606060; /* Серый цвет текста загрузки */
     font-size: 16px;
 }
 
