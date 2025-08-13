@@ -86,119 +86,50 @@ class SmokyApp {
   }
 
   /**
-   * Инициализация Telegram WebApp
+   * Инициализация Telegram WebApp согласно документации Telegram Mini Apps
    * @returns {Promise<void>}
    */
   async initializeTelegram() {
     console.log('🔄 Инициализация Telegram WebApp...');
     
-    // Дождемся полной загрузки Telegram WebApp API
-    let telegramCheckAttempts = 0;
-    const maxTelegramChecks = 20; // 2 секунды
-    
-    while (!window.Telegram?.WebApp && telegramCheckAttempts < maxTelegramChecks) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      telegramCheckAttempts++;
-      if (telegramCheckAttempts % 5 === 0) {
-        console.log(`   - Ожидание Telegram WebApp API... ${telegramCheckAttempts * 100}ms`);
-      }
-    }
-    
     // Проверяем наличие Telegram WebApp API
     const hasTelegramAPI = !!(window.Telegram?.WebApp);
     const initData = window.Telegram?.WebApp?.initData;
-    const hasValidInitData = initData && initData !== '' && initData !== 'test_data';
-    const isInTelegram = hasTelegramAPI && (
-      hasValidInitData ||
-      window.location.href.includes('telegram') || 
-      navigator.userAgent.includes('Telegram') || 
-      window.TelegramWebviewProxy || 
-      window.parent !== window
-    );
+    const hasValidInitData = initData && initData !== '';
+    
+    // Определяем рабочую среду
+    const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isInTelegram = hasTelegramAPI && hasValidInitData;
     
     console.log('   - Telegram API доступен:', hasTelegramAPI);
-    console.log('   - InitData:', initData ? `есть (${initData.length} символов)` : 'нет');
-    console.log('   - Валидный InitData:', hasValidInitData);
-    console.log('   - User Agent:', navigator.userAgent);
-    console.log('   - URL:', window.location.href);
+    console.log('   - InitData присутствует:', !!initData);
+    console.log('   - InitData валидные:', hasValidInitData);
+    console.log('   - Локальная разработка:', isLocalDev);
     console.log('   - Запущено в Telegram:', isInTelegram);
-    console.log('   - Режим разработки:', this.debug);
     
-    // Если это локальная разработка - в dev режим
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      console.warn('🔧 Переходим в режим разработки (localhost)');
+    // Если локальная разработка или нет Telegram API
+    if (isLocalDev || !hasTelegramAPI) {
+      console.warn('🔧 Переходим в режим разработки');
       await this.setupDevelopmentMode();
       return;
     }
     
-    // ТОЛЬКО в случае полного отсутствия Telegram API переходим в dev режим
-    if (!window.Telegram) {
-      console.warn('🔧 Объект Telegram отсутствует, переходим в режим разработки');
-      await this.setupDevelopmentMode();
-      return;
-    }
-    
-    // Если нет валидных данных Telegram, но есть API - попробуем подождать
-    if (!isInTelegram) {
-      console.warn('🔧 Нет валидных Telegram данных, но API доступен. Попытка ожидания...');
-      // Дополнительное ожидание для случаев, когда initData загружается асинхронно
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Перепроверяем после ожидания
-      const updatedInitData = window.Telegram?.WebApp?.initData;
-      const updatedHasValidInitData = updatedInitData && updatedInitData !== '' && updatedInitData !== 'test_data';
-      const updatedIsInTelegram = hasTelegramAPI && (
-        updatedHasValidInitData ||
-        window.location.href.includes('telegram') || 
-        navigator.userAgent.includes('Telegram') || 
-        window.TelegramWebviewProxy || 
-        window.parent !== window
-      );
-      
-      console.log('   - Повторная проверка после ожидания:');
-      console.log('   - Обновленный InitData:', updatedInitData ? `есть (${updatedInitData.length} символов)` : 'нет');
-      console.log('   - Обновленный isInTelegram:', updatedIsInTelegram);
-      
-      if (!updatedIsInTelegram) {
-        console.warn('🔧 После ожидания всё ещё нет валидных данных Telegram, переходим в режим разработки');
-        await this.setupDevelopmentMode();
-        return;
-      }
-      
-      // Обновляем переменные для дальнейшего использования
-      isInTelegram = updatedIsInTelegram;
-      hasValidInitData = updatedHasValidInitData;
-    }
-    
-    // Ожидание загрузки TelegramManager с использованием глобальной функции
-    console.log('   - Ожидание загрузки TelegramManager...');
-    
-    const telegramManagerAvailable = await window.waitForTelegramManager();
-    
-    if (!telegramManagerAvailable) {
-      console.error('❌ TelegramManager недоступен после ожидания');
-      
-      // В контексте Telegram WebApp показываем пользователю ошибку
-      if (hasTelegramAPI && isInTelegram) {
-        this.showTelegramManagerError();
-        return;
-      } else {
-        // В браузере переходим в режим разработки
-        console.log('⚠️ Переходим в режим разработки из-за недоступности TelegramManager');
-        await this.setupDevelopmentMode();
-        return;
-      }
-    }
-
     try {
-      console.log('   - TelegramManager найден, начинаем инициализацию...');
+      // Инициализируем TelegramManager
+      if (!window.TelegramManager) {
+        throw new Error('TelegramManager не загружен');
+      }
+      
+      console.log('   - Инициализируем TelegramManager...');
       const telegramInitialized = await window.TelegramManager.initialize();
       
       if (!telegramInitialized) {
-        console.warn('⚠️ Telegram WebApp не инициализирован, используем режим разработки');
-        await this.setupDevelopmentMode();
-        return;
+        throw new Error('TelegramManager не удалось инициализировать');
       }
+      
+      // Важно: вызываем ready() ТОЛЬКО после полной инициализации!
+      console.log('   - Вызываем Telegram.WebApp.ready()...');
+      window.Telegram.WebApp.ready();
       
       console.log('✅ Telegram WebApp инициализирован успешно');
     } catch (error) {
@@ -814,17 +745,5 @@ const app = new SmokyApp();
 // Экспорт для использования в других модулях
 window.SmokyApp = app;
 
-// Убираем автоматический запуск - он теперь контролируется из index.html
-// через систему SmokyAppLoader
-
-// Экспорт функции инициализации для ручного запуска
-window.SmokyApp.manualInitialize = async () => {
-  try {
-    console.log('🚀 Ручной запуск SmokyApp...');
-    await window.SmokyApp.initialize();
-    console.log('🚀 SmokyApp запущен успешно');
-  } catch (error) {
-    console.error('💥 Фатальная ошибка запуска приложения:', error);
-    console.error('💥 Stack trace:', error.stack);
-  }
-};
+// Приложение готово к использованию
+console.log('🚀 SmokyApp загружен и готов к инициализации');

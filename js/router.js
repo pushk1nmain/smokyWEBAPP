@@ -509,85 +509,41 @@ class ScreenRouter {
   }
 
   /**
-   * Инициализация роутера
+   * Инициализация роутера (упрощенная версия)
    * @returns {Promise<void>}
    */
   async initialize() {
     try {
       console.log('🔄 Инициализация роутера начата');
       
-      // Проверяем доступность зависимостей
-      console.log('   - Utils доступен:', !!window.Utils);
-      console.log('   - API доступен:', !!window.API);
-      console.log('   - API.initializeUser доступен:', typeof window.API?.initializeUser);
-      console.log('   - screen-container найден:', !!document.getElementById('screen-container'));
-      
-      // Получаем Telegram ID
-      const telegramId = Utils.getTelegramId();
-      console.log('   - Telegram ID получен:', telegramId);
-      
-      if (!telegramId) {
-        console.warn('⚠️ Telegram ID недоступен, запускаем с настройками по умолчанию');
-        await this.startWithDefaults();
-        return;
+      // Проверяем основные зависимости
+      if (!window.Utils) {
+        throw new Error('Utils не загружен');
       }
-
-      try {
-        // Инициализируем пользователя
-        console.log('   - Инициализируем пользователя...');
-        const initResult = await API.initializeUser(telegramId);
-        console.log('   - Результат инициализации:', initResult);
-        
-        this.userData = initResult;
-        this.currentStep = initResult.currentStep;
-
-        // Определяем стартовый экран
-        const startScreenName = this.getScreenNameByStep(this.currentStep);
-        console.log('   - Стартовый экран:', startScreenName, 'для шага', this.currentStep);
-        
-        // Обновляем прогресс-бар
-        Utils.updateProgressBar(this.currentStep, this.totalSteps);
-
-        // Переходим на стартовый экран
-        console.log('   - Переходим на стартовый экран:', startScreenName);
-        await this.navigateToScreen(startScreenName);
-        
-        console.log('✅ Инициализация роутера завершена успешно');
-      } catch (apiError) {
-        console.warn('⚠️ Ошибка API, запускаем с настройками по умолчанию:', apiError);
-        await this.startWithDefaults();
+      
+      if (!document.getElementById('screen-container')) {
+        throw new Error('Контейнер экранов не найден');
       }
-
+      
+      console.log('   - Основные зависимости проверены');
+      
+      // Начинаем с базовых настроек - всегда с welcome экрана
+      await this.startWithDefaults();
+      
+      console.log('✅ Инициализация роутера завершена успешно');
     } catch (error) {
       console.error('❌ Критическая ошибка инициализации роутера:', error);
-      await this.startWithDefaults();
+      this.showEmergencyUI();
     }
   }
 
   /**
-   * Запуск с настройками по умолчанию
+   * Запуск с настройками по умолчанию (упрощенная версия)
    * @returns {Promise<void>}
    */
   async startWithDefaults() {
     try {
-      console.log('🔄 Запуск роутера с настройками по умолчанию');
-      
-      // Проверяем наличие контейнера экранов
-      const screenContainer = document.getElementById('screen-container');
-      console.log('   - screen-container найден:', !!screenContainer);
-      
-      if (!screenContainer) {
-        console.error('❌ Контейнер экранов не найден!');
-        this.showEmergencyUI();
-        return;
-      }
-      
-      // Проверяем доступность Utils
-      if (!window.Utils) {
-        console.error('❌ Utils недоступен!');
-        this.showEmergencyUI();
-        return;
-      }
+      console.log('🔄 Запуск роутера с базовыми настройками');
       
       // Устанавливаем базовые данные
       this.currentStep = 0;
@@ -597,25 +553,18 @@ class ScreenRouter {
         user: null
       };
       
-      console.log('   - Устанавливаем базовые данные:', this.userData);
-      
       // Обновляем прогресс-бар
-      try {
+      if (window.Utils?.updateProgressBar) {
         Utils.updateProgressBar(this.currentStep, this.totalSteps);
-        console.log('   - Прогресс-бар обновлен');
-      } catch (progressError) {
-        console.warn('⚠️ Ошибка обновления прогресс-бара:', progressError);
       }
       
-      // Переходим на экран приветствия
-      console.log('🔄 Переходим на экран приветствия (fallback)');
+      // Просто переходим на welcome экран
+      console.log('🔄 Переходим на экран welcome');
       await this.navigateToScreen('welcome');
       
-      console.log('✅ Роутер запущен с настройками по умолчанию');
+      console.log('✅ Роутер запущен');
     } catch (error) {
-      console.error('❌ Критическая ошибка fallback инициализации:', error);
-      console.error('   Stack trace:', error.stack);
-      // Показываем минимальный UI с кнопкой перезагрузки
+      console.error('❌ Ошибка запуска с базовыми настройками:', error);
       this.showEmergencyUI();
     }
   }
@@ -679,31 +628,27 @@ class ScreenRouter {
   }
 
   /**
-   * Переход на указанный экран
+   * Переход на указанный экран (упрощенная версия)
    * @param {string} screenName Имя экрана
    * @returns {Promise<void>}
    */
   async navigateToScreen(screenName) {
     try {
-      console.log(`🔄 Навигация на экран: ${screenName}`);
+      console.log(`🔄 Переход на экран: ${screenName}`);
       
-      // Проверяем доступность Utils
-      if (window.Utils && typeof window.Utils.toggleLoading === 'function') {
+      // Показываем загрузку
+      if (window.Utils?.toggleLoading) {
         Utils.toggleLoading(true, 'Загрузка экрана...');
-      } else {
-        console.warn('⚠️ Utils.toggleLoading недоступен');
       }
 
-      // Проверяем контейнер экранов
+      // Получаем контейнер экранов
       const screenContainer = document.getElementById('screen-container');
       if (!screenContainer) {
         throw new Error('Контейнер экранов не найден');
       }
-      console.log('   - Контейнер экранов найден:', screenContainer);
 
-      // Очистка текущего экрана
-      if (this.currentScreen) {
-        console.log('   - Очищаем текущий экран:', this.currentScreen.name);
+      // Очищаем текущий экран
+      if (this.currentScreen?.cleanup) {
         try {
           this.currentScreen.cleanup();
         } catch (cleanupError) {
@@ -711,59 +656,37 @@ class ScreenRouter {
         }
       }
 
-      // Получение или создание экрана
+      // Получаем или создаем экран
       let screen = this.screens.get(screenName);
       if (!screen) {
-        console.log('   - Создаем новый экран:', screenName);
-        const config = this.screenConfig.find(s => s.name === screenName);
-        console.log('   - Конфигурация экрана:', config);
-        
-        if (!window.BaseScreen) {
-          throw new Error('BaseScreen класс недоступен');
-        }
-        
+        const config = this.screenConfig.find(s => s.name === screenName) || { name: screenName, title: screenName };
         screen = new BaseScreen(screenName, config);
         this.registerScreen(screen);
-        console.log('   - Экран создан и зарегистрирован');
-      } else {
-        console.log('   - Используем существующий экран:', screenName);
+        console.log('   - Новый экран создан:', screenName);
       }
 
-      // Показ экрана
-      console.log('   - Показываем экран...');
+      // Показываем экран
       await screen.show();
-      console.log('   - Экран показан успешно');
       
-      // Обновление состояния
+      // Обновляем состояние
       this.currentScreen = screen;
-      this.history.push(screenName);
-      console.log('   - Состояние роутера обновлено');
-
-      // Обновление прогресс-бара
-      const stepIndex = this.screenConfig.findIndex(s => s.name === screenName);
-      if (stepIndex !== -1 && window.Utils && typeof window.Utils.updateProgressBar === 'function') {
-        try {
-          Utils.updateProgressBar(stepIndex, this.totalSteps);
-          console.log('   - Прогресс-бар обновлен:', stepIndex);
-        } catch (progressError) {
-          console.warn('⚠️ Ошибка обновления прогресс-бара:', progressError);
-        }
+      if (!this.history.includes(screenName)) {
+        this.history.push(screenName);
       }
 
-      console.log(`✅ Навигация на экран ${screenName} завершена успешно`);
+      // Обновляем прогресс-бар
+      const stepIndex = this.screenConfig.findIndex(s => s.name === screenName);
+      if (stepIndex !== -1 && window.Utils?.updateProgressBar) {
+        Utils.updateProgressBar(stepIndex, this.totalSteps);
+      }
+
+      console.log(`✅ Экран ${screenName} загружен успешно`);
 
     } catch (error) {
-      console.error(`❌ Ошибка навигации на экран ${screenName}:`, error);
-      console.error('   Stack trace:', error.stack);
-      
-      if (window.Utils && typeof window.Utils.showNotification === 'function') {
-        Utils.showNotification('Ошибка загрузки экрана', 'error');
-      }
-      
-      // Пытаемся показать аварийный UI
+      console.error(`❌ Ошибка загрузки экрана ${screenName}:`, error);
       this.showEmergencyUI();
     } finally {
-      if (window.Utils && typeof window.Utils.toggleLoading === 'function') {
+      if (window.Utils?.toggleLoading) {
         Utils.toggleLoading(false);
       }
     }

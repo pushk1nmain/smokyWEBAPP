@@ -63,38 +63,39 @@ class TelegramManager {
   }
 
   /**
-   * Настройка внешнего вида приложения
+   * Настройка внешнего вида приложения согласно Telegram Mini Apps документации
    */
   setupAppearance() {
     if (!this.webApp) return;
 
-    // Отключаем стандартное контекстное меню (только если метод доступен)
+    // Отключаем вертикальные свайпы (если поддерживается)
     if (typeof this.webApp.disableVerticalSwipes === 'function') {
       try {
         this.webApp.disableVerticalSwipes();
       } catch (error) {
         console.warn('Не удалось отключить вертикальные свайпы:', error);
       }
-    } else {
-      console.warn('Метод disableVerticalSwipes недоступен в данной версии Telegram WebApp');
     }
     
-    // Настраиваем цвета заголовка
-    if (typeof this.webApp.setHeaderColor === 'function') {
-      try {
-        this.webApp.setHeaderColor('#FAFAFA'); // Цвет фона
-      } catch (error) {
-        console.warn('Не удалось установить цвет заголовка:', error);
+    // Используем современный способ настройки цветов (свойства, а не методы)
+    try {
+      // Устанавливаем цвет заголовка через свойство
+      if ('headerColor' in this.webApp) {
+        this.webApp.headerColor = '#FAFAFA';
+      } else if (typeof this.webApp.setHeaderColor === 'function') {
+        // Fallback для старых версий
+        this.webApp.setHeaderColor('#FAFAFA');
       }
-    }
-    
-    // Настраиваем цвет фона
-    if (typeof this.webApp.setBackgroundColor === 'function') {
-      try {
+      
+      // Устанавливаем цвет фона через свойство
+      if ('backgroundColor' in this.webApp) {
+        this.webApp.backgroundColor = '#FAFAFA';
+      } else if (typeof this.webApp.setBackgroundColor === 'function') {
+        // Fallback для старых версий
         this.webApp.setBackgroundColor('#FAFAFA');
-      } catch (error) {
-        console.warn('Не удалось установить цвет фона:', error);
       }
+    } catch (error) {
+      console.warn('Не удалось установить цвета приложения:', error);
     }
 
     // Скрываем кнопки по умолчанию
@@ -429,21 +430,5 @@ console.log('📡 Диагностика Telegram WebApp окружения:', {
 // Установка глобального флага готовности
 window.TelegramManagerLoaded = true;
 
-// Отключаем автоинициализацию - она будет управляться из app.js
-console.log('📡 TelegramManager готов к ручной инициализации из app.js');
-
-// Дополнительная проверка и диагностика для системы ожидания
-setTimeout(() => {
-  const telegramManagerOk = !!(window.TelegramManager && window.TelegramManagerLoaded);
-  console.log(`📡 Финальная проверка TelegramManager: ${telegramManagerOk ? '✅ готов' : '❌ проблема'}`);
-  
-  if (!telegramManagerOk) {
-    console.error('🔴 КРИТИЧЕСКАЯ ОШИБКА: TelegramManager не готов после загрузки telegram.js');
-    console.error('   Состояние:', {
-      hasTelegramManager: !!window.TelegramManager,
-      hasTelegramManagerLoaded: !!window.TelegramManagerLoaded,
-      telegramManagerType: typeof window.TelegramManager,
-      telegramManagerKeys: window.TelegramManager ? Object.keys(window.TelegramManager).slice(0, 10) : 'none'
-    });
-  }
-}, 50); // Небольшая задержка для проверки
+// TelegramManager готов
+console.log('📡 TelegramManager загружен и готов к использованию');

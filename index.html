@@ -39,121 +39,60 @@
         <div id="notification-container" class="notification-container"></div>
     </div>
 
-    <!-- Telegram готовность и система ожидания скриптов -->
+    <!-- Core Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/telegram.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Telegram WebApp инициализация -->
     <script>
-        // Система контроля загрузки скриптов
-        window.SmokyAppLoader = {
-            scriptsLoaded: {
-                utils: false,
-                api: false,
-                telegram: false,
-                router: false
-            },
+        // Простая инициализация после загрузки всех скриптов
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 DOM загружен, запуск приложения...');
             
-            // Отметка о загрузке скрипта
-            markScriptLoaded(scriptName) {
-                this.scriptsLoaded[scriptName] = true;
-                console.log(`📜 Скрипт ${scriptName}.js загружен`);
-                this.checkAllScriptsLoaded();
-            },
+            // Показываем загрузку
+            if (window.Utils?.toggleLoading) {
+                Utils.toggleLoading(true, 'Инициализация...');
+            }
             
-            // Проверка загрузки всех скриптов
-            checkAllScriptsLoaded() {
-                const allLoaded = Object.values(this.scriptsLoaded).every(loaded => loaded);
-                if (allLoaded) {
-                    console.log('📜 Все скрипты загружены, запуск приложения...');
-                    this.startApp();
+            try {
+                // Проверяем доступность всех компонентов
+                if (!window.SmokyApp) {
+                    throw new Error('SmokyApp не загружен');
                 }
-            },
-            
-            // Запуск приложения после загрузки всех скриптов
-            async startApp() {
-                try {
-                    if (window.SmokyApp?.manualInitialize) {
-                        await window.SmokyApp.manualInitialize();
-                    } else if (window.SmokyApp?.initialize) {
-                        console.log('🚀 Запуск SmokyApp (старый способ)...');
-                        await window.SmokyApp.initialize();
-                        console.log('🚀 SmokyApp запущен успешно');
-                    } else {
-                        console.error('💥 SmokyApp не найден после загрузки скриптов');
-                        console.error('   Доступные методы SmokyApp:', Object.keys(window.SmokyApp || {}));
-                    }
-                } catch (error) {
-                    console.error('💥 Фатальная ошибка запуска приложения:', error);
-                    console.error('💥 Stack trace:', error.stack);
+                
+                // НЕ вызываем Telegram.WebApp.ready() здесь!
+                // Это будет сделано в SmokyApp после полной инициализации
+                
+                // Запускаем приложение
+                await window.SmokyApp.initialize();
+                
+                console.log('✅ Приложение запущено успешно');
+            } catch (error) {
+                console.error('💥 Ошибка запуска приложения:', error);
+                
+                // Показываем экстренное сообщение
+                const container = document.getElementById('screen-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="padding: 2rem; text-align: center;">
+                            <h1 style="color: #f44336; margin-bottom: 1rem;">Ошибка загрузки</h1>
+                            <p style="margin-bottom: 1rem;">Не удалось запустить приложение.</p>
+                            <button onclick="location.reload()" 
+                                style="background: #2196f3; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer;">
+                                Перезагрузить
+                            </button>
+                        </div>
+                    `;
+                }
+            } finally {
+                if (window.Utils?.toggleLoading) {
+                    Utils.toggleLoading(false);
                 }
             }
-        };
-        
-        // Обработка готовности Telegram WebApp
-        if (window.Telegram?.WebApp) {
-            console.log('🔄 Telegram WebApp готов к инициализации');
-            window.Telegram.WebApp.ready();
-        } else {
-            console.warn('⚠️ Telegram WebApp API недоступен при загрузке страницы');
-        }
-        
-        // Улучшенная система ожидания TelegramManager
-        function waitForTelegramManager() {
-            return new Promise((resolve) => {
-                // Проверяем и объект, и флаг загрузки
-                if (window.TelegramManager && window.TelegramManagerLoaded) {
-                    console.log('✅ TelegramManager доступен сразу');
-                    resolve(true);
-                    return;
-                }
-                
-                console.log('⏳ Ожидание загрузки TelegramManager...');
-                let attempts = 0;
-                const maxAttempts = 100; // 10 секунд (увеличено время ожидания)
-                
-                const checkInterval = setInterval(() => {
-                    attempts++;
-                    
-                    // Проверяем каждые 10 попыток для диагностики
-                    if (attempts % 10 === 0) {
-                        console.log(`   Попытка ${attempts}: TelegramManager=${!!window.TelegramManager}, флаг=${!!window.TelegramManagerLoaded}`);
-                        
-                        // Дополнительная диагностика каждые 30 попыток
-                        if (attempts % 30 === 0) {
-                            console.log('   Дополнительная диагностика:', {
-                                telegramScriptLoaded: window.SmokyAppLoader?.scriptsLoaded?.telegram,
-                                documentReady: document.readyState,
-                                windowKeys: Object.keys(window).filter(k => k.includes('Telegram')),
-                                hasWindow: !!window
-                            });
-                        }
-                    }
-                    
-                    if (window.TelegramManager && window.TelegramManagerLoaded) {
-                        console.log(`✅ TelegramManager загружен через ${attempts * 100}ms`);
-                        clearInterval(checkInterval);
-                        resolve(true);
-                    } else if (attempts >= maxAttempts) {
-                        console.error('❌ TelegramManager недоступен после 10 секунд ожидания');
-                        console.error('   Финальная диагностика:', {
-                            hasTelegramManager: !!window.TelegramManager,
-                            hasTelegramManagerLoaded: !!window.TelegramManagerLoaded,
-                            scriptsLoadedState: window.SmokyAppLoader?.scriptsLoaded,
-                            hasWindow: !!window,
-                            documentReady: document.readyState
-                        });
-                        clearInterval(checkInterval);
-                        resolve(false);
-                    }
-                }, 100);
-            });
-        }
-        
-        // Делаем функцию глобально доступной
-        window.waitForTelegramManager = waitForTelegramManager;
+        });
     </script>
-    
-    <!-- Core Scripts с контролем загрузки -->
-    <script src="js/utils.js" onload="window.SmokyAppLoader.markScriptLoaded('utils')" onerror="console.error('❌ Ошибка загрузки utils.js')"></script>
-    <script src="js/api.js" onload="window.SmokyAppLoader.markScriptLoaded('api')" onerror="console.error('❌ Ошибка загрузки api.js')"></script>
-    <script src="js/telegram.js" onload="window.SmokyAppLoader.markScriptLoaded('telegram')" onerror="console.error('❌ Ошибка загрузки telegram.js')"></script>
-    <script src="js/router.js" onload="window.SmokyAppLoader.markScriptLoaded('router')" onerror="console.error('❌ Ошибка загрузки router.js')"></script>
 </body>
 </html>
