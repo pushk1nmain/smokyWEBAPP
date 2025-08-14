@@ -10,11 +10,11 @@ APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Определяем какой docker-compose файл использовать
 if [ -f "$APP_DIR/docker-compose-proxy.yml" ] && docker network ls | grep -q nginx-proxy; then
-    DOCKER_COMPOSE_FILE="$APP_DIR/config/docker/docker-compose-proxy.yml"
+    DOCKER_COMPOSE_FILE="$APP_DIR/_config/docker/docker-compose-proxy.yml"
     PROXY_MODE=true
     echo "🔗 Обнаружен режим проксирования"
 else
-    DOCKER_COMPOSE_FILE="$APP_DIR/config/docker/docker-compose.yml" 
+    DOCKER_COMPOSE_FILE="$APP_DIR/_config/docker/docker-compose.yml" 
     PROXY_MODE=false
 fi
 
@@ -24,12 +24,12 @@ echo "📄 Скрипт запущен из: $SCRIPT_DIR"
 cd $APP_DIR
 
 # Проверяем необходимые файлы
-if [ ! -f "config/.env" ]; then
+if [ ! -f "_config/.env" ]; then
     echo "❌ Файл .env не найден. Создайте его из .env.example"
     exit 1
 fi
 
-if [ ! -f "config/docker/docker-compose.yml" ]; then
+if [ ! -f "_config/docker/docker-compose.yml" ]; then
     echo "❌ Файл docker-compose.yml не найден"
     exit 1
 fi

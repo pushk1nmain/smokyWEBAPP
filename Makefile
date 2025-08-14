@@ -4,7 +4,7 @@
 .PHONY: help install build start stop restart logs status clean update deploy backup restore test lint
 
 # Переменные
-COMPOSE_FILE := config/docker/docker-compose.yml
+COMPOSE_FILE := _config/docker/docker-compose.yml
 PROJECT_NAME := smokyapp
 BACKUP_DIR := ./backups
 LOG_DIR := ./logs
@@ -32,9 +32,9 @@ help: ## Показать справку по командам
 
 install: ## Первоначальная установка и настройка
 	@echo "$(BLUE)🚀 Установка SmokyApp...$(NC)"
-	@if [ ! -f config/.env ]; then \
+	@if [ ! -f _config/.env ]; then \
 			echo "$(YELLOW)Создание .env файла из примера...$(NC)"; \
-			cp config/.env.example config/.env; \
+			cp _config/.env.example _config/.env; \
 			echo "$(RED)⚠️  Настройте .env файл перед запуском!$(NC)"; \
 	fi
 	@mkdir -p $(BACKUP_DIR) $(LOG_DIR)
@@ -54,9 +54,9 @@ start: ## Запуск приложения
 
 start-proxy: ## Запуск приложения для работы с внешним nginx
 	@echo "$(BLUE)▶️  Запуск SmokyApp (proxy режим)...$(NC)"
-	@docker-compose -f config/docker/docker-compose-proxy.yml up -d
+	@docker-compose -f _config/docker/docker-compose-proxy.yml up -d
 	@echo "$(GREEN)✅ Приложение запущено в proxy режиме$(NC)"
-	@docker-compose -f docker-compose-proxy.yml ps
+	@docker-compose -f _config/docker/docker-compose-proxy.yml ps
 
 stop: ## Остановка приложения
 	@echo "$(BLUE)⏹️  Остановка SmokyApp...$(NC)"
@@ -74,12 +74,15 @@ logs: ## Просмотр логов приложения
 	@docker-compose -f $(COMPOSE_FILE) logs -f --tail=50
 
 logs-app: ## Просмотр логов основного приложения
+	@echo "$(BLUE)📋 Логи основного приложения:$(NC)"
 	@docker-compose -f $(COMPOSE_FILE) logs -f smokyapp
 
 logs-updater: ## Просмотр логов службы обновлений
+	@echo "$(BLUE)📋 Логи службы обновлений:$(NC)"
 	@docker-compose -f $(COMPOSE_FILE) logs -f updater
 
 logs-nginx: ## Просмотр логов nginx
+	@echo "$(BLUE)📋 Логи nginx:$(NC)"
 	@docker exec smokyapp-web tail -f /var/log/nginx/access.log
 
 status: ## Показать статус контейнеров и приложения
@@ -89,10 +92,10 @@ status: ## Показать статус контейнеров и прилож�
 	@docker-compose -f $(COMPOSE_FILE) ps
 	@echo ""
 	@echo "$(YELLOW)Использование ресурсов:$(NC)"
-	@docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}"
+	@docker stats --no-stream --format \"table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\" 
 	@echo ""
 	@echo "$(YELLOW)Проверка здоровья:$(NC)"
-	@curl -s -o /dev/null -w "HTTP Status: %{http_code} | Response Time: %{time_total}s\n" http://localhost/health || echo "$(RED)❌ Приложение недоступно$(NC)"
+	@curl -s -o /dev/null -w \"HTTP Status: %{http_code} | Response Time: %{time_total}s\n\" http://localhost/health || echo \"$(RED)❌ Приложение недоступно$(NC)\"
 
 clean: ## Очистка неиспользуемых ресурсов Docker
 	@echo "$(BLUE)🧹 Очистка Docker ресурсов...$(NC)"
@@ -124,7 +127,7 @@ deploy: ## Автоматическое развертывание
 backup: ## Создание резервной копии
 	@echo "$(BLUE)💾 Создание резервной копии...$(NC)"
 	@mkdir -p $(BACKUP_DIR)
-	@BACKUP_NAME="backup_$(shell date +%Y%m%d_%H%M%S)"; \
+	@BACKUP_NAME=\"backup_$(shell date +%Y%m%d_%H%M%S)\"; \
 	tar -czf $(BACKUP_DIR)/$$BACKUP_NAME.tar.gz \
 		--exclude='logs/*' \
 		--exclude='backups/*' \
@@ -161,7 +164,7 @@ lint: ## Проверка качества кода
 	@# Проверка docker-compose.yml
 	@docker-compose -f $(COMPOSE_FILE) config >/dev/null && echo "$(GREEN)✅ docker-compose.yml валиден$(NC)" || echo "$(RED)❌ Ошибка в docker-compose.yml$(NC)"
 	@# Проверка скриптов bash
-	@command -v shellcheck >/dev/null 2>&1 && find scripts -name "*.sh" -exec shellcheck {} \; || echo "$(YELLOW)⚠️  shellcheck не установлен$(NC)"
+	@command -v shellcheck >/dev/null 2>&1 && find scripts -name \"*.sh\" -exec shellcheck {} \; || echo "$(YELLOW)⚠️  shellcheck не установлен$(NC)"
 
 watch-start: ## Запуск мониторинга обновлений
 	@echo "$(BLUE)👁️  Запуск мониторинга обновлений...$(NC)"
@@ -175,6 +178,7 @@ watch-status: ## Статус мониторинга обновлений
 	@./scripts/watch.sh status
 
 watch-logs: ## Логи мониторинга обновлений
+	@echo "$(BLUE)📋 Логи мониторинга обновлений:$(NC)"
 	@./scripts/watch.sh logs
 
 shell: ## Подключение к контейнеру приложения
@@ -189,9 +193,9 @@ ps: ## Показать запущенные процессы в контейн�
 
 env-check: ## Проверка переменных окружения
 	@echo "$(BLUE)🔧 Проверка переменных окружения:$(NC)"
-	@if [ -f config/.env ]; then \
+	@if [ -f _config/.env ]; then \
 		echo "$(GREEN)✅ .env файл найден$(NC)"; \
-		grep -v '^#' config/.env | grep -v '^$' | head -10; \
+		grep -v '^#' _config/.env | grep -v '^$$' | head -10; \
 	else \
 		echo "$(RED)❌ .env файл не найден$(NC)"; \
 		echo "$(YELLOW)Выполните: make install$(NC)"; \
@@ -199,7 +203,7 @@ env-check: ## Проверка переменных окружения
 
 ports: ## Показать используемые порты
 	@echo "$(BLUE)🔌 Используемые порты:$(NC)"
-	@docker-compose -f $(COMPOSE_FILE) ps --format "table {{.Service}}\t{{.Ports}}"
+	@docker-compose -f $(COMPOSE_FILE) ps --format \"table {{.Service}}\t{{.Ports}}\" 
 
 size: ## Показать размер образов Docker
 	@echo "$(BLUE)📏 Размер Docker образов:$(NC)"
@@ -213,10 +217,10 @@ health: ## Детальная проверка здоровья системы
 	@echo "$(BLUE)🏥 Проверка здоровья системы:$(NC)"
 	@echo ""
 	@echo "$(YELLOW)Доступность приложения:$(NC)"
-	@curl -s -w "Status: %{http_code} | Time: %{time_total}s | Size: %{size_download} bytes\n" http://localhost/ -o /dev/null
+	@curl -s -w \"Status: %{http_code} | Time: %{time_total}s | Size: %{size_download} bytes\n\" http://localhost/ -o /dev/null
 	@echo ""
 	@echo "$(YELLOW)Проверка endpoint'ов:$(NC)"
-	@curl -s -w "Health: %{http_code}\n" http://localhost/health -o /dev/null
+	@curl -s -w \"Health: %{http_code}\n\" http://localhost/health -o /dev/null
 	@echo ""
 	@echo "$(YELLOW)Использование диска:$(NC)"
 	@df -h . | tail -1
@@ -242,8 +246,8 @@ setup-proxy: ## Полная настройка с внешним nginx и SSL
 	@echo "$(YELLOW)make start-proxy$(NC)"
 
 proxy-logs: ## Логи в режиме прокси
-	@docker-compose -f config/docker/docker-compose-proxy.yml logs -f
+	@docker-compose -f _config/docker/docker-compose-proxy.yml logs -f
 
 proxy-status: ## Статус в режиме прокси
-	@docker-compose -f config/docker/docker-compose-proxy.yml ps
-	@docker network inspect nginx-proxy --format '{{range .Containers}}{{.Name}}: {{.IPv4Address}}{{"\n"}}{{end}}'
+	@docker-compose -f _config/docker/docker-compose-proxy.yml ps
+	@docker network inspect nginx-proxy --format '{{range .Containers}}{{.Name}}: {{.IPv4Address}}{"\n"}}{{end}}'

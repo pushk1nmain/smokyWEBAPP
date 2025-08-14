@@ -37,7 +37,7 @@ COPY src/ /usr/share/nginx/html/src/
 
 # Копируем конфигурацию nginx
 RUN rm /etc/nginx/conf.d/default.conf
-COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY _config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Копируем скрипты (опционально)
 COPY scripts/ /app/scripts/
