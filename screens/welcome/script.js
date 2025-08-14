@@ -85,27 +85,51 @@
      * Настройка приложения для работы в Telegram
      */
     const setupTelegramWebApp = async () => {
-        console.log('🔧 Настройка для Telegram...');
-        tg.ready();
-        if (config.telegram.autoExpand) {
-            tg.expand();
-        }
-        if (config.telegram.applyTheme) {
-            applyTelegramTheme();
-        }
-        setupTelegramButtons();
+        try {
+            console.log('🔧 Настройка для Telegram...');
+            tg.ready();
+            if (config.telegram.autoExpand) {
+                tg.expand();
+            }
+            if (config.telegram.applyTheme) {
+                applyTelegramTheme();
+            }
+            setupTelegramButtons();
 
-        console.log('👤 Получение данных пользователя Telegram...');
-        const user = tg.initDataUnsafe.user;
+            console.log('👤 Обработка данных пользователя Telegram...');
+            
+            // Добавляем детальное логирование всего объекта initDataUnsafe
+            console.log('🔍 Полные данные от Telegram (initDataUnsafe):', tg.initDataUnsafe);
 
-        if (user) {
-            console.log(`👤 Пользователь получен: ${user.first_name} (ID: ${user.id})`);
-            showLoadingWithText('Проверяем ваш профиль...');
-            const apiResult = await checkUserInAPI(user.id);
-            await personalizeGreeting(user, apiResult);
-        } else {
-            console.warn('⚠️ Не удалось получить данные пользователя из Telegram.');
-            await personalizeGreeting(null, { found: false });
+            const user = tg.initDataUnsafe.user;
+
+            if (user && typeof user === 'object') {
+                // Логируем полученный объект пользователя
+                console.log('✅ Объект пользователя получен:', user);
+
+                // Проверяем наличие ID
+                if (!user.id) {
+                    throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
+                }
+                
+                console.log(`👤 ID пользователя: ${user.id}. Начинаем проверку в API...`);
+                showLoadingWithText('Проверяем ваш профиль...');
+                const apiResult = await checkUserInAPI(user.id);
+                
+                console.log('🎨 Персонализация интерфейса...');
+                await personalizeGreeting(user, apiResult);
+
+            } else {
+                // Эта ситуация не должна происходить, но добавим обработку
+                console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: `tg.initDataUnsafe.user` имеет неверный формат или отсутствует.');
+                throw new Error('Не удалось получить корректные данные пользователя от Telegram.');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка на этапе обработки данных пользователя:', error);
+            // Показываем ошибку на экране, чтобы пользователь мог ее сообщить
+            showCriticalError('Ошибка обработки данных', `Произошла ошибка при обработке вашего профиля Telegram. Пожалуйста, сообщите об этом разработчику. Детали: ${error.message}`);
+            // Также отправляем ошибку в глобальный обработчик
+            handleError(error, 'setupTelegramWebApp');
         }
     };
     
