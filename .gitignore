@@ -5,6 +5,7 @@
 .cursorignore
 .cursor/
 .API_ENDPOINTS.md
+.dockercompose.yml
 
 # Configuration files with sensitive data
 config.js
