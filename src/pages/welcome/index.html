@@ -90,7 +90,7 @@
         </div>
         
         <!-- Консоль разработчика сверху -->
-        <div class="dev-console" id="devConsole">
+        <div class="dev-console dev-console-hidden" id="devConsole">
             <div class="dev-console-header">
                 <div class="dev-console-title">
                     <span class="dev-console-icon">🔧</span>
@@ -98,6 +98,9 @@
                     <span class="dev-console-count" id="logCount">0</span>
                 </div>
                 <div class="dev-console-controls">
+                    <button class="dev-console-btn" id="toggleDevConsole" title="Переключить консоль">
+                        🔧
+                    </button>
                     <button class="dev-console-btn" id="clearLogs" title="Очистить логи">
                         🗑️
                     </button>

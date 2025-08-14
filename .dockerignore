@@ -6,6 +6,7 @@
 .gitignore
 .gitattributes
 .gitmodules
+GEMINI.md
 
 # Документация и метаданные
 README.md

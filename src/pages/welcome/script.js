@@ -482,6 +482,13 @@ const handleError = (error, context = 'Unknown') => {
             filterToggleBtn.addEventListener('click', () => this.toggleFilters());
         }
         
+        const toggleBtn = document.getElementById('toggleDevConsole');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                this.consoleElement.classList.toggle('dev-console-hidden');
+            });
+        }
+        
         const filterBtns = document.querySelectorAll('.filter-btn');
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
