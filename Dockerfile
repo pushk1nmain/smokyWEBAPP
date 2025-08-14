@@ -80,5 +80,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Используем официальный entrypoint nginx для корректной работы
 STOPSIGNAL SIGQUIT
 
-# Точка входа с максимальной диагностикой
-CMD /bin/sh -c "echo '[DEBUG] Docker CMD started.' && if [ -z \"$API_KEY\" ]; then echo '[FATAL] API_KEY is not set. Exiting.'; exit 1; fi && echo \"[DEBUG] API_KEY value is: [$API_KEY]\" && echo '[DEBUG] Running envsubst.' && envsubst '\\$API_KEY' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && echo '[DEBUG] envsubst finished. Generated nginx.conf:' && cat /etc/nginx/nginx.conf && echo '[DEBUG] Starting nginx.' && nginx -g 'daemon off;' "
+# Точка входа: экспортируем переменную, проверяем и запускаем nginx
+CMD /bin/sh -c "export API_KEY && if [ -z \"$API_KEY\" ]; then echo 'FATAL: API_KEY is not set'; exit 1; fi && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
