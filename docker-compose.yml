@@ -3,8 +3,8 @@
 services:
   smokyapp:
     build:
-      context: ..
-      dockerfile: _config/docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
       target: production
       args:
         BUILDKIT_INLINE_CACHE: 1
