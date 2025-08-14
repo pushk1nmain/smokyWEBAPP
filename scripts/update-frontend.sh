@@ -10,11 +10,11 @@ APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Определяем какой docker-compose файл использовать
 if [ -f "$APP_DIR/docker-compose-proxy.yml" ] && docker network ls | grep -q nginx-proxy; then
-    DOCKER_COMPOSE_FILE="$APP_DIR/_config/docker/docker-compose-proxy.yml"
+    DOCKER_COMPOSE_FILE="$APP_DIR/docker-compose-proxy.yml"
     PROXY_MODE=true
     echo "🔗 Обнаружен режим проксирования"
 else
-    DOCKER_COMPOSE_FILE="$APP_DIR/_config/docker/docker-compose.yml" 
+    DOCKER_COMPOSE_FILE="$APP_DIR/docker-compose.yml" 
     PROXY_MODE=false
 fi
 
