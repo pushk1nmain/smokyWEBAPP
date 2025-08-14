@@ -334,7 +334,7 @@ const handleStartClick = () => {
     if (tg?.HapticFeedback) {
         tg.HapticFeedback.impactOccurred('medium');
     }
-    showNotification('Добро пожаловать в SmokyApp! 🎉');
+    
     setTimeout(navigateToNextScreen, 1500);
 };
 
