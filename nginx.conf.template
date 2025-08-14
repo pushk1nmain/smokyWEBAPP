@@ -97,7 +97,7 @@ http {
             # Безопасное добавление API ключа на сервере
             # Клиентский заголовок Authorization очищается для безопасности
             proxy_set_header Authorization ''; 
-            proxy_set_header X-API-Key '$API_KEY';
+            proxy_set_header X-API-Key $API_KEY;
 
             # CORS заголовки для Telegram WebApp
             add_header Access-Control-Allow-Origin "*" always;
