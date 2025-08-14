@@ -4,7 +4,7 @@
 .PHONY: help install build start stop restart logs status clean update deploy backup restore test lint
 
 # Переменные
-COMPOSE_FILE := docker-compose.yml
+COMPOSE_FILE := config/docker/docker-compose.yml
 PROJECT_NAME := smokyapp
 BACKUP_DIR := ./backups
 LOG_DIR := ./logs
@@ -32,10 +32,10 @@ help: ## Показать справку по командам
 
 install: ## Первоначальная установка и настройка
 	@echo "$(BLUE)🚀 Установка SmokyApp...$(NC)"
-	@if [ ! -f .env ]; then \
-		echo "$(YELLOW)Создание .env файла из примера...$(NC)"; \
-		cp .env.example .env; \
-		echo "$(RED)⚠️  Настройте .env файл перед запуском!$(NC)"; \
+	@if [ ! -f config/.env ]; then \
+			echo "$(YELLOW)Создание .env файла из примера...$(NC)"; \
+			cp config/.env.example config/.env; \
+			echo "$(RED)⚠️  Настройте .env файл перед запуском!$(NC)"; \
 	fi
 	@mkdir -p $(BACKUP_DIR) $(LOG_DIR)
 	@chmod +x scripts/*.sh
@@ -54,7 +54,7 @@ start: ## Запуск приложения
 
 start-proxy: ## Запуск приложения для работы с внешним nginx
 	@echo "$(BLUE)▶️  Запуск SmokyApp (proxy режим)...$(NC)"
-	@docker-compose -f docker-compose-proxy.yml up -d
+	@docker-compose -f config/docker/docker-compose-proxy.yml up -d
 	@echo "$(GREEN)✅ Приложение запущено в proxy режиме$(NC)"
 	@docker-compose -f docker-compose-proxy.yml ps
 
@@ -189,9 +189,9 @@ ps: ## Показать запущенные процессы в контейн�
 
 env-check: ## Проверка переменных окружения
 	@echo "$(BLUE)🔧 Проверка переменных окружения:$(NC)"
-	@if [ -f .env ]; then \
+	@if [ -f config/.env ]; then \
 		echo "$(GREEN)✅ .env файл найден$(NC)"; \
-		grep -v '^#' .env | grep -v '^$$' | head -10; \
+		grep -v '^#' config/.env | grep -v '^$' | head -10; \
 	else \
 		echo "$(RED)❌ .env файл не найден$(NC)"; \
 		echo "$(YELLOW)Выполните: make install$(NC)"; \
@@ -242,8 +242,8 @@ setup-proxy: ## Полная настройка с внешним nginx и SSL
 	@echo "$(YELLOW)make start-proxy$(NC)"
 
 proxy-logs: ## Логи в режиме прокси
-	@docker-compose -f docker-compose-proxy.yml logs -f
+	@docker-compose -f config/docker/docker-compose-proxy.yml logs -f
 
 proxy-status: ## Статус в режиме прокси
-	@docker-compose -f docker-compose-proxy.yml ps
+	@docker-compose -f config/docker/docker-compose-proxy.yml ps
 	@docker network inspect nginx-proxy --format '{{range .Containers}}{{.Name}}: {{.IPv4Address}}{{"\n"}}{{end}}'
