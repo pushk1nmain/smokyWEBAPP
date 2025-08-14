@@ -124,10 +124,10 @@
                 
                 console.log(`👤 ID пользователя: ${user.id}. Начинаем проверку в API...`);
                 showLoadingWithText('Проверяем ваш профиль...');
-                const apiResult = await checkUserInAPI(user.id);
+                // const apiResult = await checkUserInAPI(user.id);
                 
                 console.log('🎨 Персонализация интерфейса...');
-                await personalizeGreeting(user, apiResult);
+                // await personalizeGreeting(user, apiResult);
 
             } else {
                 // Эта ситуация не должна происходить, но добавим обработку
@@ -155,8 +155,8 @@
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
         showLoadingWithText('Проверяем тестовый профиль...');
-        const apiResult = await checkUserInAPI(testUser.id);
-        await personalizeGreeting(testUser, apiResult);
+        // const apiResult = await checkUserInAPI(testUser.id);
+        // await personalizeGreeting(testUser, apiResult);
     };
 
     // ... (остальные функции без изменений: applyTelegramTheme, setupTelegramButtons, checkUserInAPI, getUserData, personalizeGreeting, setupUI, setupEventListeners, handleStartClick, и т.д.)
