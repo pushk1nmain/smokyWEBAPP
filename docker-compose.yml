@@ -18,7 +18,7 @@ services:
     
     # Переменные окружения из .env файла
     environment:
-      - API_KEY
+      - API_KEY=${API_KEY}
       - NODE_ENV=${NODE_ENV:-production}
       - TZ=${TZ:-Europe/Moscow}
       - NGINX_WORKER_PROCESSES=${NGINX_WORKER_PROCESSES:-auto}
