@@ -18,7 +18,6 @@
 
 ### Заголовки
 ```
-X-API-Key: your-api-key
 Content-Type: application/json
 ```
 
