@@ -101,8 +101,8 @@ if [ $LOCAL != $REMOTE ]; then
 echo "🔧 Самокоррекция путей в update-frontend.sh..."
 sed -i 's|DOCKER_COMPOSE_FILE="$APP_DIR/_config/docker/docker-compose-proxy.yml"|DOCKER_COMPOSE_FILE="$APP_DIR/docker-compose-proxy.yml"|g' "$0"
 sed -i 's|DOCKER_COMPOSE_FILE="$APP_DIR/_config/docker/docker-compose.yml"|DOCKER_COMPOSE_FILE="$APP_DIR/docker-compose.yml"|g' "$0"
-sed -i 's|if [ ! -f "_config/docker/docker-compose.yml" ]; then|if [ ! -f "docker-compose.yml" ]; then|g' "$0"
-sed -i 's|if [ ! -f "_config/.env" ]; then|if [ ! -f "_config/.env" ]; then|g' "$0"
+sed -i 's|if \[ \! -f "_config/docker/docker-compose\.yml" \] ; then|if [ ! -f "docker-compose.yml" ]; then|g' "$0"
+sed -i 's|if \[ \! -f "_config/\.env" \] ; then|if [ ! -f "_config/.env" ]; then|g' "$0"
 echo "✅ Самокоррекция завершена."
 
     echo "✅ Код обновлен!"
