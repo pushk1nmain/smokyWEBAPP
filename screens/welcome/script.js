@@ -10,7 +10,7 @@
 
     const config = {
         api: {
-            baseUrl: '/api'
+            baseUrl: '/api/v1'
         },
         development: {
             enableDebugLogs: true,
