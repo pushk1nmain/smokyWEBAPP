@@ -3,7 +3,7 @@
 services:
   smokyapp:
     build:
-      context: .
+      context: ..
       dockerfile: config/docker/Dockerfile
       target: production
       args:
