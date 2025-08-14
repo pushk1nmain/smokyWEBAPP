@@ -52,6 +52,12 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100vh; /* Фиксированная высота viewport */
+    
+    /* New: Background image for the second screen */
+    background-image: url('../../assets/images/background.png');
+    background-size: cover; /* Cover the entire element */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-position: center center; /* Center the image */
 }
 
 .app-container {
@@ -59,77 +65,73 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
+    /* Remove the linear gradient as it's replaced by the image */
+    /* background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); */
     overflow: hidden; /* Убираем прокрутку */
 }
 
-/* Background Shapes */
+/* Remove all Background Shapes CSS */
+/*
 .background-shape {
     position: absolute;
     opacity: 0.7;
     z-index: 0;
 }
 
-/* Top-Left Blue Rectangle */
 .shape-blue-top-left {
     background-color: var(--color-blue);
-    width: 300px; /* Larger */
-    height: 350px; /* Larger */
-    top: -150px; /* More off-screen */
-    left: -150px; /* More off-screen */
-    border-radius: 0 0 150px 0; /* More rounded, larger corner */
+    width: 300px;
+    height: 350px;
+    top: -150px;
+    left: -150px;
+    border-radius: 0 0 150px 0;
 }
 
-/* Top-Middle Light Pink (first) */
 .shape-pink-top-right {
     background-color: var(--color-light-pink);
-    width: 250px; /* Larger */
-    height: 250px; /* Larger */
-    top: -100px; /* More off-screen */
-    right: 120px; /* Adjusted position */
-    border-radius: 50%; /* Still circular, but larger */
+    width: 250px;
+    height: 250px;
+    top: -100px;
+    right: 120px;
+    border-radius: 50%;
 }
 
-/* Top-Right Light Pink (second) */
 .shape-pink-top-right-2 {
     background-color: var(--color-light-pink);
-    width: 200px; /* Larger */
-    height: 200px; /* Larger */
-    top: -20px; /* Adjusted position */
-    right: -80px; /* More off-screen */
-    border-radius: 50%; /* Still circular, but larger */
+    width: 200px;
+    height: 200px;
+    top: -20px;
+    right: -80px;
+    border-radius: 50%;
 }
 
-/* Top-Right Green */
 .shape-green-top-right {
     background-color: var(--color-green);
-    width: 300px; /* Larger */
-    height: 300px; /* Larger */
-    top: -120px; /* More off-screen */
-    right: -150px; /* More off-screen */
-    border-radius: 50%; /* Still circular, but larger */
+    width: 300px;
+    height: 300px;
+    top: -120px;
+    right: -150px;
+    border-radius: 50%;
 }
 
-/* Bottom-Left Blue */
 .shape-blue-bottom-left {
     background-color: var(--color-blue);
-    width: 350px; /* Larger */
-    height: 350px; /* Larger */
-    bottom: -180px; /* More off-screen */
-    left: -180px; /* More off-screen */
-    border-radius: 50%; /* Still circular, but larger */
+    width: 350px;
+    height: 350px;
+    bottom: -180px;
+    left: -180px;
+    border-radius: 50%;
 }
 
-/* Bottom-Right Green */
 .shape-green-bottom-right {
     background-color: var(--color-green);
-    width: 280px; /* Larger */
-    height: 280px; /* Larger */
-    bottom: -120px; /* More off-screen */
-    right: -120px; /* More off-screen */
-    border-radius: 50%; /* Still circular, but larger */
+    width: 280px;
+    height: 280px;
+    bottom: -120px;
+    right: -120px;
+    border-radius: 50%;
 }
-
+*/
 
 /* Screen Layout */
 .name-input-screen {
