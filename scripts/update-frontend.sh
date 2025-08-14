@@ -29,7 +29,7 @@ if [ ! -f "_config/.env" ]; then
     exit 1
 fi
 
-if [ ! -f "_config/docker/docker-compose.yml" ]; then
+if [ ! -f "docker-compose.yml" ]; then
     echo "❌ Файл docker-compose.yml не найден"
     exit 1
 fi
