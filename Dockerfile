@@ -42,6 +42,7 @@ COPY screens/ /usr/share/nginx/html/screens/
 COPY robots.txt humans.txt /usr/share/nginx/html/
 
 # Копируем конфигурацию nginx
+RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Копируем скрипты (опционально)
