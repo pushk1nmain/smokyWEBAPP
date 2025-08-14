@@ -73,61 +73,61 @@ body {
 /* Top-Left Blue Rectangle */
 .shape-blue-top-left {
     background-color: var(--color-blue);
-    width: 200px; /* Increased width */
-    height: 250px; /* Increased height */
-    top: -100px; /* Adjusted position */
-    left: -100px; /* Adjusted position */
-    border-radius: 0 0 100px 0; /* Rounded bottom-right corner */
+    width: 300px; /* Larger */
+    height: 350px; /* Larger */
+    top: -150px; /* More off-screen */
+    left: -150px; /* More off-screen */
+    border-radius: 0 0 150px 0; /* More rounded, larger corner */
 }
 
 /* Top-Middle Light Pink (first) */
 .shape-pink-top-right {
     background-color: var(--color-light-pink);
-    width: 180px;
-    height: 180px;
-    top: -50px; /* Adjusted position */
-    right: 100px; /* Adjusted position */
-    border-radius: 50%; /* Full circle */
+    width: 250px; /* Larger */
+    height: 250px; /* Larger */
+    top: -100px; /* More off-screen */
+    right: 120px; /* Adjusted position */
+    border-radius: 50%; /* Still circular, but larger */
 }
 
 /* Top-Right Light Pink (second) */
 .shape-pink-top-right-2 {
     background-color: var(--color-light-pink);
-    width: 150px;
-    height: 150px;
-    top: 0px; /* Adjusted position */
-    right: -50px; /* Adjusted position */
-    border-radius: 50%; /* Full circle */
+    width: 200px; /* Larger */
+    height: 200px; /* Larger */
+    top: -20px; /* Adjusted position */
+    right: -80px; /* More off-screen */
+    border-radius: 50%; /* Still circular, but larger */
 }
 
 /* Top-Right Green */
 .shape-green-top-right {
     background-color: var(--color-green);
-    width: 220px; /* Increased width */
-    height: 220px; /* Increased height */
-    top: -80px; /* Adjusted position */
-    right: -100px; /* Adjusted position */
-    border-radius: 50%; /* Full circle */
+    width: 300px; /* Larger */
+    height: 300px; /* Larger */
+    top: -120px; /* More off-screen */
+    right: -150px; /* More off-screen */
+    border-radius: 50%; /* Still circular, but larger */
 }
 
 /* Bottom-Left Blue */
 .shape-blue-bottom-left {
     background-color: var(--color-blue);
-    width: 250px; /* Increased width */
-    height: 250px; /* Increased height */
-    bottom: -120px; /* Adjusted position */
-    left: -120px; /* Adjusted position */
-    border-radius: 50%; /* Full circle */
+    width: 350px; /* Larger */
+    height: 350px; /* Larger */
+    bottom: -180px; /* More off-screen */
+    left: -180px; /* More off-screen */
+    border-radius: 50%; /* Still circular, but larger */
 }
 
 /* Bottom-Right Green */
 .shape-green-bottom-right {
     background-color: var(--color-green);
-    width: 200px; /* Increased width */
-    height: 200px; /* Increased height */
-    bottom: -80px; /* Adjusted position */
-    right: -80px; /* Adjusted position */
-    border-radius: 50%; /* Full circle */
+    width: 280px; /* Larger */
+    height: 280px; /* Larger */
+    bottom: -120px; /* More off-screen */
+    right: -120px; /* More off-screen */
+    border-radius: 50%; /* Still circular, but larger */
 }
 
 
