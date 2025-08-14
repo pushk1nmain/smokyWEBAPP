@@ -4,48 +4,59 @@
  */
 
 (function() {
-    // Глобальные переменные в пределах модуля
+    // Глобальные переменные и встроенная конфигурация
     let tg = null;
     let isReady = false;
-    let config = null;
+
+    const config = {
+        api: {
+            baseUrl: '/api'
+        },
+        development: {
+            enableDebugLogs: true,
+            enableBrowserTestMode: true,
+            testUser: {
+                id: 123456789,
+                first_name: 'Тест',
+                last_name: 'Пользователь',
+                username: 'testuser',
+                language_code: 'ru'
+            }
+        },
+        telegram: {
+            enableHapticFeedback: true,
+            autoExpand: true,
+            applyTheme: true
+        },
+        ui: {
+            loadingAnimationDuration: 500,
+            notificationDuration: 3000,
+            enableAnimations: true
+        }
+    };
 
     /**
      * Отображение критической ошибки на экране
-     * @param {string} title - Заголовок ошибки
-     * @param {string} message - Сообщение об ошибке
      */
     const showCriticalError = (title, message) => {
         hideLoading();
-        const container = document.querySelector('.app-container');
-        if (container) {
-            container.innerHTML = `
-                <div style="padding: 20px; text-align: center; color: var(--tg-theme-text-color, #000);">
-                    <h2>${title}</h2>
-                    <p>${message}</p>
-                </div>
-            `;
-        }
-    };
-    
-    /**
-     * Инициализация конфигурации
-     */
-    const initializeConfig = () => {
-        console.log('⚙️ Инициализация конфигурации...');
-        if (typeof window === 'undefined' || !window.SmokyConfig) {
-            throw new Error('Конфигурация SmokyConfig не найдена. Убедитесь, что файл `config.js` существует и подключен правильно.');
-        }
-        config = window.SmokyConfig;
-        console.log('✅ Конфигурация загружена.');
-
-        if (!config.api?.baseUrl || !config.api?.apiKey) {
-            throw new Error('В файле `config.js` не заданы обязательные параметры API: `baseUrl` или `apiKey`.');
-        }
-        if (config.api.apiKey === 'YOUR_API_KEY_HERE') {
-            console.warn('⚠️ ВНИМАНИЕ: Используется тестовый API ключ!');
-        }
-        console.log('✅ Конфигурация успешно валидирована.');
-        return config;
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ffdddd;
+            color: #d8000c;
+            padding: 10px;
+            z-index: 10000;
+            font-size: 14px;
+            text-align: center;
+            border-bottom: 2px solid #d8000c;
+            word-break: break-word;
+        `;
+        errorDiv.innerHTML = `<b>${title}</b><br><small>${message}</small>`;
+        document.body.prepend(errorDiv);
     };
 
     /**
@@ -53,14 +64,13 @@
      */
     const main = async () => {
         try {
-            // 1. Инициализация конфигурации
-            initializeConfig();
+            console.log('🚀 Приложение запускается со встроенной конфигурацией...');
 
-            // 2. Настройка UI и событий
+            // Настройка UI и событий
             setupUI();
             setupEventListeners();
 
-            // 3. Инициализация Telegram или режима браузера
+            // Инициализация Telegram или режима браузера
             if (window.Telegram && window.Telegram.WebApp) {
                 tg = window.Telegram.WebApp;
                 console.log(`✅ Telegram WebApp API доступен (v${tg.version}). Инициализация...`);
@@ -76,7 +86,7 @@
 
         } catch (error) {
             console.error('❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ИНИЦИАЛИЗАЦИИ:', error);
-            showCriticalError('Ошибка при конфигурации приложения', error.message);
+            showCriticalError('Ошибка при запуске приложения', error.message);
             handleError(error, 'Initialization');
         }
     };
@@ -211,15 +221,13 @@ const checkUserInAPI = async (telegramId) => {
     
     try {
         const apiUrl = `${config.api.baseUrl}/user/${telegramId}`;
-        const apiKey = config.api.apiKey;
         
         console.log('🌐 URL для API запроса:', apiUrl);
         
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': apiKey
+                'Content-Type': 'application/json'
             }
         });
         
