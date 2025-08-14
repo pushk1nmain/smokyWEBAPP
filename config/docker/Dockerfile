@@ -32,18 +32,12 @@ RUN mkdir -p /var/log/smokyapp \
              /var/run/nginx
 
 # Копируем основные файлы приложения
-COPY index.html health.html style.css script.js /usr/share/nginx/html/
-
-# Копируем директории
-COPY elements/ /usr/share/nginx/html/elements/
-COPY screens/ /usr/share/nginx/html/screens/ 
-
-# Копируем дополнительные файлы
-COPY robots.txt humans.txt /usr/share/nginx/html/
+COPY public/ /usr/share/nginx/html/
+COPY src/ /usr/share/nginx/html/src/
 
 # Копируем конфигурацию nginx
 RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Копируем скрипты (опционально)
 COPY scripts/ /app/scripts/

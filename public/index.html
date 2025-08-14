@@ -46,6 +46,16 @@
                     ➡️ Перейти на Welcome экран
                 </button>
             `;
+            debugInfo.innerHTML = `
+                <h2>🔍 ДИАГНОСТИКА JAVASCRIPT</h2>
+                <p>✅ JavaScript работает!</p>
+                <p>📍 Текущий URL: ${window.location.href}</p>
+                <p>📱 User Agent: ${navigator.userAgent}</p>
+                <p>📱 Telegram WebApp: ${window.Telegram ? 'Доступен' : 'НЕ доступен'}</p>
+                <button onclick="window.location.href='./src/pages/welcome/index.html'" style="padding: 10px 20px; font-size: 16px; margin-top: 10px;">
+                    ➡️ Перейти на Welcome экран
+                </button>
+            `;
             body.insertBefore(debugInfo, body.firstChild);
         });
     </script>
