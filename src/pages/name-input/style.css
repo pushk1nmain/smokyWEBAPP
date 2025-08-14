@@ -338,3 +338,91 @@ body {
     white-space: nowrap;
     border: 0;
 }
+
+/* Screen Layout */
+.name-input-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--container-padding);
+    /* Removed max-width and width from here */
+    margin: 0 auto; /* Keep horizontal centering */
+    overflow: hidden;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally within the flex container */
+    text-align: center; /* Ensure text is centered */
+    position: relative; /* For z-index of content */
+    z-index: 1; /* Ensure content is above background shapes */
+}
+
+/* Top Icon */
+.top-icon-section {
+    text-align: center;
+    margin-top: 20px; /* Keep existing margin */
+    margin-bottom: 20px; /* Keep existing margin */
+    width: 100%; /* Ensure it takes full width to allow centering its content */
+}
+
+/* Character Section (meditating person) */
+.character-section {
+    flex: 0 0 auto;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    width: 100%; /* Ensure it takes full width to allow centering its content */
+}
+
+/* Content Section */
+.content-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically within this section */
+    align-items: center; /* Center content horizontally within this section */
+    text-align: center; /* Ensure text is centered */
+    gap: 15px;
+    min-height: 0;
+    width: 100%; /* Ensure it takes full width of its parent */
+    max-width: 400px; /* Control content width */
+    margin: 0 auto; /* Center content section */
+}
+
+/* Explicitly set text colors */
+.screen-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #235BDF; /* Force dark blue color */
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.screen-description {
+    font-size: 18px;
+    color: #1C3D8C; /* Force dark blue color */
+    line-height: 1.5;
+    margin-bottom: 20px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Input field container */
+.input-field-container {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff; /* White background for input */
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 25px; /* Rounded corners */
+    padding: 12px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    max-width: 300px;
+    margin: 0 auto; /* Center the input field */
+}
+
+/* Action Button (Next Button) */
+.action-section {
+    margin: 30px 0;
+    width: 100%; /* Ensure it takes full width to allow centering its content */
+    display: flex; /* Use flex to center the button */
+    justify-content: center; /* Center the button horizontally */
+}
