@@ -224,11 +224,20 @@ const checkUserInAPI = async (telegramId) => {
         
         console.log('🌐 URL для API запроса:', apiUrl);
         
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        if (tg && tg.initData) {
+            headers['X-Telegram-WebApp-Data'] = tg.initData;
+            console.log('✅ Добавлен заголовок X-Telegram-WebApp-Data:', tg.initData);
+        } else {
+            console.warn('⚠️ tg.initData отсутствует. Заголовок X-Telegram-WebApp-Data не будет добавлен.');
+        }
+        
         const response = await fetch(apiUrl, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: headers
         });
         
         if (response.ok) {
