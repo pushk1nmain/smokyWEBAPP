@@ -54,7 +54,7 @@ body {
     height: 100vh; /* Фиксированная высота viewport */
     
     /* New: Background image for the second screen */
-    background-image: url('../../assets/images/background.png');
+    background-image: url('../../assets/images/background.svg');
     background-size: cover; /* Cover the entire element */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-position: center center; /* Center the image */
