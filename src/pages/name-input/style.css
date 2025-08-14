@@ -66,54 +66,68 @@ body {
 /* Background Shapes */
 .background-shape {
     position: absolute;
-    border-radius: 50%; /* Default to circle, adjust with specific classes */
     opacity: 0.7;
     z-index: 0;
 }
 
+/* Top-Left Blue Rectangle */
 .shape-blue-top-left {
     background-color: var(--color-blue);
-    width: 150px;
-    height: 150px;
-    top: -50px;
-    left: -50px;
-    border-radius: 0 0 100% 0; /* Rounded bottom-right corner */
+    width: 200px; /* Increased width */
+    height: 250px; /* Increased height */
+    top: -100px; /* Adjusted position */
+    left: -100px; /* Adjusted position */
+    border-radius: 0 0 100px 0; /* Rounded bottom-right corner */
 }
 
+/* Top-Middle Light Pink (first) */
 .shape-pink-top-right {
     background-color: var(--color-light-pink);
     width: 180px;
     height: 180px;
-    top: -80px;
-    right: -80px;
-    border-radius: 0 0 0 100%; /* Rounded bottom-left corner */
+    top: -50px; /* Adjusted position */
+    right: 100px; /* Adjusted position */
+    border-radius: 50%; /* Full circle */
 }
 
+/* Top-Right Light Pink (second) */
+.shape-pink-top-right-2 {
+    background-color: var(--color-light-pink);
+    width: 150px;
+    height: 150px;
+    top: 0px; /* Adjusted position */
+    right: -50px; /* Adjusted position */
+    border-radius: 50%; /* Full circle */
+}
+
+/* Top-Right Green */
 .shape-green-top-right {
     background-color: var(--color-green);
-    width: 100px;
-    height: 100px;
-    top: 20px;
-    right: -30px;
-    border-radius: 50%;
+    width: 220px; /* Increased width */
+    height: 220px; /* Increased height */
+    top: -80px; /* Adjusted position */
+    right: -100px; /* Adjusted position */
+    border-radius: 50%; /* Full circle */
 }
 
+/* Bottom-Left Blue */
 .shape-blue-bottom-left {
     background-color: var(--color-blue);
-    width: 200px;
-    height: 200px;
-    bottom: -100px;
-    left: -100px;
-    border-radius: 100% 0 0 0; /* Rounded top-right corner */
+    width: 250px; /* Increased width */
+    height: 250px; /* Increased height */
+    bottom: -120px; /* Adjusted position */
+    left: -120px; /* Adjusted position */
+    border-radius: 50%; /* Full circle */
 }
 
+/* Bottom-Right Green */
 .shape-green-bottom-right {
     background-color: var(--color-green);
-    width: 120px;
-    height: 120px;
-    bottom: -60px;
-    right: -60px;
-    border-radius: 50%;
+    width: 200px; /* Increased width */
+    height: 200px; /* Increased height */
+    bottom: -80px; /* Adjusted position */
+    right: -80px; /* Adjusted position */
+    border-radius: 50%; /* Full circle */
 }
 
 
