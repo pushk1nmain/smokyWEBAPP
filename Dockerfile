@@ -10,9 +10,8 @@ LABEL description="Telegram Web App для помощи в отказе от к�
 LABEL version="1.0.1"
 LABEL org.opencontainers.image.source="https://github.com/smokyapp/webapp"
 
-# Устанавливаем gettext (для envsubst) и другие утилиты
+# Устанавливаем необходимые утилиты
 RUN apk add --no-cache \
-    gettext \
     git \
     bash \
     curl \
@@ -42,8 +41,8 @@ COPY screens/ /usr/share/nginx/html/screens/
 # Копируем дополнительные файлы
 COPY robots.txt humans.txt /usr/share/nginx/html/
 
-# Копируем ШАБЛОН конфигурации nginx
-COPY nginx.conf.template /etc/nginx/nginx.conf.template
+# Копируем конфигурацию nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Копируем скрипты (опционально)
 COPY scripts/ /app/scripts/
@@ -80,5 +79,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Используем официальный entrypoint nginx для корректной работы
 STOPSIGNAL SIGQUIT
 
-# Финальная точка входа: безопасно подставляем ТОЛЬКО $API_KEY и запускаем nginx
-CMD /bin/sh -c "envsubst '$API_KEY' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+# Точка входа - запуск nginx в foreground режиме
+CMD ["nginx", "-g", "daemon off;"]

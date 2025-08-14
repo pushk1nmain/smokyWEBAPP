@@ -18,7 +18,6 @@ services:
     
     # Переменные окружения из .env файла
     environment:
-      - API_KEY=SMOKY-Oz5niTU0yVrHv892BGxotdo2lCK0KtKPp7ypYskFG9CqR2thpSEPgBnxHnkI7WBQ1jYRZLGQ2JJGKLUmV0zYiahamBjtU3DoUmY0Dnp7peZFLwUGMAcgFe0IkT
       - NODE_ENV=${NODE_ENV:-production}
       - TZ=${TZ:-Europe/Moscow}
       - NGINX_WORKER_PROCESSES=${NGINX_WORKER_PROCESSES:-auto}
