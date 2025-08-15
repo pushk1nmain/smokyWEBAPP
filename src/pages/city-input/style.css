@@ -561,42 +561,4 @@
     color: var(--color-placeholder);
 }
 
-/* Common button styles */
-.common-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px 32px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffffff;
-    background: linear-gradient(180deg, #5A9BF7 0%, #235BDF 100%);
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    text-decoration: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    min-width: 200px;
-    text-align: center;
-}
 
-.common-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-.common-button:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.common-arrow-icon {
-    width: 20px;
-    height: 20px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin-left: 10px;
-}
