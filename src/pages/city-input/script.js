@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     /**
-     * Утилиты загрузки
+     * Утилиты загрузки (оставлены для совместимости)
      */
     const showLoadingWithText = (text) => {
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -54,26 +54,25 @@ document.addEventListener('DOMContentLoaded', () => {
         pageTitle.textContent = `Где Вы живете?`;
     }
 
-    // 3. Add logic for the "Continue" button with loading animation
+    // 3. Add logic for the "Continue" button with optimized loading
     nextButton.addEventListener('click', () => {
         const city = nameInput.value.trim();
         if (city) {
-            // Show loading and simulate saving
-            showLoadingWithText('Сохраняем ваш город');
-            
-            // Save city to localStorage
+            // Быстрое сохранение в localStorage без искусственных задержек
             localStorage.setItem('userCity', city);
             
-            // Simulate API call delay and show completion message
-            setTimeout(() => {
-                showLoadingWithText('Готово! Начинаем ваше путешествие');
-                
+            // Показываем краткое подтверждение и завершаем
+            if (window.LoadingManager) {
+                // Используем минимальную задержку только для UX
+                const timeoutId = LoadingManager.showConditional('Город сохранен', 100);
                 setTimeout(() => {
-                    // Here would typically be navigation to next page
+                    LoadingManager.hide(timeoutId);
                     alert(`Город сохранен: ${city}. Следующий шаг пока не реализован.`);
-                    hideLoading();
-                }, 1500);
-            }, 2000);
+                }, 500);
+            } else {
+                // Fallback без излишних задержек
+                alert(`Город сохранен: ${city}. Следующий шаг пока не реализован.`);
+            }
             
         } else {
             if (window.Telegram && window.Telegram.WebApp) {

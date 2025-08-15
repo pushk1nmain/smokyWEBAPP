@@ -93,6 +93,11 @@
             // Настройка UI и событий
             setupUI();
             setupEventListeners();
+            
+            // Предзагружаем следующую страницу для быстрого перехода
+            if (window.LoadingManager) {
+                LoadingManager.preloadPage('../name-input/index.html');
+            }
 
             // Инициализация Telegram или режима браузера
             if (window.Telegram && window.Telegram.WebApp) {
@@ -147,8 +152,14 @@
                 }
                 
                 console.log(`👤 ID пользователя: ${user.id}. Начинаем проверку в API...`);
-                showLoadingWithText('Проверяем ваш профиль...');
-                const apiResult = await checkUserInAPI(user.id);
+                // Используем LoadingManager для API запроса
+                const apiResult = await (window.LoadingManager ? 
+                    LoadingManager.wrapApiCall(
+                        () => checkUserInAPI(user.id),
+                        'Проверяем ваш профиль'
+                    ) : 
+                    (showLoadingWithText('Проверяем ваш профиль...'), await checkUserInAPI(user.id))
+                );
                 
                 console.log('🎨 Персонализация интерфейса...');
                 await personalizeGreeting(user, apiResult);
@@ -354,7 +365,7 @@ const setupEventListeners = () => {
 };
 
 /**
- * Обработчик нажатия кнопки "Начать"
+ * Обработчик нажатия кнопки "Начать" с быстрым переходом
  */
 const handleStartClick = () => {
     console.log('🚀 Начинаем путь с Смоки!');
@@ -362,12 +373,16 @@ const handleStartClick = () => {
         tg.HapticFeedback.impactOccurred('medium');
     }
     
-    // Показываем анимацию загрузки при переходе
-    showLoadingWithText('Переходим к следующему шагу');
-    
-    setTimeout(() => {
-        navigateToNextScreen();
-    }, 1800);
+    // Используем быстрый переход без задержек для локальной навигации
+    if (window.LoadingManager) {
+        LoadingManager.fastNavigate('../name-input/index.html', 200);
+    } else {
+        // Fallback для старого способа
+        showLoadingWithText('Переходим к следующему шагу');
+        setTimeout(() => {
+            navigateToNextScreen();
+        }, 800);
+    }
 };
 
 /**

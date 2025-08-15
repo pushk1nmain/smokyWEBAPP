@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Предзагружаем следующую страницу
+    if (window.LoadingManager) {
+        LoadingManager.preloadPage('../city-input/index.html');
+    }
     const nameInput = document.querySelector('.name-input');
     const nextButton = document.getElementById('nextButton');
     const characterSection = document.querySelector('.character-section');
@@ -141,25 +145,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (telegramId && webAppInitData) {
-            showLoadingWithText('Сохраняем ваше имя');
-            const isSuccess = await sendNameToBackend(name, telegramId, webAppInitData);
-            if (isSuccess) {
-                showLoadingWithText('Готово! Переходим дальше');
-                setTimeout(() => {
-                    window.location.href = '../city-input/index.html';
-                }, 1000);
-            } else {
-                hideLoading();
-                // If backend fails, remove the stored name to avoid inconsistency
+            // Используем LoadingManager для API запроса
+            try {
+                const isSuccess = await (window.LoadingManager ? 
+                    LoadingManager.wrapApiCall(
+                        () => sendNameToBackend(name, telegramId, webAppInitData),
+                        'Сохраняем ваше имя'
+                    ) : 
+                    (showLoadingWithText('Сохраняем ваше имя'), await sendNameToBackend(name, telegramId, webAppInitData))
+                );
+                
+                if (isSuccess) {
+                    // Быстрый переход без лишних задержек
+                    if (window.LoadingManager) {
+                        LoadingManager.fastNavigate('../city-input/index.html', 200);
+                    } else {
+                        window.location.href = '../city-input/index.html';
+                    }
+                } else {
+                    // If backend fails, remove the stored name to avoid inconsistency
+                    localStorage.removeItem('userName');
+                }
+            } catch (error) {
+                console.error('Ошибка при сохранении имени:', error);
                 localStorage.removeItem('userName');
             }
         } else {
-            // Fallback for testing outside Telegram
+            // Fallback for testing outside Telegram - быстрый переход
             console.warn('Telegram data not available. Redirecting in test mode.');
-            showLoadingWithText('Переходим к следующему шагу');
-            setTimeout(() => {
+            if (window.LoadingManager) {
+                LoadingManager.fastNavigate('../city-input/index.html', 100);
+            } else {
                 window.location.href = '../city-input/index.html';
-            }, 1500);
+            }
         }
     });
 
