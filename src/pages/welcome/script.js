@@ -362,7 +362,12 @@ const handleStartClick = () => {
         tg.HapticFeedback.impactOccurred('medium');
     }
     
-    setTimeout(navigateToNextScreen, 1500);
+    // Показываем анимацию загрузки при переходе
+    showLoadingWithText('Переходим к следующему шагу');
+    
+    setTimeout(() => {
+        navigateToNextScreen();
+    }, 1800);
 };
 
 /**
@@ -377,6 +382,8 @@ const navigateToNextScreen = () => {
         }
     }
     
+    // Переход на следующий экран
+    window.location.href = '../name-input/index.html';
 };
 
 /**
