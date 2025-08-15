@@ -392,19 +392,43 @@ const showNotification = (message) => {
 };
 
 /**
- * Утилиты загрузки
+ * Утилиты загрузки с анимированными сообщениями
  */
 const showLoadingWithText = (text) => {
     const loadingOverlay = document.getElementById('loadingOverlay');
     const loadingText = document.querySelector('.loading-text');
-    if (loadingOverlay) loadingOverlay.classList.remove('hidden');
-    if (loadingText) loadingText.textContent = text;
+    
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('hidden');
+        
+        // Добавляем haptic feedback если доступен
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('light');
+        }
+    }
+    
+    if (loadingText) {
+        // Плавная смена текста с анимацией
+        loadingText.style.opacity = '0';
+        setTimeout(() => {
+            loadingText.innerHTML = text + '<span class="loading-dots"></span>';
+            loadingText.style.opacity = '1';
+        }, 200);
+    }
 };
 
 const hideLoading = () => {
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) {
-        setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+        // Добавляем небольшую задержку для плавности
+        setTimeout(() => {
+            loadingOverlay.classList.add('hidden');
+            
+            // Haptic feedback при завершении загрузки
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }, 800);
     }
 };
 

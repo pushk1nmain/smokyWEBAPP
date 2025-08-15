@@ -1,4 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
+    /**
+     * Утилиты загрузки
+     */
+    const showLoadingWithText = (text) => {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.querySelector('.loading-text');
+        
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('hidden');
+            
+            // Добавляем haptic feedback если доступен
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+        }
+        
+        if (loadingText) {
+            // Плавная смена текста с анимацией
+            loadingText.style.opacity = '0';
+            setTimeout(() => {
+                loadingText.innerHTML = text + '<span class="loading-dots"></span>';
+                loadingText.style.opacity = '1';
+            }, 200);
+        }
+    };
+
+    const hideLoading = () => {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            // Добавляем небольшую задержку для плавности
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                
+                // Haptic feedback при завершении загрузки
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                }
+            }, 800);
+        }
+    };
     const pageTitle = document.getElementById('page-title');
     const nameInput = document.querySelector('.name-input');
     const nextButton = document.getElementById('nextButton');
@@ -14,15 +54,27 @@ document.addEventListener('DOMContentLoaded', () => {
         pageTitle.textContent = `Где Вы живете?`;
     }
 
-    // 3. Add logic for the "Continue" button (for now, just an alert)
+    // 3. Add logic for the "Continue" button with loading animation
     nextButton.addEventListener('click', () => {
         const city = nameInput.value.trim();
         if (city) {
-            alert(`Город для сохранения: ${city}. Следующий шаг пока не реализован.`);
-            // Here you would typically save the city and navigate to the next page
-            // For example:
-            // localStorage.setItem('userCity', city);
-            // window.location.href = '../next-page/index.html';
+            // Show loading and simulate saving
+            showLoadingWithText('Сохраняем ваш город');
+            
+            // Save city to localStorage
+            localStorage.setItem('userCity', city);
+            
+            // Simulate API call delay and show completion message
+            setTimeout(() => {
+                showLoadingWithText('Готово! Начинаем ваше путешествие');
+                
+                setTimeout(() => {
+                    // Here would typically be navigation to next page
+                    alert(`Город сохранен: ${city}. Следующий шаг пока не реализован.`);
+                    hideLoading();
+                }, 1500);
+            }, 2000);
+            
         } else {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.showAlert('Пожалуйста, введите ваш город.');

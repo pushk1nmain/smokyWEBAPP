@@ -43,6 +43,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    /**
+     * Утилиты загрузки
+     */
+    const showLoadingWithText = (text) => {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.querySelector('.loading-text');
+        
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('hidden');
+            
+            // Добавляем haptic feedback если доступен
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+        }
+        
+        if (loadingText) {
+            // Плавная смена текста с анимацией
+            loadingText.style.opacity = '0';
+            setTimeout(() => {
+                loadingText.innerHTML = text + '<span class="loading-dots"></span>';
+                loadingText.style.opacity = '1';
+            }, 200);
+        }
+    };
+
+    const hideLoading = () => {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            // Добавляем небольшую задержку для плавности
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                
+                // Haptic feedback при завершении загрузки
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                }
+            }, 800);
+        }
+    };
+
     const sendNameToBackend = async (name, telegramId, webAppInitData) => {
         try {
             if (!webAppInitData) {
@@ -100,18 +141,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (telegramId && webAppInitData) {
+            showLoadingWithText('Сохраняем ваше имя');
             const isSuccess = await sendNameToBackend(name, telegramId, webAppInitData);
             if (isSuccess) {
-                // Redirect only if backend call is successful
-                window.location.href = '../city-input/index.html';
+                showLoadingWithText('Готово! Переходим дальше');
+                setTimeout(() => {
+                    window.location.href = '../city-input/index.html';
+                }, 1000);
             } else {
+                hideLoading();
                 // If backend fails, remove the stored name to avoid inconsistency
                 localStorage.removeItem('userName');
             }
         } else {
             // Fallback for testing outside Telegram
             console.warn('Telegram data not available. Redirecting in test mode.');
-            window.location.href = '../city-input/index.html';
+            showLoadingWithText('Переходим к следующему шагу');
+            setTimeout(() => {
+                window.location.href = '../city-input/index.html';
+            }, 1500);
         }
     });
 
