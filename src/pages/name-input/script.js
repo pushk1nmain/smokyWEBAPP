@@ -42,19 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (wasKeyboardOpen !== isKeyboardOpen) {
             if (characterSection) {
                 if (isKeyboardOpen) {
-                    // Клавиатура открыта - скрываем изображение
-                    characterSection.style.transition = 'all 0.3s ease-out';
-                    characterSection.style.maxHeight = '0px';
-                    characterSection.style.opacity = '0';
-                    characterSection.style.marginBottom = '0px';
-                    characterSection.style.overflow = 'hidden';
+                    // Клавиатура открыта - мгновенно скрываем изображение
+                    characterSection.style.display = 'none';
                 } else {
-                    // Клавиатура закрыта - показываем изображение
-                    characterSection.style.transition = 'all 0.3s ease-out';
-                    characterSection.style.maxHeight = '';
-                    characterSection.style.opacity = '';
-                    characterSection.style.marginBottom = '';
-                    characterSection.style.overflow = '';
+                    // Клавиатура закрыта - мгновенно показываем изображение
+                    characterSection.style.display = '';
                 }
             }
             
