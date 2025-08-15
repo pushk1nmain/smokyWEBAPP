@@ -432,7 +432,11 @@ body {
     background: transparent; /* Make background transparent */
     outline: none; /* Remove outline on focus */
     padding: 0; /* Remove default padding */
-    color: var(--tg-theme-text-color); /* Inherit text color */
+    color: var(--color-text); /* Set text color to dark blue */
+}
+
+.name-input:focus::placeholder {
+    color: transparent;
 }
 
 /* Action Button (Next Button) */
