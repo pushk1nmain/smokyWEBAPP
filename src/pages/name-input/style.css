@@ -452,8 +452,3 @@ body {
     display: flex; /* Use flex to center the button */
     justify-content: center; /* Center the button horizontally */
 }
-
-.action-section .common-button {
-    max-width: 300px; /* Match input field width */
-    width: 100%; /* Take full width up to max-width */
-}

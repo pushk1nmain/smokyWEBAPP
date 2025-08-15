@@ -137,7 +137,7 @@ body {
     justify-content: center;
     gap: 12px;
     box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
-    /* min-width: 280px; Removed for common style */
+    min-width: 280px; /* Re-added for consistent width */
     position: relative;
     overflow: hidden;
 }
