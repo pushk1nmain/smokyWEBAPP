@@ -365,7 +365,7 @@ const setupEventListeners = () => {
 };
 
 /**
- * Обработчик нажатия кнопки "Начать" с быстрым переходом
+ * Обработчик нажатия кнопки "Начать" с плавной загрузкой
  */
 const handleStartClick = () => {
     console.log('🚀 Начинаем путь с Смоки!');
@@ -373,16 +373,11 @@ const handleStartClick = () => {
         tg.HapticFeedback.impactOccurred('medium');
     }
     
-    // Используем быстрый переход без задержек для локальной навигации
-    if (window.LoadingManager) {
-        LoadingManager.fastNavigate('../name-input/index.html', 200);
-    } else {
-        // Fallback для старого способа
-        showLoadingWithText('Переходим к следующему шагу');
-        setTimeout(() => {
-            navigateToNextScreen();
-        }, 800);
-    }
+    // Показываем загрузку и плавно переходим
+    showLoading();
+    setTimeout(() => {
+        navigateToNextScreen();
+    }, 1200); // Увеличили для плавности
 };
 
 /**
@@ -414,11 +409,10 @@ const showNotification = (message) => {
 };
 
 /**
- * Утилиты загрузки с анимированными сообщениями
+ * Простые утилиты загрузки без текста
  */
-const showLoadingWithText = (text) => {
+const showLoading = () => {
     const loadingOverlay = document.getElementById('loadingOverlay');
-    const loadingText = document.querySelector('.loading-text');
     
     if (loadingOverlay) {
         loadingOverlay.classList.remove('hidden');
@@ -428,21 +422,12 @@ const showLoadingWithText = (text) => {
             tg.HapticFeedback.impactOccurred('light');
         }
     }
-    
-    if (loadingText) {
-        // Плавная смена текста с анимацией
-        loadingText.style.opacity = '0';
-        setTimeout(() => {
-            loadingText.innerHTML = text + '<span class="loading-dots"></span>';
-            loadingText.style.opacity = '1';
-        }, 200);
-    }
 };
 
 const hideLoading = () => {
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) {
-        // Добавляем небольшую задержку для плавности
+        // Плавное скрытие
         setTimeout(() => {
             loadingOverlay.classList.add('hidden');
             
@@ -450,8 +435,13 @@ const hideLoading = () => {
             if (tg?.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
             }
-        }, 800);
+        }, 600);
     }
+};
+
+// Для совместимости со старым кодом
+const showLoadingWithText = (text) => {
+    showLoading();
 };
 
 /**

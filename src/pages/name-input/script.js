@@ -48,11 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * Утилиты загрузки
+     * Простые утилиты загрузки без текста
      */
-    const showLoadingWithText = (text) => {
+    const showLoading = () => {
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingText = document.querySelector('.loading-text');
         
         if (loadingOverlay) {
             loadingOverlay.classList.remove('hidden');
@@ -62,21 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
             }
         }
-        
-        if (loadingText) {
-            // Плавная смена текста с анимацией
-            loadingText.style.opacity = '0';
-            setTimeout(() => {
-                loadingText.innerHTML = text + '<span class="loading-dots"></span>';
-                loadingText.style.opacity = '1';
-            }, 200);
-        }
     };
 
     const hideLoading = () => {
         const loadingOverlay = document.getElementById('loadingOverlay');
         if (loadingOverlay) {
-            // Добавляем небольшую задержку для плавности
+            // Плавное скрытие
             setTimeout(() => {
                 loadingOverlay.classList.add('hidden');
                 
@@ -84,8 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
                     window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
                 }
-            }, 800);
+            }, 600);
         }
+    };
+    
+    // Для совместимости со старым кодом
+    const showLoadingWithText = (text) => {
+        showLoading();
     };
 
     const sendNameToBackend = async (name, telegramId, webAppInitData) => {
@@ -145,39 +140,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (telegramId && webAppInitData) {
-            // Используем LoadingManager для API запроса
+            // Показываем загрузку на время API запроса
+            showLoading();
+            
             try {
-                const isSuccess = await (window.LoadingManager ? 
-                    LoadingManager.wrapApiCall(
-                        () => sendNameToBackend(name, telegramId, webAppInitData),
-                        'Сохраняем ваше имя'
-                    ) : 
-                    (showLoadingWithText('Сохраняем ваше имя'), await sendNameToBackend(name, telegramId, webAppInitData))
-                );
+                const isSuccess = await sendNameToBackend(name, telegramId, webAppInitData);
                 
                 if (isSuccess) {
-                    // Быстрый переход без лишних задержек
-                    if (window.LoadingManager) {
-                        LoadingManager.fastNavigate('../city-input/index.html', 200);
-                    } else {
+                    // Плавный переход к следующей странице
+                    setTimeout(() => {
                         window.location.href = '../city-input/index.html';
-                    }
+                    }, 800);
                 } else {
-                    // If backend fails, remove the stored name to avoid inconsistency
+                    hideLoading();
                     localStorage.removeItem('userName');
                 }
             } catch (error) {
                 console.error('Ошибка при сохранении имени:', error);
+                hideLoading();
                 localStorage.removeItem('userName');
             }
         } else {
-            // Fallback for testing outside Telegram - быстрый переход
+            // Показываем загрузку и для fallback
             console.warn('Telegram data not available. Redirecting in test mode.');
-            if (window.LoadingManager) {
-                LoadingManager.fastNavigate('../city-input/index.html', 100);
-            } else {
+            showLoading();
+            setTimeout(() => {
                 window.location.href = '../city-input/index.html';
-            }
+            }, 1000);
         }
     });
 

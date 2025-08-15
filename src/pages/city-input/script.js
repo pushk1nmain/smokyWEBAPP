@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     /**
-     * Утилиты загрузки (оставлены для совместимости)
+     * Простые утилиты загрузки без текста
      */
-    const showLoadingWithText = (text) => {
+    const showLoading = () => {
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingText = document.querySelector('.loading-text');
         
         if (loadingOverlay) {
             loadingOverlay.classList.remove('hidden');
@@ -14,21 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
             }
         }
-        
-        if (loadingText) {
-            // Плавная смена текста с анимацией
-            loadingText.style.opacity = '0';
-            setTimeout(() => {
-                loadingText.innerHTML = text + '<span class="loading-dots"></span>';
-                loadingText.style.opacity = '1';
-            }, 200);
-        }
     };
 
     const hideLoading = () => {
         const loadingOverlay = document.getElementById('loadingOverlay');
         if (loadingOverlay) {
-            // Добавляем небольшую задержку для плавности
+            // Плавное скрытие
             setTimeout(() => {
                 loadingOverlay.classList.add('hidden');
                 
@@ -36,8 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
                     window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
                 }
-            }, 800);
+            }, 600);
         }
+    };
+    
+    // Для совместимости со старым кодом
+    const showLoadingWithText = (text) => {
+        showLoading();
     };
     const pageTitle = document.getElementById('page-title');
     const nameInput = document.querySelector('.name-input');
@@ -54,25 +49,23 @@ document.addEventListener('DOMContentLoaded', () => {
         pageTitle.textContent = `Где Вы живете?`;
     }
 
-    // 3. Add logic for the "Continue" button with optimized loading
+    // 3. Add logic for the "Continue" button with smooth loading
     nextButton.addEventListener('click', () => {
         const city = nameInput.value.trim();
         if (city) {
-            // Быстрое сохранение в localStorage без искусственных задержек
+            // Показываем загрузку для плавности
+            showLoading();
+            
+            // Сохраняем город в localStorage
             localStorage.setItem('userCity', city);
             
-            // Показываем краткое подтверждение и завершаем
-            if (window.LoadingManager) {
-                // Используем минимальную задержку только для UX
-                const timeoutId = LoadingManager.showConditional('Город сохранен', 100);
+            // Плавное завершение с задержкой
+            setTimeout(() => {
+                hideLoading();
                 setTimeout(() => {
-                    LoadingManager.hide(timeoutId);
                     alert(`Город сохранен: ${city}. Следующий шаг пока не реализован.`);
-                }, 500);
-            } else {
-                // Fallback без излишних задержек
-                alert(`Город сохранен: ${city}. Следующий шаг пока не реализован.`);
-            }
+                }, 200);
+            }, 800);
             
         } else {
             if (window.Telegram && window.Telegram.WebApp) {
