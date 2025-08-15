@@ -4,7 +4,7 @@
 
 ## Базовая информация
 
-- **Базовый URL**: `https://api.smokybot.com`
+- **Базовый URL**: `https://your-domain.com`
 - **API версия**: v1
 - **Документация**: `/docs` (Swagger UI)
 - **ReDoc**: `/redoc`
@@ -13,12 +13,25 @@
 
 ### Middleware
 - **IP фильтрация**: Проверка разрешенных IP адресов
-- **API ключи**: Требуется валидный API ключ в заголовках
 - **CORS**: Настроен для работы с Telegram WebApp
 
 ### Заголовки
 ```
 Content-Type: application/json
+```
+
+### Валидация Telegram WebApp Data
+
+Для всех запросов к `/api/v1/` эндпоинтам требуется валидация данных, полученных от Telegram WebApp. Это обеспечивает безопасность и подтверждает, что запрос исходит от легитимного пользователя Telegram.
+
+**Как это работает:**
+1. Telegram WebApp передает строку `initData` (или `initDataUnsafe`) в заголовке `X-Telegram-WebApp-Data` или в качестве query-параметра `initData`.
+2. Сервер использует `initData` и секретный токен вашего Telegram бота для вычисления и проверки хэша.
+3. Если хэш валиден, запрос обрабатывается. В противном случае, доступ будет отклонен.
+
+**Пример заголовка:**
+```
+X-Telegram-WebApp-Data: query_id=AAHdF6...&user=%7B%22id%22%3A123456789%2C%22first_name%22%3A%22John%22%2C%22last_name%22%3A%22Doe%22%2C%22language_code%22%3A%22en%22%2C%22is_premium%22%3Atrue%7D&auth_date=1678886400&hash=abcdef1234567890abcdef1234567890
 ```
 
 ## Основные endpoints
@@ -376,20 +389,20 @@ Endpoint для тестирования системы Telegram уведомл�
 ```bash
 curl -X POST "https://your-domain.com/api/v1/check_town" \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: your-api-key" \
+  -H "X-Telegram-WebApp-Data: <telegram_webapp_data_here>" \
   -d '{"town": "Москва"}'
 ```
 
 ### Получение пользователя
 ```bash
 curl "https://your-domain.com/api/v1/user/123456789" \
-  -H "X-API-Key: your-api-key"
+  -H "X-Telegram-WebApp-Data: <telegram_webapp_data_here>"
 ```
 
 ### Очистка кэша (только для админов)
 ```bash
 curl -X DELETE "https://your-domain.com/api/v1/admin/cache?confirm=true" \
-  -H "X-API-Key: your-admin-api-key"
+  -H "X-Telegram-WebApp-Data: <telegram_webapp_data_here>"
 ```
 
 ---

@@ -11,7 +11,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    nextButton.addEventListener('click', () => {
+    // --- API Configuration ---
+    const API_BASE_URL = 'https://api.smokybot.com/api/v1';
+
+    const sendNameToBackend = async (name, telegramId, webAppInitData) => {
+        try {
+            if (!webAppInitData) {
+                showAlert('Ошибка: Данные Telegram WebApp не доступны для аутентификации.');
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/name`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Telegram-WebApp-Data': webAppInitData // Use initData for authentication
+                },
+                body: JSON.stringify({
+                    telegram_id: telegramId,
+                    name: name
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                showAlert('ЗАПИСАЛ В БД');
+                // Proceed to next screen or action
+            } else {
+                // Handle API error response
+                const errorMessage = data.message || 'Неизвестная ошибка при записи в БД.';
+                showAlert(`Ошибка: ${errorMessage}`);
+            }
+        } catch (error) {
+            console.error('Ошибка при отправке имени в БД:', error);
+            showAlert('Ошибка сети или сервера при записи в БД.');
+        }
+    };
+
+    nextButton.addEventListener('click', async () => { // Make the event listener async
         const name = nameInput.value.trim(); // Get value and remove leading/trailing spaces
 
         // Rule 1: Not empty
@@ -27,18 +65,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Rule 3: Only letters (no numbers, no special characters, no spaces)
-        // Using a regular expression to check for only Cyrillic or Latin letters
         const lettersOnlyRegex = /^[a-zA-Zа-яА-ЯёЁ]+$/;
         if (!lettersOnlyRegex.test(name)) {
             showAlert('Имя должно содержать только буквы (без цифр, пробелов и спецсимволов).');
             return;
+            }
+
+        // Get Telegram User ID and initData
+        let telegramId = null;
+        let webAppInitData = null;
+
+        if (window.Telegram && window.Telegram.WebApp) {
+            webAppInitData = window.Telegram.WebApp.initData || window.Telegram.WebApp.initDataUnsafe;
+            if (window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                telegramId = window.Telegram.WebApp.initDataUnsafe.user.id;
+            }
         }
 
-        // Rule 4: No leading/trailing spaces (already handled by .trim())
-        // Rule 5: No multiple internal spaces (already handled by regex if no spaces allowed)
+        if (!telegramId) {
+            console.warn('Telegram User ID not available. Using a placeholder ID for testing.');
+            telegramId = 12345; // Placeholder ID for testing outside Telegram WebApp
+        }
+        if (!webAppInitData) {
+            console.warn('Telegram WebApp InitData not available. API calls might fail.');
+            // For testing outside WebApp, you might need a mock initData or skip API call
+            // For production, this should ideally not happen if running inside WebApp
+        }
 
-        // If all checks pass
-        showAlert('ОК');
-        // In a real application, you would proceed to the next step here
+        if (telegramId) {
+            await sendNameToBackend(name, telegramId, webAppInitData);
+        } else {
+            showAlert('Не удалось получить ID пользователя Telegram.');
+        }
+    });
+
+    nameInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission if any
+            nextButton.click(); // Trigger the click event on the button
+        }
     });
 });
