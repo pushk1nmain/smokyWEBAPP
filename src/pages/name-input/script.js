@@ -18,8 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             if (!webAppInitData) {
                 showAlert('Ошибка: Данные Telegram WebApp не доступны для аутентификации.');
+                console.error('webAppInitData is null or empty.'); // Debugging
                 return;
             }
+            console.log('Sending name:', name, 'Telegram ID:', telegramId); // Debugging
+            console.log('X-Telegram-WebApp-Data:', webAppInitData); // Debugging
 
             const response = await fetch(`${API_BASE_URL}/name`, {
                 method: 'POST',
@@ -34,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
+            console.log('API Response Status:', response.status); // Debugging
+            console.log('API Response Data:', data); // Debugging
 
             if (response.ok && data.success) {
                 showAlert('ЗАПИСАЛ В БД');
