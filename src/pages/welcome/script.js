@@ -154,7 +154,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        showLoadingWithText('Проверяем тестовый профиль...');
+        showLoadingWithText('');
         const apiResult = await checkUserInAPI(testUser.id);
         await personalizeGreeting(testUser, apiResult);
     };
