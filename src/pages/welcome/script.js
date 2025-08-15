@@ -312,18 +312,21 @@ const getUserData = async () => {
 const personalizeGreeting = async (telegramUser, apiResult) => {
     const titleElement = document.querySelector('.welcome-title');
     if (!titleElement) return;
-    
-    let userName = '';
-    if (apiResult.found && apiResult.userData?.name) {
-        userName = apiResult.userData.name;
-    } else if (telegramUser?.first_name) {
-        userName = telegramUser.first_name;
+
+    let userName = localStorage.getItem('userName');
+
+    if (!userName) {
+        if (apiResult.found && apiResult.userData?.name) {
+            userName = apiResult.userData.name;
+        } else if (telegramUser?.first_name) {
+            userName = telegramUser.first_name;
+        }
     }
     
     if (userName) {
-        titleElement.textContent = `Привет, ${userName}! Я Смоки — ваш робот-друг на пути к жизни без сигарет`;
+        titleElement.textContent = `Привет, ${userName}! Я Смоки — Ваш гид к жизни без сигарет`;
     } else {
-        titleElement.textContent = 'Привет! Я Смоки — ваш робот-друг на пути к жизни без сигарет';
+        titleElement.textContent = 'Привет! Я Смоки — Ваш гид к жизни без сигарет';
     }
 };
 
