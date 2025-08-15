@@ -295,18 +295,33 @@
     }
 }
 
+/* Адаптация для низких экранов и открытой клавиатуры */
 @media (max-height: 600px) {
     .character-section {
-        margin-bottom: 20px;
-        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+        min-height: 80px; /* Уменьшаем минимальную высоту */
     }
     
     .meditating-person-image {
-        width: 140px; /* Adjust as needed */
+        max-width: 100px; /* Значительно уменьшаем изображение */
+        max-height: 100px;
+    }
+    
+    .content-section {
+        gap: 12px;
+    }
+}
+
+/* Специальная адаптация для очень низких экранов (клавиатура открыта) */
+@media (max-height: 450px) {
+    .character-section {
+        display: none; /* Скрываем изображение при очень маленькой высоте */
     }
     
     .content-section {
         gap: 15px;
+        justify-content: flex-start; /* Выравниваем содержимое сверху */
     }
 }
 
@@ -359,13 +374,13 @@
     display: flex;
     flex-direction: column;
     padding: var(--container-padding);
-    /* Removed max-width and width from here */
-    margin: 0 auto; /* Keep horizontal centering */
-    height: 100%; /* Ensure it takes full height of its parent */
-    overflow-y: auto; /* Allow scrolling if content exceeds viewport height */
-    text-align: center; /* Ensure text is centered */
-    position: relative; /* For z-index of content */
-    z-index: 1; /* Ensure content is above background shapes */
+    margin: 0 auto;
+    height: 100%;
+    overflow-y: auto; /* Разрешаем прокрутку при необходимости */
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    min-height: 0; /* Важно для корректной работы flex */
 }
 
 /* Top Icon */
@@ -378,19 +393,22 @@
 
 /* Character Section (meditating person) */
 .character-section {
-    flex: 0 1 auto;
+    flex: 0 0 auto; /* Не позволяем секции растягиваться или сжиматься */
     text-align: center;
-    margin-bottom: 20px; /* Adjusted margin to create space below the image */
+    margin-bottom: 15px;
     margin-top: 10px;
-    width: 100%; /* Ensure it takes full width to allow centering its content */
+    width: 100%;
     transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    min-height: 120px; /* Минимальная высота для стабильности */
 }
 
 .meditating-person-image {
-    max-width: 200px; /* Limit the maximum width of the image */
-    height: auto; /* Maintain aspect ratio */
-    display: block; /* Ensure it behaves as a block element for margin auto */
-    margin: 0 auto; /* Center the image horizontally */
+    max-width: 160px; /* Уменьшаем размер изображения */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    max-height: 160px; /* Ограничиваем высоту */
+    object-fit: contain; /* Сохраняем пропорции */
 }
 
 /* Content Section */
@@ -398,12 +416,13 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
     min-height: 0;
-    width: 100%; /* Ensure it takes full width of its parent */
-    max-width: 400px; /* Control content width */
-    margin: 0 auto; /* Center content section */
-    overflow-y: auto; /* Allow scrolling within this section */
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    overflow-y: visible; /* Убираем scroll внутри секции */
+    justify-content: center; /* Центрируем содержимое по вертикали */
 }
 
 /* Explicitly set text colors */
