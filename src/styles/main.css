@@ -122,7 +122,7 @@ body {
     margin: 30px 0;
 }
 
-.start-button {
+.common-button {
     background: #4CAF50;
     color: white;
     border: none;
@@ -137,12 +137,12 @@ body {
     justify-content: center;
     gap: 12px;
     box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
-    min-width: 280px;
+    /* min-width: 280px; Removed for common style */
     position: relative;
     overflow: hidden;
 }
 
-.start-button::before {
+.common-button::before {
     content: '';
     position: absolute;
     top: 0;
@@ -153,22 +153,22 @@ body {
     transition: left 0.5s;
 }
 
-.start-button:hover::before {
+.common-button:hover::before {
     left: 100%;
 }
 
-.start-button:hover {
+.common-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 25px rgba(76, 175, 80, 0.4);
     background: #45a049;
 }
 
-.start-button:active {
+.common-button:active {
     transform: translateY(0);
     box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
 }
 
-.start-button:focus {
+.common-button:focus {
     outline: 2px solid var(--tg-theme-button-color);
     outline-offset: 2px;
 }
@@ -183,7 +183,7 @@ body {
 }
 
 /* CSS стрелка */
-.arrow-icon {
+.common-arrow-icon {
     width: 0;
     height: 0;
     border-left: 8px solid white;
