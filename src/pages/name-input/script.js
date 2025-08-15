@@ -1,28 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Adjust app height dynamically for virtual keyboard
-    function adjustAppHeight() {
-        const appContainer = document.querySelector('.app-container');
-        if (appContainer && window.visualViewport) {
-            appContainer.style.height = `${window.visualViewport.height}px`;
-        } else if (appContainer) {
-            // Fallback for browsers without visualViewport (less accurate for keyboard)
-            appContainer.style.height = `${window.innerHeight}px`;
-        }
-    }
-
-    // Initial adjustment
-    adjustAppHeight();
-
-    // Adjust on visual viewport resize (e.g., keyboard appearing/disappearing)
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', adjustAppHeight);
-    } else {
-        // Fallback for window resize (less accurate for keyboard)
-        window.addEventListener('resize', adjustAppHeight);
-    }
-
     const nameInput = document.querySelector('.name-input');
     const nextButton = document.getElementById('nextButton');
+    const nameInputScreen = document.querySelector('.name-input-screen'); // Get the main screen element
+    const characterSection = document.querySelector('.character-section'); // Get the character section
 
     // Function to show Telegram WebApp alert
     const showAlert = (message) => {
@@ -32,6 +12,52 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(message); // Fallback for testing outside Telegram WebApp
         }
     };
+
+    // --- Telegram WebApp Keyboard Handling ---
+    if (window.Telegram && window.Telegram.WebApp) {
+        const WebApp = window.Telegram.WebApp;
+
+        // Initial setup for viewport
+        WebApp.ready();
+        WebApp.expand(); // Ensure the app expands to full height
+
+        // Listen for viewport changes (including keyboard appearance/disappearance)
+        WebApp.onEvent('viewportChanged', () => {
+            const currentViewportHeight = WebApp.viewportHeight;
+            const stableViewportHeight = WebApp.viewportStableHeight;
+
+            const keyboardHeight = stableViewportHeight - currentViewportHeight;
+
+            if (nameInputScreen) {
+                // Apply padding to the bottom of the screen to push content up
+                // Only apply if keyboard is detected (height > 0)
+                nameInputScreen.style.paddingBottom = `${Math.max(0, keyboardHeight)}px`;
+                
+                // Dynamically adjust character section height
+                if (characterSection) {
+                    if (keyboardHeight > 0) {
+                        // Keyboard is open, shrink character section
+                        characterSection.style.maxHeight = '0px'; // Shrink to 0px
+                        characterSection.style.opacity = '0'; // Fade out
+                        characterSection.style.overflow = 'hidden'; // Hide overflow content
+                    } else {
+                        // Keyboard is closed, revert character section
+                        characterSection.style.maxHeight = ''; // Revert to CSS default
+                        characterSection.style.opacity = ''; // Revert to CSS default
+                        characterSection.style.overflow = ''; // Revert to CSS default
+                    }
+                }
+
+                // Scroll the active input into view if it's focused
+                if (document.activeElement === nameInput && keyboardHeight > 0) {
+                    nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        // Trigger initial viewport check
+        // WebApp.onEvent('mainButtonPress', () => {}); // Removed as it might interfere with other logic
+    }
 
     // --- API Configuration ---
     const config = {

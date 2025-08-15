@@ -4,32 +4,33 @@
  */
 
 (function() {
-    // Adjust app height dynamically for virtual keyboard
-    function adjustAppHeight() {
-        const appContainer = document.querySelector('.app-container');
-        if (appContainer && window.visualViewport) {
-            appContainer.style.height = `${window.visualViewport.height}px`;
-        } else if (appContainer) {
-            // Fallback for browsers without visualViewport (less accurate for keyboard)
-            appContainer.style.height = `${window.innerHeight}px`;
-        }
-    }
-
-    // Initial adjustment
-    adjustAppHeight();
-
-    // Adjust on visual viewport resize (e.g., keyboard appearing/disappearing)
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', adjustAppHeight);
-    } else {
-        // Fallback for window resize (less accurate for keyboard)
-        window.addEventListener('resize', adjustAppHeight);
-    }
-
-
     // Глобальные переменные и встроенная конфигурация
     let tg = null;
     let isReady = false;
+
+    // --- Telegram WebApp Keyboard Handling ---
+    // This is added for consistency, though welcome screen doesn't have direct input issues
+    if (window.Telegram && window.Telegram.WebApp) {
+        const WebApp = window.Telegram.WebApp;
+        const appContainer = document.querySelector('.app-container');
+
+        // Initial setup for viewport
+        WebApp.ready();
+        WebApp.expand(); // Ensure the app expands to full height
+
+        // Listen for viewport changes (including keyboard appearance/disappearance)
+        WebApp.onEvent('viewportChanged', () => {
+            const currentViewportHeight = WebApp.viewportHeight;
+            const stableViewportHeight = WebApp.viewportStableHeight;
+
+            const keyboardHeight = stableViewportHeight - currentViewportHeight;
+
+            if (appContainer) {
+                // Apply padding to the bottom of the app container
+                appContainer.style.paddingBottom = `${Math.max(0, keyboardHeight)}px`;
+            }
+        });
+    }
 
     const config = {
         api: {

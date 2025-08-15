@@ -43,24 +43,13 @@
 }
 
 /* Основной контейнер */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #ffffff;
-    color: var(--tg-theme-text-color);
-    line-height: 1.6;
-    overflow: hidden; /* Убираем прокрутку */
+    overflow: auto; /* Разрешаем прокрутку */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
 }
 
-.app-container {
-    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
-    overflow: hidden; /* Убираем прокрутку */
+    overflow: auto; /* Разрешаем прокрутку */
 }
 
 /* Парящие смайлики */
@@ -347,7 +336,6 @@ body {
     padding: var(--container-padding);
     /* Removed max-width and width from here */
     margin: 0 auto; /* Keep horizontal centering */
-    overflow: hidden;
     height: 100%; /* Ensure it takes full height of its parent */
     overflow-y: auto; /* Allow scrolling if content exceeds viewport height */
     text-align: center; /* Ensure text is centered */
@@ -365,11 +353,12 @@ body {
 
 /* Character Section (meditating person) */
 .character-section {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     text-align: center;
     margin-bottom: 20px; /* Adjusted margin to create space below the image */
     margin-top: 10px;
     width: 100%; /* Ensure it takes full width to allow centering its content */
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
 }
 
 .meditating-person-image {
