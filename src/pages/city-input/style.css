@@ -1,0 +1,602 @@
+/**
+ * SmokyApp - Name Input Screen Styles
+ * Стили экрана ввода имени оптимизированы для Telegram WebApp
+ */
+
+/* CSS Custom Properties для Telegram Theme */
+:root {
+    /* Базовые цвета (fallback) */
+    --tg-theme-bg-color: #ffffff;
+    --tg-theme-text-color: #000000;
+    --tg-theme-hint-color: #999999;
+    --tg-theme-link-color: #2196F3;
+    --tg-theme-button-color: #2196F3;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-secondary-bg-color: #f1f1f1;
+    
+    /* Кастомные цвета приложения */
+    --smoky-primary: #2196F3;
+    --smoky-secondary: #FFF3E0;
+    --smoky-accent: #FF9800;
+    --smoky-success: #4CAF50;
+    --smoky-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Размеры и отступы */
+    --container-padding: 20px;
+    --border-radius: 16px;
+    --transition-duration: 0.3s;
+
+    /* Цвета для второго экрана */
+    --color-blue: #5A9BF7;
+    --color-light-pink: #FEB8B1;
+    --color-green: #74E976;
+    --color-title: #235BDF;
+    --color-text: #1C3D8C;
+    --color-placeholder: #B0A5A5;
+}
+
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Основной контейнер */
+    body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: var(--tg-theme-text-color);
+    line-height: 1.6;
+    body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: var(--tg-theme-text-color);
+    line-height: 1.6;
+    overflow: auto; /* Разрешаем прокрутку */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
+}
+
+.app-container {
+    min-height: 100vh; /* Используем min-height вместо фиксированной высоты */
+    height: 100vh; /* Fallback для старых браузеров */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%);
+    overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+    overflow-y: auto; /* Разрешаем вертикальную прокрутку */
+}
+
+    .app-container {
+    min-height: 100vh; /* Используем min-height вместо фиксированной высоты */
+    height: 100vh; /* Fallback для старых браузеров */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%);
+    overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+    overflow-y: auto; /* Разрешаем вертикальную прокрутку */
+}
+
+/* Парящие смайлики */
+.floating-emojis {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0; /* Устанавливаем самый низкий z-index чтобы смайлики были позади всех элементов */
+    overflow: hidden;
+}
+
+.emoji {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0.3;
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.6, 1.0); /* Более плавная кривая анимации */
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+    user-select: none;
+    will-change: transform; /* Оптимизация для плавности */
+}
+
+/* Индивидуальные настройки для каждого смайлика */
+/* Размещаем смайлики только по краям экрана, избегая центральной зоны с контентом */
+.emoji-1 {
+    top: 5%;
+    left: 5%;
+    animation: floatSlow 12s infinite;
+    animation-delay: 0s;
+}
+
+.emoji-2 {
+    top: 8%;
+    right: 5%;
+    animation: floatMedium 10s infinite;
+    animation-delay: 1.5s;
+}
+
+.emoji-3 {
+    top: 92%;
+    left: 8%;
+    animation: floatGentle 8s infinite;
+    animation-delay: 3s;
+}
+
+.emoji-4 {
+    top: 95%;
+    right: 8%;
+    animation: floatSlow 14s infinite;
+    animation-delay: 4.5s;
+}
+
+.emoji-5 {
+    top: 35%;
+    left: 2%;
+    animation: floatMedium 11s infinite;
+    animation-delay: 2s;
+}
+
+.emoji-6 {
+    top: 75%;
+    left: 3%;
+    animation: floatGentle 9s infinite;
+    animation-delay: 3.5s;
+}
+
+.emoji-7 {
+    top: 25%;
+    right: 3%;
+    animation: floatSlow 13s infinite;
+    animation-delay: 1s;
+}
+
+.emoji-8 {
+    top: 65%;
+    right: 2%;
+    animation: floatMedium 10s infinite;
+    animation-delay: 5s;
+}
+
+.emoji-9 {
+    top: 45%;
+    left: 1%;
+    animation: floatGentle 7s infinite;
+    animation-delay: 4s;
+}
+
+.emoji-10 {
+    top: 15%;
+    left: 2%;
+    animation: floatSlow 15s infinite;
+    animation-delay: 2.5s;
+}
+
+.emoji-11 {
+    top: 55%;
+    right: 1%;
+    animation: floatMedium 9s infinite;
+    animation-delay: 5.5s;
+}
+
+/* Анимации для смайликов */
+@keyframes floatSlow {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    16.67% {
+        transform: translateY(-6px) translateX(2px) rotate(0.5deg);
+    }
+    33.33% {
+        transform: translateY(-8px) translateX(3px) rotate(1deg);
+    }
+    50% {
+        transform: translateY(-5px) translateX(-1px) rotate(-0.3deg);
+    }
+    66.67% {
+        transform: translateY(-10px) translateX(4px) rotate(1.2deg);
+    }
+    83.33% {
+        transform: translateY(-3px) translateX(-2px) rotate(-0.7deg);
+    }
+}
+
+@keyframes floatMedium {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    20% {
+        transform: translateY(-4px) translateX(-2px) rotate(-0.5deg);
+    }
+    40% {
+        transform: translateY(-7px) translateX(-3px) rotate(-0.8deg);
+    }
+    60% {
+        transform: translateY(-3px) translateX(2px) rotate(0.4deg);
+    }
+    80% {
+        transform: translateY(-6px) translateX(3px) rotate(0.9deg);
+    }
+}
+
+@keyframes floatGentle {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-3px) translateX(1px) rotate(0.2deg);
+    }
+    50% {
+        transform: translateY(-5px) translateX(-1px) rotate(-0.3deg);
+    }
+    75% {
+        transform: translateY(-2px) translateX(2px) rotate(0.4deg);
+    }
+}
+
+/* Анимации */
+@keyframes floatAnimation {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 380px) {
+    :root {
+        --container-padding: 16px;
+    }
+    
+    .meditating-person-image {
+        width: 120px; /* Adjust as needed */ /* Also make it smaller for small screens */
+    }
+    
+    .screen-title {
+        font-size: 24px;
+    }
+    
+    .screen-description {
+        font-size: 16px;
+    }
+    
+    .next-button {
+        padding: 14px 24px;
+        font-size: 16px;
+        min-width: 180px;
+    }
+
+    .input-field-container {
+        padding: 10px 15px;
+    }
+
+    .name-input {
+        font-size: 16px;
+    }
+}
+
+/* Адаптация для низких экранов и открытой клавиатуры */
+@media (max-height: 600px) {
+    .character-section {
+        margin-bottom: 10px;
+        margin-top: 5px;
+        min-height: 80px; /* Уменьшаем минимальную высоту */
+    }
+    
+    .meditating-person-image {
+        max-width: 100px; /* Значительно уменьшаем изображение */
+        max-height: 100px;
+    }
+    
+    .content-section {
+        gap: 12px;
+    }
+}
+
+/* Дополнительная защита для очень низких экранов */
+@media (max-height: 400px) {
+    .character-section {
+        display: none !important; /* Принудительно скрываем изображение */
+    }
+    
+    .content-section {
+        gap: 10px;
+        justify-content: flex-start;
+    }
+    
+    .screen-title {
+        font-size: 24px; /* Уменьшаем заголовок */
+    }
+    
+    .screen-description {
+        font-size: 16px; /* Уменьшаем описание */
+        margin-bottom: 15px;
+    }
+}
+
+/* Поддержка темной темы */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --tg-theme-bg-color: #1a1a1a;
+        --tg-theme-text-color: #ffffff;
+        --tg-theme-hint-color: #aaaaaa;
+        --tg-theme-secondary-bg-color: #2a2a2a;
+        --smoky-shadow: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce) {
+    .character-container,
+    .next-button .arrow-icon { /* Apply to arrow icon if animated */
+        animation: none;
+    }
+    
+    .next-button {
+        transition: none;
+    }
+}
+
+/* Фокус для клавиатурной навигации */
+*:focus {
+    outline: 2px solid var(--tg-theme-button-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Скрытие элементов для скринридеров */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Screen Layout */
+.name-input-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--container-padding);
+    margin: 0 auto;
+    height: 100%;
+    overflow-y: visible; /* Убираем scroll, управляем через JavaScript */
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    min-height: 0; /* Важно для корректной работы flex */
+    transform: translateZ(0); /* Включаем аппаратное ускорение для плавности анимаций */
+}
+
+/* Top Icon */
+.top-icon-section {
+    text-align: center;
+    margin-top: 20px; /* Keep existing margin */
+    margin-bottom: 20px; /* Keep existing margin */
+    width: 100%; /* Ensure it takes full width to allow centering its content */
+}
+
+/* Character Section (meditating person) */
+.character-section {
+    flex: 0 0 auto; /* Не позволяем секции растягиваться или сжиматься */
+    text-align: center;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    width: 100%;
+    /* Transition управляется через JavaScript для лучшего контроля */
+    min-height: 120px; /* Минимальная высота для стабильности */
+    will-change: max-height, opacity; /* Оптимизация для анимаций */
+}
+
+.meditating-person-image {
+    max-width: 160px; /* Уменьшаем размер изображения */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    max-height: 160px; /* Ограничиваем высоту */
+    object-fit: contain; /* Сохраняем пропорции */
+}
+
+/* Content Section */
+.content-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 0;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    overflow-y: visible; /* Убираем scroll внутри секции */
+    justify-content: center; /* Центрируем содержимое по вертикали */
+}
+
+/* Explicitly set text colors */
+.screen-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #235BDF; /* Force dark blue color */
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.screen-description {
+    font-size: 18px;
+    color: #1C3D8C; /* Force dark blue color */
+    line-height: 1.5;
+    margin-bottom: 20px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Input field container */
+.input-field-container {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff; /* White background for input */
+    border: 2px solid var(--color-title); /* Blue border from image */
+    border-radius: 25px; /* Rounded corners */
+    padding: 16px 24px; /* Increased padding for bigger input */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    max-width: 100%; /* Make it wider */
+    margin: 0 auto; /* Center the input field */
+}
+
+.name-input {
+    flex: 1; /* Allow it to take available space */
+    border: none; /* Remove default border */
+    background: transparent; /* Make background transparent */
+    outline: none; /* Remove outline on focus */
+    padding: 0; /* Remove default padding */
+    font-size: 18px; /* Increased font size for better visibility */
+    color: var(--color-text); /* Set text color to dark blue */
+}
+
+.name-input:focus::placeholder {
+    color: transparent;
+}
+
+.name-input:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: none; /* Remove any default shadow on focus */
+}
+
+.input-icon {
+    width: 24px;
+    height: auto;
+    margin-right: 10px; /* Space between icon and text */
+}
+
+/* Action Button (Next Button) */
+.action-section {
+    margin: 30px 0;
+    width: 100%; /* Ensure it takes full width to allow centering its content */
+    display: flex; /* Use flex to center the button */
+    justify-content: center; /* Center the button horizontally */
+}
+
+.next-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(180deg, #5A9BF7 0%, #235BDF 100%);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 200px;
+    text-align: center;
+}
+
+.next-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.next-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.button-text {
+    margin-right: 10px;
+}
+
+.arrow-icon {
+    width: 20px;
+    height: 20px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Placeholder styling */
+::placeholder {
+    color: var(--color-placeholder);
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: var(--color-placeholder);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: var(--color-placeholder);
+}
+
+/* Common button styles */
+.common-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(180deg, #5A9BF7 0%, #235BDF 100%);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 200px;
+    text-align: center;
+}
+
+.common-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.common-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.common-arrow-icon {
+    width: 20px;
+    height: 20px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-left: 10px;
+}

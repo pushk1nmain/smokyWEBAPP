@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>SmokyApp - Ввод города</title>
+    
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    
+    <!-- Отключение кэширования для разработки -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Meta теги для Telegram WebApp -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Парящие смайлики на фоне -->
+        <div class="floating-emojis">
+            <span class="emoji emoji-1">🔥</span>
+            <span class="emoji emoji-2">🚀</span>
+            <span class="emoji emoji-3">🚭</span>
+            <span class="emoji emoji-4">💨</span>
+            <span class="emoji emoji-5">🌿</span>
+            <span class="emoji emoji-6">💚</span>
+            <span class="emoji emoji-7">🤝</span>
+            <span class="emoji emoji-8">📈</span>
+            <span class="emoji emoji-9">🪴</span>
+            <span class="emoji emoji-10">⏳</span>
+            <span class="emoji emoji-11">🏆</span>
+        </div>
+        
+
+        <main class="name-input-screen">
+            
+
+            <div class="character-section">
+                <div class="character-container">
+                    <!-- Placeholder for meditating person image -->
+                    <img src="../../assets/images/meditating_person.svg" alt="Медитирующий человек" class="meditating-person-image">
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h1 class="screen-title" id="page-title">..., где Вы живете?</h1>
+                
+                <p class="screen-description">
+                    Это поможет мне писать вам в удобное время, а не посреди ночи 😴
+                </p>
+                
+                <div class="input-section">
+                    <div class="input-field-container">
+                        <img src="../../assets/icons/User_fill.svg" alt="Иконка пользователя" class="input-icon">
+                        <input type="text" placeholder="Ваш город" class="name-input">
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <button class="common-button" 
+                            id="nextButton"
+                            tabindex="0" 
+                            aria-label="Продолжить">
+                        <span class="button-text">Продолжить</span>
+                        <span class="common-arrow-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="script.js" defer></script>
+</body>
+</html>
