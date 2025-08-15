@@ -51,11 +51,11 @@ body {
     overflow: hidden; /* Убираем прокрутку */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    height: 100vh; /* Фиксированная высота viewport */
+    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
 }
 
 .app-container {
-    height: 100vh; /* Фиксированная высота viewport */
+    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
     display: flex;
     flex-direction: column;
     position: relative;

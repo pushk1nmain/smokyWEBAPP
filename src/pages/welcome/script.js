@@ -4,6 +4,29 @@
  */
 
 (function() {
+    // Adjust app height dynamically for virtual keyboard
+    function adjustAppHeight() {
+        const appContainer = document.querySelector('.app-container');
+        if (appContainer && window.visualViewport) {
+            appContainer.style.height = `${window.visualViewport.height}px`;
+        } else if (appContainer) {
+            // Fallback for browsers without visualViewport (less accurate for keyboard)
+            appContainer.style.height = `${window.innerHeight}px`;
+        }
+    }
+
+    // Initial adjustment
+    adjustAppHeight();
+
+    // Adjust on visual viewport resize (e.g., keyboard appearing/disappearing)
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', adjustAppHeight);
+    } else {
+        // Fallback for window resize (less accurate for keyboard)
+        window.addEventListener('resize', adjustAppHeight);
+    }
+
+
     // Глобальные переменные и встроенная конфигурация
     let tg = null;
     let isReady = false;
