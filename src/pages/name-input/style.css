@@ -255,7 +255,7 @@ body {
     }
     
     .meditating-person-image {
-        width: 160px; /* Adjust as needed */
+        width: 120px; /* Adjust as needed */ /* Also make it smaller for small screens */
     }
     
     .screen-title {
@@ -367,9 +367,16 @@ body {
 .character-section {
     flex: 0 0 auto;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* Adjusted margin to create space below the image */
     margin-top: 10px;
     width: 100%; /* Ensure it takes full width to allow centering its content */
+}
+
+.meditating-person-image {
+    max-width: 200px; /* Limit the maximum width of the image */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensure it behaves as a block element for margin auto */
+    margin: 0 auto; /* Center the image horizontally */
 }
 
 /* Content Section */
