@@ -12,7 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- API Configuration ---
-    const API_BASE_URL = 'https://api.smokybot.com/api/v1';
+    const config = {
+        api: {
+            baseUrl: '/api/v1'
+        }
+    };
 
     const sendNameToBackend = async (name, telegramId, webAppInitData) => {
         try {
@@ -24,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Sending name:', name, 'Telegram ID:', telegramId); // Debugging
             console.log('X-Telegram-WebApp-Data:', webAppInitData); // Debugging
 
-            const response = await fetch(`${API_BASE_URL}/name`, {
+            const response = await fetch(`${config.api.baseUrl}/name`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let webAppInitData = null;
 
         if (window.Telegram && window.Telegram.WebApp) {
-            webAppInitData = window.Telegram.WebApp.initData || window.Telegram.WebApp.initDataUnsafe;
+            webAppInitData = window.Telegram.WebApp.initData;
             if (window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
                 telegramId = window.Telegram.WebApp.initDataUnsafe.user.id;
             }
