@@ -60,21 +60,25 @@
 }
 
 .app-container {
-    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
+    min-height: 100vh; /* Используем min-height вместо фиксированной высоты */
+    height: 100vh; /* Fallback для старых браузеров */
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
-    overflow: auto; /* Разрешаем прокрутку */
+    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%);
+    overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+    overflow-y: auto; /* Разрешаем вертикальную прокрутку */
 }
 
     .app-container {
-    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
+    min-height: 100vh; /* Используем min-height вместо фиксированной высоты */
+    height: 100vh; /* Fallback для старых браузеров */
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
-    overflow: auto; /* Разрешаем прокрутку */
+    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%);
+    overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+    overflow-y: auto; /* Разрешаем вертикальную прокрутку */
 }
 
 /* Парящие смайлики */
@@ -313,15 +317,24 @@
     }
 }
 
-/* Специальная адаптация для очень низких экранов (клавиатура открыта) */
-@media (max-height: 450px) {
+/* Дополнительная защита для очень низких экранов */
+@media (max-height: 400px) {
     .character-section {
-        display: none; /* Скрываем изображение при очень маленькой высоте */
+        display: none !important; /* Принудительно скрываем изображение */
     }
     
     .content-section {
-        gap: 15px;
-        justify-content: flex-start; /* Выравниваем содержимое сверху */
+        gap: 10px;
+        justify-content: flex-start;
+    }
+    
+    .screen-title {
+        font-size: 24px; /* Уменьшаем заголовок */
+    }
+    
+    .screen-description {
+        font-size: 16px; /* Уменьшаем описание */
+        margin-bottom: 15px;
     }
 }
 
@@ -376,11 +389,12 @@
     padding: var(--container-padding);
     margin: 0 auto;
     height: 100%;
-    overflow-y: auto; /* Разрешаем прокрутку при необходимости */
+    overflow-y: visible; /* Убираем scroll, управляем через JavaScript */
     text-align: center;
     position: relative;
     z-index: 1;
     min-height: 0; /* Важно для корректной работы flex */
+    transform: translateZ(0); /* Включаем аппаратное ускорение для плавности анимаций */
 }
 
 /* Top Icon */
@@ -398,8 +412,9 @@
     margin-bottom: 15px;
     margin-top: 10px;
     width: 100%;
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    /* Transition управляется через JavaScript для лучшего контроля */
     min-height: 120px; /* Минимальная высота для стабильности */
+    will-change: max-height, opacity; /* Оптимизация для анимаций */
 }
 
 .meditating-person-image {

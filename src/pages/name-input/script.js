@@ -13,51 +13,92 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Telegram WebApp Keyboard Handling ---
+    // --- Universal Keyboard Handling for Telegram WebApp ---
+    let initialViewportHeight = window.innerHeight;
+    let isKeyboardOpen = false;
+
+    // Telegram WebApp specific setup
     if (window.Telegram && window.Telegram.WebApp) {
         const WebApp = window.Telegram.WebApp;
-
-        // Initial setup for viewport
         WebApp.ready();
-        WebApp.expand(); // Ensure the app expands to full height
+        WebApp.expand();
+        
+        // Store initial viewport height after expansion
+        setTimeout(() => {
+            initialViewportHeight = window.innerHeight;
+        }, 100);
+    }
 
-        // Listen for viewport changes (including keyboard appearance/disappearance)
-        WebApp.onEvent('viewportChanged', () => {
-            const currentViewportHeight = WebApp.viewportHeight;
-            const stableViewportHeight = WebApp.viewportStableHeight;
-
-            const keyboardHeight = stableViewportHeight - currentViewportHeight;
-
-            if (nameInputScreen) {
-                // Apply padding to the bottom of the screen to push content up
-                // Only apply if keyboard is detected (height > 0)
-                nameInputScreen.style.paddingBottom = `${Math.max(0, keyboardHeight)}px`;
-                
-                // Dynamically adjust character section height
-                if (characterSection) {
-                    if (keyboardHeight > 0) {
-                        // Keyboard is open, shrink character section
-                        characterSection.style.maxHeight = '0px'; // Shrink to 0px
-                        characterSection.style.opacity = '0'; // Fade out
-                        characterSection.style.overflow = 'hidden'; // Hide overflow content
-                    } else {
-                        // Keyboard is closed, revert character section
-                        characterSection.style.maxHeight = ''; // Revert to CSS default
-                        characterSection.style.opacity = ''; // Revert to CSS default
-                        characterSection.style.overflow = ''; // Revert to CSS default
-                    }
-                }
-
-                // Scroll the active input into view if it's focused
-                if (document.activeElement === nameInput && keyboardHeight > 0) {
-                    nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Universal viewport change handler
+    const handleViewportChange = () => {
+        const currentViewportHeight = window.innerHeight;
+        const heightDifference = initialViewportHeight - currentViewportHeight;
+        const keyboardThreshold = 150; // Минимальная высота для определения клавиатуры
+        
+        const wasKeyboardOpen = isKeyboardOpen;
+        isKeyboardOpen = heightDifference > keyboardThreshold;
+        
+        // Только если состояние изменилось
+        if (wasKeyboardOpen !== isKeyboardOpen) {
+            if (characterSection) {
+                if (isKeyboardOpen) {
+                    // Клавиатура открыта - скрываем изображение
+                    characterSection.style.transition = 'all 0.3s ease-out';
+                    characterSection.style.maxHeight = '0px';
+                    characterSection.style.opacity = '0';
+                    characterSection.style.marginBottom = '0px';
+                    characterSection.style.overflow = 'hidden';
+                } else {
+                    // Клавиатура закрыта - показываем изображение
+                    characterSection.style.transition = 'all 0.3s ease-out';
+                    characterSection.style.maxHeight = '';
+                    characterSection.style.opacity = '';
+                    characterSection.style.marginBottom = '';
+                    characterSection.style.overflow = '';
                 }
             }
-        });
+            
+            // Прокручиваем к input при открытии клавиатуры
+            if (isKeyboardOpen && document.activeElement === nameInput) {
+                setTimeout(() => {
+                    nameInput.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'nearest'
+                    });
+                }, 100);
+            }
+        }
+    };
 
-        // Trigger initial viewport check
-        // WebApp.onEvent('mainButtonPress', () => {}); // Removed as it might interfere with other logic
+    // Слушаем изменения размера окна (универсальный подход)
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+            initialViewportHeight = window.innerHeight;
+            handleViewportChange();
+        }, 500);
+    });
+
+    // Дополнительная обработка для Telegram WebApp API (если доступно)
+    if (window.Telegram && window.Telegram.WebApp) {
+        const WebApp = window.Telegram.WebApp;
+        
+        try {
+            WebApp.onEvent('viewportChanged', handleViewportChange);
+        } catch (e) {
+            console.log('Telegram viewportChanged event not available, using fallback');
+        }
     }
+
+    // Обработка фокуса на input для дополнительной защиты
+    nameInput.addEventListener('focus', () => {
+        setTimeout(handleViewportChange, 300);
+    });
+    
+    nameInput.addEventListener('blur', () => {
+        setTimeout(handleViewportChange, 300);
+    });
 
     // --- API Configuration ---
     const config = {
