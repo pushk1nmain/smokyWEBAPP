@@ -579,6 +579,12 @@ body {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     z-index: 1001;
+    opacity: 1;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.other-source-modal.hidden .modal-overlay-blur {
+    opacity: 0;
 }
 
 .other-source-modal-content {
