@@ -591,11 +591,6 @@ body {
     width: 100%;
     text-align: center;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    transform: scale(0.9);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.other-source-modal:not(.hidden) .other-source-modal-content {
     transform: scale(1);
 }
 
@@ -737,21 +732,6 @@ body {
     line-height: 1;
 }
 
-/* Анимация появления модального окна */
-@keyframes otherSourceModalSlideIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9) translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.other-source-modal:not(.hidden) .other-source-modal-content {
-    animation: otherSourceModalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
 /* Адаптивность модального окна */
 @media (max-width: 480px) {
