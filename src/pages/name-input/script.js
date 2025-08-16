@@ -8,7 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const characterSection = document.querySelector('.character-section');
 
     const showAlert = (message) => {
-        if (window.Telegram && window.Telegram.WebApp) {
+        if (window.showErrorModal) {
+            window.showErrorModal(message);
+        } else if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.showAlert(message);
         } else {
             alert(message); // Fallback
@@ -118,16 +120,69 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    nextButton.addEventListener('click', async () => {
-        const name = nameInput.value.trim();
+    /**
+     * Валидация имени пользователя
+     * @param {string} name - введенное имя
+     * @returns {object} - объект с результатом валидации и сообщением об ошибке
+     */
+    const validateName = (name) => {
+        // Убираем пробелы в начале и конце
+        const trimmedName = name.trim();
+        
+        // Проверка длины
+        if (trimmedName.length < 2) {
+            return { isValid: false, error: 'Имя должно содержать от 2 до 20 символов' };
+        }
+        
+        if (trimmedName.length > 20) {
+            return { isValid: false, error: 'Имя должно содержать от 2 до 20 символов' };
+        }
+        
+        // Проверка допустимых символов (кириллица, латиница, пробелы, дефисы)
+        const validCharsRegex = /^[a-zA-Zа-яА-ЯёЁ\s\-]+$/;
+        if (!validCharsRegex.test(trimmedName)) {
+            return { isValid: false, error: 'Имя может содержать только буквы, пробелы и дефисы' };
+        }
+        
+        // Проверка на множественные пробелы
+        if (/\s{2,}/.test(trimmedName)) {
+            return { isValid: false, error: 'Имя может содержать только буквы, пробелы и дефисы' };
+        }
+        
+        // Проверка, что имя не начинается и не заканчивается дефисом
+        if (trimmedName.startsWith('-') || trimmedName.endsWith('-')) {
+            return { isValid: false, error: 'Имя может содержать только буквы, пробелы и дефисы' };
+        }
+        
+        // Проверка на несколько дефисов подряд
+        if (/\-{2,}/.test(trimmedName)) {
+            return { isValid: false, error: 'Имя может содержать только буквы, пробелы и дефисы' };
+        }
+        
+        // Проверка на пробел или дефис в начале/конце (дополнительная проверка)
+        if (trimmedName.startsWith(' ') || trimmedName.endsWith(' ')) {
+            return { isValid: false, error: 'Имя может содержать только буквы, пробелы и дефисы' };
+        }
+        
+        return { isValid: true, cleanedName: trimmedName };
+    };
 
-        if (name === '' || name.length < 2 || !/^[a-zA-Zа-яА-ЯёЁ]+$/.test(name)) {
-            showAlert('Имя должно содержать только буквы (минимум 2) и не может быть пустым.');
+    nextButton.addEventListener('click', async () => {
+        const name = nameInput.value;
+        
+        // Валидация имени
+        const validation = validateName(name);
+        
+        if (!validation.isValid) {
+            showAlert(validation.error);
             return;
         }
+        
+        // Используем очищенное имя
+        const cleanedName = validation.cleanedName;
 
         // --- Save name and redirect ---
-        localStorage.setItem('userName', name);
+        localStorage.setItem('userName', cleanedName);
 
         let telegramId = null;
         let webAppInitData = null;
@@ -144,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showLoading();
             
             try {
-                const isSuccess = await sendNameToBackend(name, telegramId, webAppInitData);
+                const isSuccess = await sendNameToBackend(cleanedName, telegramId, webAppInitData);
                 
                 if (isSuccess) {
                     // Плавный переход к следующей странице
