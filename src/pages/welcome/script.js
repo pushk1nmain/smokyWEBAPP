@@ -283,9 +283,23 @@ const checkUserInAPI = async (telegramId) => {
             console.log('❌ Пользователь не найден в API (404)');
             return { found: false, userData: null };
         } else {
-            const errorText = await response.text();
-            console.error('❌ Ошибка API запроса:', response.status, errorText);
-            return { found: false, userData: null, error: `HTTP ${response.status}` };
+            // Пытаемся получить детальное сообщение об ошибке с сервера
+            let errorMessage = '';
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorData.error || '';
+            } catch (e) {
+                // Если не удалось распарсить JSON, пытаемся получить текст
+                try {
+                    errorMessage = await response.text();
+                } catch (e2) {
+                    errorMessage = '';
+                }
+            }
+            
+            const serverError = errorMessage || `HTTP ${response.status}`;
+            console.error('❌ Ошибка API запроса:', response.status, serverError);
+            return { found: false, userData: null, error: serverError };
         }
     } catch (error) {
         console.error('❌ Ошибка сети при запросе к API:', error);

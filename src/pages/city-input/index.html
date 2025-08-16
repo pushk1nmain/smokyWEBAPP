@@ -117,6 +117,25 @@
                 </div>
             </div>
         </div>
+
+        <!-- Модальное окно ошибки города не найден -->
+        <div class="city-not-found-modal hidden" id="cityNotFoundModal">
+            <div class="modal-overlay-blur" id="cityNotFoundOverlay"></div>
+            <div class="error-modal-content">
+                <h2 class="error-modal-title">Ой!</h2>
+                <div class="error-modal-text-container">
+                    <p class="error-modal-text">
+                        Похоже, ваш населенный пункт играет с нами в прятки! 😄<br><br>
+                        Если живете в таком уютном местечке, что его даже на картах не сразу найдешь, то укажите ближайший город-сосед
+                    </p>
+                </div>
+                <div class="error-modal-buttons">
+                    <button class="error-modal-button" id="cityNotFoundOkButton">
+                        <span class="confirm-icon">✓</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- JavaScript -->

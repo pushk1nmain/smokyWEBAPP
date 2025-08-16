@@ -77,10 +77,26 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                if (response.status === 404) {
-                    throw new Error('Город не найден. Проверьте правильность написания.');
+                // Пытаемся получить детальное сообщение об ошибке с сервера
+                let errorMessage = '';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorData.error || '';
+                } catch (e) {
+                    // Если не удалось распарсить JSON, пытаемся получить текст
+                    try {
+                        errorMessage = await response.text();
+                    } catch (e2) {
+                        errorMessage = '';
+                    }
                 }
-                throw new Error(`Ошибка сервера: ${response.status}`);
+
+                if (response.status === 404) {
+                    throw new Error(errorMessage || 'Город не найден. Проверьте правильность написания.');
+                }
+                
+                // Показываем текст с сервера или fallback сообщение
+                throw new Error(errorMessage || `Ошибка сервера (${response.status})`);
             }
 
             const data = await response.json();
@@ -113,6 +129,47 @@ document.addEventListener('DOMContentLoaded', () => {
             minute: '2-digit',
             hour12: false
         });
+    };
+
+    /**
+     * Функция для показа модального окна ошибки "город не найден"
+     * Отображает поп-ап с дружелюбным сообщением об ошибке и эффектом блюра
+     */
+    const showCityNotFoundModal = () => {
+        const modal = document.getElementById('cityNotFoundModal');
+        const okButton = document.getElementById('cityNotFoundOkButton');
+        
+        // Показываем модальное окно
+        modal.classList.remove('hidden');
+        
+        // Haptic feedback при показе модального окна
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+        }
+        
+        // Обработчик кнопки "OK"
+        const handleOkClick = () => {
+            modal.classList.add('hidden');
+            
+            // Haptic feedback для кнопки OK
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+            
+            // Очищаем обработчик
+            okButton.removeEventListener('click', handleOkClick);
+        };
+        
+        // Добавляем обработчик события
+        okButton.addEventListener('click', handleOkClick);
+        
+        // Обработчик клика по overlay для закрытия модального окна
+        const modalOverlay = document.getElementById('cityNotFoundOverlay');
+        const handleOverlayClick = () => {
+            handleOkClick();
+            modalOverlay.removeEventListener('click', handleOverlayClick);
+        };
+        modalOverlay.addEventListener('click', handleOverlayClick);
     };
 
     /**
@@ -222,13 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     showCityConfirmationModal(result.confirmedName, result.utcOffset);
                 }, 200);
             } else {
-                // Если город не найден, показываем ошибку
+                // Если город не найден, показываем дружелюбный поп-ап
                 setTimeout(() => {
-                    if (window.Telegram && window.Telegram.WebApp) {
-                        window.Telegram.WebApp.showAlert(result.error || 'Город не найден. Проверьте правильность написания.');
-                    } else {
-                        alert(result.error || 'Город не найден. Проверьте правильность написания.');
-                    }
+                    showCityNotFoundModal();
                 }, 200);
             }
         } catch (error) {
