@@ -4,9 +4,15 @@
  */
 
 /**
- * Базовый URL для API (в продакшене будет изменен)
+ * Получает базовый URL для API из конфигурации
  */
-const API_BASE_URL = 'https://your-domain.com';
+const getApiBaseUrl = () => {
+    if (window.SmokyConfig && window.SmokyConfig.api && window.SmokyConfig.api.baseUrl) {
+        return window.SmokyConfig.api.baseUrl;
+    }
+    // Fallback для случая если конфигурация не загружена
+    return '/api/v1';
+};
 
 /**
  * Получает данные Telegram WebApp для аутентификации
@@ -68,7 +74,7 @@ const apiRequest = async (endpoint, options = {}) => {
         }
 
         // Выполняем запрос
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, requestConfig);
+        const response = await fetch(`${getApiBaseUrl()}${endpoint}`, requestConfig);
 
         // Парсим ответ
         const data = await response.json();

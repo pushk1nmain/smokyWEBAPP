@@ -4,7 +4,6 @@
 
 ## Базовая информация
 
-- **Базовый URL**: `https://your-domain.com`
 - **API версия**: v1
 - **Документация**: `/docs` (Swagger UI)
 - **ReDoc**: `/redoc`
