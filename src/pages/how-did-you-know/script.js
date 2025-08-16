@@ -136,34 +136,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const duration = 3000; // 3 секунды
         const startTime = Date.now();
         
+        // Инициализируем CSS переменные
+        emoji.style.setProperty('--progress', '0');
+        progressFill.style.setProperty('--progress', '0');
+        
+        // Флаги для пульсации (чтобы не срабатывали многократно)
+        let pulse1Triggered = false;
+        let pulse2Triggered = false;
+        
         const animate = () => {
             const elapsed = Date.now() - startTime;
             progress = Math.min(elapsed / duration, 1);
             
-            // Обновляем прогресс-бар
-            progressFill.style.width = `${progress * 100}%`;
+            // Плавное easing (ease-out cubic)
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
             
-            // Эффект накачивания эмодзи (от 1.0 до 1.4)
-            const muscleScale = 1 + (progress * 0.4);
-            emoji.style.transform = `scale(${muscleScale})`;
+            // Обновляем CSS переменные (плавно)
+            emoji.style.setProperty('--progress', easedProgress.toString());
+            progressFill.style.setProperty('--progress', progress.toString());
             
-            // Добавляем свечение по мере прогресса
-            const glowIntensity = progress * 20;
-            emoji.style.filter = `drop-shadow(0 0 ${glowIntensity}px rgba(255, 215, 0, ${progress * 0.8}))`;
-            
-            // Активация частичек энергии по мере прогресса
+            // Активация частичек энергии по мере прогресса (с небольшой задержкой между ними)
             particles.forEach((particle, index) => {
-                if (progress > (index / particles.length)) {
+                const particleThreshold = (index / particles.length) * 0.8; // Растягиваем на 80% времени
+                if (easedProgress > particleThreshold) {
                     particle.classList.add('active');
                 }
             });
             
-            // Пульсация при достижении определенных этапов
-            if (progress > 0.3 && progress < 0.35) {
+            // Пульсация при достижении определенных этапов (однократно)
+            if (progress > 0.3 && !pulse1Triggered) {
                 emoji.classList.add('pulse-effect');
+                pulse1Triggered = true;
+                // Убираем класс через время анимации
+                setTimeout(() => {
+                    emoji.classList.remove('pulse-effect');
+                }, 600);
             }
-            if (progress > 0.7 && progress < 0.75) {
+            
+            if (progress > 0.7 && !pulse2Triggered) {
                 emoji.classList.add('pulse-effect');
+                pulse2Triggered = true;
+                setTimeout(() => {
+                    emoji.classList.remove('pulse-effect');
+                }, 600);
             }
             
             if (progress < 1) {
@@ -171,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Анимация завершена
                 setTimeout(() => {
-                    // Здесь будет переход на следующую страницу
                     completeLoading(modal);
                 }, 500);
             }
