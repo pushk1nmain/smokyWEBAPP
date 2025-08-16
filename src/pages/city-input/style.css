@@ -756,24 +756,22 @@
     }
 }
 
-/* Темная тема для модального окна */
-@media (prefers-color-scheme: dark) {
-    .modal-content {
-        background: #2a2a2a;
-        color: #ffffff;
-    }
-    
-    .modal-title {
-        color: #5A9BF7;
-    }
-    
-    .modal-text {
-        color: #b0b0b0;
-    }
-    
-    .modal-time-text {
-        color: #5A9BF7;
-    }
+/* Принудительно белая тема для модального окна - отключаем темную тему */
+.modal-content {
+    background: #ffffff !important;
+    color: #333333 !important;
+}
+
+.modal-title {
+    color: #5A9BF7 !important;
+}
+
+.modal-text {
+    color: #666666 !important;
+}
+
+.modal-time-text {
+    color: #5A9BF7 !important;
 }
 
 

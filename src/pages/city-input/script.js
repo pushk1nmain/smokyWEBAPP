@@ -113,12 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Функция для вычисления локального времени пользователя
-     * Принимает UTC смещение в часах и возвращает отформатированное время
+     * Принимает UTC смещение в секундах и возвращает отформатированное время
      */
-    const calculateLocalTime = (utcOffsetHours) => {
+    const calculateLocalTime = (utcOffsetSeconds) => {
         const now = new Date();
         const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
-        const localTime = new Date(utcTime + (utcOffsetHours * 3600000));
+        const localTime = new Date(utcTime + (utcOffsetSeconds * 1000));
         
         return localTime.toLocaleTimeString('ru-RU', {
             hour: '2-digit',
