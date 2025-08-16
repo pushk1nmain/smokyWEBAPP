@@ -275,12 +275,12 @@ body {
     display: flex;
     align-items: center;
     padding: 16px 20px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fafcff;
+    border: 1px solid rgba(35, 91, 223, 0.12);
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
     min-height: 56px;
     width: 100%;
     position: relative;
@@ -288,15 +288,15 @@ body {
 }
 
 .option-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border-color: rgba(35, 91, 223, 0.2);
-    background: #fafbff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: rgba(35, 91, 223, 0.25);
+    background: #f5f8ff;
 }
 
 .option-card:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .option-card.selected {
