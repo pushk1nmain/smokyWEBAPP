@@ -87,9 +87,30 @@
                 </div>
             </div>
         </div>
+
+        <!-- Модальное окно подтверждения города -->
+        <div class="city-confirmation-modal hidden" id="cityConfirmationModal">
+            <div class="modal-overlay" id="modalOverlay"></div>
+            <div class="modal-content">
+                <h2 class="modal-title" id="modalTitle">Москва?</h2>
+                <div class="modal-text-container">
+                    <p class="modal-text">Говорят, там воздух особенный. Ну, если без сигарет!</p>
+                    <p class="modal-time-text">Давайте сверимся:<br>у Вас сейчас <span id="localTimeDisplay">20:46</span>?</p>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-button modal-back-button" id="modalBackButton">
+                        <span class="back-arrow-icon"></span>
+                    </button>
+                    <button class="modal-button modal-confirm-button" id="modalConfirmButton">
+                        <span class="confirm-icon">✓</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- JavaScript -->
+    <script src="../../config.js"></script>
     <script src="../../utils/loading-manager.js"></script>
     <script src="script.js" defer></script>
 </body>

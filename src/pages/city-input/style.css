@@ -561,4 +561,219 @@
     color: var(--color-placeholder);
 }
 
+/* Модальное окно подтверждения города */
+.city-confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.city-confirmation-modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Фон модального окна с блюром */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Контент модального окна */
+.modal-content {
+    position: relative;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px 25px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: scale(1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.city-confirmation-modal.hidden .modal-content {
+    transform: scale(0.9);
+}
+
+/* Заголовок модального окна */
+.modal-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #235BDF;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+/* Контейнер текста */
+.modal-text-container {
+    margin-bottom: 25px;
+}
+
+/* Основной текст */
+.modal-text {
+    font-size: 16px;
+    color: #1C3D8C;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+/* Текст с временем */
+.modal-time-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #235BDF;
+    line-height: 1.4;
+}
+
+#localTimeDisplay {
+    font-weight: 700;
+    color: #FF6B35;
+}
+
+/* Кнопки модального окна */
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.modal-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка "Назад" */
+.modal-back-button {
+    background: linear-gradient(135deg, #ff6b6b, #e55353);
+    color: white;
+}
+
+.modal-back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+}
+
+.modal-back-button:active {
+    transform: translateY(0);
+}
+
+/* Кнопка "Подтвердить" */
+.modal-confirm-button {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+}
+
+.modal-confirm-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+.modal-confirm-button:active {
+    transform: translateY(0);
+}
+
+/* Иконка стрелки назад */
+.back-arrow-icon {
+    width: 0;
+    height: 0;
+    border-right: 8px solid white;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    margin-right: 2px;
+}
+
+/* Иконка галочки */
+.confirm-icon {
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+/* Анимация появления модального окна */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.city-confirmation-modal:not(.hidden) .modal-content {
+    animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Адаптивность модального окна */
+@media (max-width: 380px) {
+    .modal-content {
+        padding: 25px 20px;
+        max-width: 280px;
+    }
+    
+    .modal-title {
+        font-size: 24px;
+    }
+    
+    .modal-text, .modal-time-text {
+        font-size: 15px;
+    }
+    
+    .modal-button {
+        width: 55px;
+        height: 55px;
+        font-size: 22px;
+    }
+}
+
+/* Темная тема для модального окна */
+@media (prefers-color-scheme: dark) {
+    .modal-content {
+        background: #2a2a2a;
+        color: #ffffff;
+    }
+    
+    .modal-title {
+        color: #5A9BF7;
+    }
+    
+    .modal-text {
+        color: #b0b0b0;
+    }
+    
+    .modal-time-text {
+        color: #5A9BF7;
+    }
+}
+
 
