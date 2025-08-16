@@ -148,11 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const elapsed = Date.now() - startTime;
             progress = Math.min(elapsed / duration, 1);
             
-            // Плавное easing (ease-out cubic)
-            const easedProgress = 1 - Math.pow(1 - progress, 3);
+            // Более плавное easing (ease-out quadratic для меньшей резкости)
+            const easedProgress = 1 - Math.pow(1 - progress, 2);
             
-            // Обновляем CSS переменные (плавно)
-            emoji.style.setProperty('--progress', easedProgress.toString());
+            // Сглаживаем обновления - обновляем только если изменение существенное
+            const newProgressValue = Math.round(easedProgress * 1000) / 1000; // округляем до 3 знаков
+            const currentProgress = parseFloat(emoji.style.getPropertyValue('--progress') || '0');
+            
+            if (Math.abs(newProgressValue - currentProgress) > 0.005) { // обновляем только при изменении > 0.5%
+                emoji.style.setProperty('--progress', newProgressValue.toString());
+            }
+            
             progressFill.style.setProperty('--progress', progress.toString());
             
             // Активация частичек энергии по мере прогресса (с небольшой задержкой между ними)
