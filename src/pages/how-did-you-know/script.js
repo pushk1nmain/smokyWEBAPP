@@ -190,9 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             optionCards.forEach(card => card.classList.remove('selected'));
             card.classList.add('selected');
             
-            setTimeout(() => {
-                showOtherSourceModal();
-            }, 200);
+            showOtherSourceModal();
             return;
         }
 
