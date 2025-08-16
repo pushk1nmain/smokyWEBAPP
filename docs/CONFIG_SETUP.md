@@ -35,7 +35,7 @@ API ключ можно получить:
 ```javascript
 window.SmokyConfig = {
     api: {
-        baseUrl: 'https://api.smokybot.com/api/v1',
+        baseUrl: '/api/v1',
         apiKey: 'РЕАЛЬНЫЙ_API_КЛЮЧ'
     },
     development: { /* настройки разработки */ },
@@ -101,13 +101,13 @@ RUN echo "window.SmokyConfig = { api: { apiKey: '${API_KEY}' } };" > /app/config
 
 ### Ошибка сети при API запросах
 - Проверьте правильность `api.baseUrl`
-- Убедитесь что backend сервер доступен
+- Убедитесь что приватный сервер доступен
 - Проверьте CORS настройки на сервере
 
 ## Переменные конфигурации
 
 ### api.*
-- `baseUrl` - базовый URL API сервера
+- `baseUrl` - базовый URL API приватного сервера
 - `apiKey` - ключ для аутентификации
 
 ### development.*

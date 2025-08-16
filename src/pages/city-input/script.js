@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * Функция для проверки города через API сервера
+     * Функция для проверки города через API приватного сервера
      * Отправляет запрос на /api/v1/check_town и получает подтвержденное название и временную зону
      */
     const checkCityWithAPI = async (cityName) => {
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Отсутствуют данные аутентификации Telegram');
             }
 
-            const apiUrl = window.SmokyConfig?.api?.baseUrl || 'https://api.smokybot.com/api/v1';
+            const apiUrl = '/api/v1';
             
             const response = await fetch(`${apiUrl}/check_town`, {
                 method: 'POST',
