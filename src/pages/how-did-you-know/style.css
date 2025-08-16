@@ -559,7 +559,7 @@ body {
     padding: 20px;
     opacity: 1;
     visibility: visible;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .other-source-modal.hidden {
@@ -635,7 +635,6 @@ body {
 
 .other-source-input-field:focus-within {
     border-color: #5A9BF7;
-    box-shadow: 0 0 0 3px rgba(35, 91, 223, 0.1);
 }
 
 .other-source-input-icon {
@@ -652,6 +651,11 @@ body {
     font-size: 16px;
     color: #1C3D8C;
     font-weight: 500;
+}
+
+.other-source-input:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 .other-source-input::placeholder {
