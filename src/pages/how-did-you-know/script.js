@@ -255,71 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Переход на следующую страницу:', nextPageUrl);
     };
 
-    /**
-     * Создает и показывает простое модальное окно с сообщением об успехе (для "Другое")
-     * @param {string} selectedOption - выбранная опция
-     */
-    const showSimpleSuccessModal = (selectedOption) => {
-        // Удаляем предыдущее модальное окно, если оно есть
-        const existingModal = document.querySelector('.success-modal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-
-        // Создаем модальное окно
-        const modalHTML = `
-            <div class="success-modal" id="successModal">
-                <div class="modal-overlay-blur"></div>
-                <div class="success-modal-content">
-                    <h2 class="success-modal-title">Принял!</h2>
-                    <div class="success-modal-text-container">
-                        <p class="success-modal-text">Спасибо за информацию!</p>
-                    </div>
-                    <div class="success-modal-buttons">
-                        <button class="success-modal-button" id="successModalOkButton">
-                            <span class="confirm-icon">✓</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Добавляем модальное окно в DOM
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = modalHTML;
-        const modal = tempDiv.firstElementChild;
-        document.body.appendChild(modal);
-
-        // Обработчики закрытия модального окна
-        const okButton = modal.querySelector('#successModalOkButton');
-        const overlay = modal.querySelector('.modal-overlay-blur');
-
-        const closeModal = () => {
-            modal.classList.add('hidden');
-            setTimeout(() => {
-                if (modal && modal.parentNode) {
-                    modal.parentNode.removeChild(modal);
-                }
-                // После закрытия простого модала запускаем загрузку
-                setTimeout(() => {
-                    showLoadingModal(selectedOption);
-                }, 100);
-            }, 300);
-        };
-
-        okButton.addEventListener('click', closeModal);
-        overlay.addEventListener('click', closeModal);
-
-        // Показываем модальное окно
-        requestAnimationFrame(() => {
-            modal.classList.remove('hidden');
-        });
-
-        // Haptic feedback если доступен
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        }
-    };
 
     /**
      * Показывает модальное окно для опции "Другое"
@@ -431,9 +366,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Закрываем модальное окно
                 closeModal();
                 
-                // Показываем простое модальное окно "Принял!" для "Другое"
+                // Сразу показываем загрузку без промежуточного "Принял!"
                 setTimeout(() => {
-                    showSimpleSuccessModal('other');
+                    showLoadingModal('other');
                 }, 300);
                 
                 // Haptic feedback
