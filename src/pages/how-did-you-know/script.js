@@ -83,6 +83,93 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
+     * Показывает модальное окно для опции "Другое"
+     */
+    const showOtherSourceModal = () => {
+        const modal = document.getElementById('otherSourceModal');
+        const modalText = document.getElementById('otherSourceModalText');
+        
+        // Персонализируем текст с именем пользователя
+        modalText.textContent = `Вы настоящий исследователь! ${userName}, а где же вы обо мне услышали? Может, это был подкаст, статья или даже сарафанное радио в очереди за кофе?`;
+        
+        // Показываем модальное окно
+        modal.classList.remove('hidden');
+        
+        // Haptic feedback
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+        }
+        
+        // Обработчики кнопок
+        const backButton = document.getElementById('otherSourceBackButton');
+        const confirmButton = document.getElementById('otherSourceConfirmButton');
+        const overlay = document.getElementById('otherSourceOverlay');
+        const input = document.getElementById('otherSourceInput');
+        
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            input.value = ''; // Очищаем поле ввода
+            
+            // Убираем выделение с карточки "Другое"
+            optionCards.forEach(card => card.classList.remove('selected'));
+        };
+        
+        const handleConfirm = () => {
+            const customSource = input.value.trim();
+            if (!customSource) {
+                // Показываем ошибку если поле пустое
+                if (window.showErrorModal) {
+                    window.showErrorModal('Пожалуйста, укажите где вы узнали о Смоки');
+                }
+                return;
+            }
+            
+            // Сохраняем кастомный источник
+            localStorage.setItem('userSourceInfo', `other: ${customSource}`);
+            console.log(`Пользователь ${userName} выбрал кастомный источник: ${customSource}`);
+            
+            // Закрываем модальное окно
+            closeModal();
+            
+            // Показываем обычное модальное окно "Принял!"
+            setTimeout(() => {
+                showSuccessModal('other');
+            }, 300);
+            
+            // Haptic feedback
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+        };
+        
+        // Добавляем обработчики (удаляем старые если есть)
+        const newBackButton = backButton.cloneNode(true);
+        const newConfirmButton = confirmButton.cloneNode(true);
+        const newOverlay = overlay.cloneNode(true);
+        
+        backButton.parentNode.replaceChild(newBackButton, backButton);
+        confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        
+        newBackButton.addEventListener('click', closeModal);
+        newConfirmButton.addEventListener('click', handleConfirm);
+        newOverlay.addEventListener('click', closeModal);
+        
+        // Обработчик Enter в поле ввода
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                handleConfirm();
+            }
+        });
+        
+        // Фокусируемся на поле ввода
+        setTimeout(() => {
+            input.focus();
+        }, 300);
+    };
+
+    /**
      * Обработчик нажатия на карточку выбора
      * @param {Event} event - событие клика
      */
@@ -90,16 +177,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = event.currentTarget;
         const option = card.getAttribute('data-option');
 
+        // Haptic feedback при выборе
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+
+        // Если выбрана опция "Другое", показываем специальное модальное окно
+        if (option === 'other') {
+            // Выделяем карточку
+            optionCards.forEach(card => card.classList.remove('selected'));
+            card.classList.add('selected');
+            
+            setTimeout(() => {
+                showOtherSourceModal();
+            }, 200);
+            return;
+        }
+
+        // Для остальных опций показываем обычное модальное окно
         // Убираем выделение с других карточек
         optionCards.forEach(card => card.classList.remove('selected'));
         
         // Выделяем выбранную карточку
         card.classList.add('selected');
-
-        // Haptic feedback при выборе
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
 
         // Небольшая задержка перед показом модального окна для лучшего UX
         setTimeout(() => {

@@ -78,6 +78,34 @@
             </div>
         </main>
         
+        <!-- Модальное окно для опции "Другое" -->
+        <div class="other-source-modal hidden" id="otherSourceModal">
+            <div class="modal-overlay-blur" id="otherSourceOverlay"></div>
+            <div class="other-source-modal-content">
+                <h2 class="other-source-modal-title">Интересно...</h2>
+                <div class="other-source-modal-text-container">
+                    <p class="other-source-modal-text" id="otherSourceModalText">
+                        Вы настоящий исследователь! Диана, а где же вы обо мне услышали? 
+                        Может, это был подкаст, статья или даже сарафанное радио в очереди за кофе?
+                    </p>
+                </div>
+                <div class="other-source-input-container">
+                    <div class="other-source-input-field">
+                        <span class="other-source-input-icon">🔍</span>
+                        <input type="text" placeholder="Откуда Вы узнали о Смоки?" class="other-source-input" id="otherSourceInput">
+                    </div>
+                </div>
+                <div class="other-source-modal-buttons">
+                    <button class="other-source-modal-button other-source-back-button" id="otherSourceBackButton">
+                        <span class="back-arrow-icon"></span>
+                    </button>
+                    <button class="other-source-modal-button other-source-confirm-button" id="otherSourceConfirmButton">
+                        <span class="confirm-icon">✓</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Простая загрузка с логотипом Смоки -->
         <div class="loading-overlay hidden" id="loadingOverlay">
             <div class="loading-character">
