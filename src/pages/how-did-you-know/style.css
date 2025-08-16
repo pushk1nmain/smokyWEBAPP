@@ -300,18 +300,14 @@ body {
 }
 
 .option-card.selected {
-    background: linear-gradient(135deg, #235BDF, #5A9BF7);
-    border-color: #235BDF;
-    box-shadow: 0 4px 16px rgba(35, 91, 223, 0.3);
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border-color: #4CAF50;
+    box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
     transform: translateY(-1px);
 }
 
 .option-card.selected .option-text {
     color: #ffffff;
-}
-
-.option-card.selected .option-icon {
-    filter: brightness(0) invert(1);
 }
 
 /* Option Icon */
