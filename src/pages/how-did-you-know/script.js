@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         screenTitle.textContent = `${userName}, откуда Вы узнали о Смоки?`;
     }
 
-    // Получаем все кнопки выбора
-    const optionButtons = document.querySelectorAll('.option-button');
+    // Получаем все карточки выбора
+    const optionCards = document.querySelectorAll('.option-card');
 
     /**
      * Создает и показывает модальное окно с сообщением об успехе
@@ -83,18 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * Обработчик нажатия на кнопку выбора
+     * Обработчик нажатия на карточку выбора
      * @param {Event} event - событие клика
      */
     const handleOptionClick = (event) => {
-        const button = event.currentTarget;
-        const option = button.getAttribute('data-option');
+        const card = event.currentTarget;
+        const option = card.getAttribute('data-option');
 
-        // Убираем выделение с других кнопок
-        optionButtons.forEach(btn => btn.classList.remove('selected'));
+        // Убираем выделение с других карточек
+        optionCards.forEach(card => card.classList.remove('selected'));
         
-        // Выделяем выбранную кнопку
-        button.classList.add('selected');
+        // Выделяем выбранную карточку
+        card.classList.add('selected');
 
         // Haptic feedback при выборе
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
@@ -113,9 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('userSourceInfo', option);
     };
 
-    // Добавляем обработчики событий на все кнопки выбора
-    optionButtons.forEach(button => {
-        button.addEventListener('click', handleOptionClick);
+    // Добавляем обработчики событий на все карточки выбора
+    optionCards.forEach(card => {
+        card.addEventListener('click', handleOptionClick);
     });
 
     // Предзагружаем следующую страницу (если будет нужна в будущем)
