@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalText.textContent = `Вы настоящий исследователь! ${userName}, а где же вы обо мне услышали? Может, это был подкаст, статья или даже сарафанное радио в очереди за кофе?`;
         
         // Показываем модальное окно
-        modal.classList.remove('hidden');
+        modal.classList.add('show');
         
         // Haptic feedback
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const input = document.getElementById('otherSourceInput');
         
         const closeModal = () => {
-            modal.classList.add('hidden');
+            modal.classList.remove('show');
             input.value = ''; // Очищаем поле ввода
             
             // Убираем выделение с карточки "Другое"
