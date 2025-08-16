@@ -631,9 +631,12 @@
 /* Основной текст */
 .modal-text {
     font-size: 16px;
+    font-weight: 400;
     color: #1C3D8C;
     line-height: 1.4;
     margin-bottom: 15px;
+    font-stretch: normal;
+    letter-spacing: normal;
 }
 
 /* Текст с временем */
@@ -642,6 +645,8 @@
     font-weight: 600;
     color: #235BDF;
     line-height: 1.4;
+    font-stretch: normal;
+    letter-spacing: normal;
 }
 
 #localTimeDisplay {
@@ -768,10 +773,14 @@
 
 .modal-text {
     color: #666666 !important;
+    font-stretch: normal !important;
+    letter-spacing: normal !important;
 }
 
 .modal-time-text {
     color: #5A9BF7 !important;
+    font-stretch: normal !important;
+    letter-spacing: normal !important;
 }
 
 /* Модальное окно ошибки города не найден */
