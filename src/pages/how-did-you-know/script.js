@@ -52,10 +52,210 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * Создает и показывает модальное окно с сообщением об успехе
+     * Создает и показывает модальное окно с загрузкой "Сила воли крепнет"
      * @param {string} selectedOption - выбранная опция
      */
-    const showSuccessModal = (selectedOption) => {
+    const showLoadingModal = (selectedOption) => {
+        // Удаляем предыдущее модальное окно, если оно есть
+        const existingModal = document.querySelector('.loading-progress-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Создаем модальное окно с индикатором загрузки
+        const modalHTML = `
+            <div class="loading-progress-modal" id="loadingProgressModal">
+                <div class="modal-overlay-blur"></div>
+                <div class="loading-progress-modal-content">
+                    <h2 class="loading-progress-modal-title">🎉 Спасибо за ответы!</h2>
+                    <div class="loading-progress-modal-text-container">
+                        <p class="loading-progress-modal-text">Загружаю вашу персональную историю освобождения...</p>
+                    </div>
+                    
+                    <!-- Контейнер с индикатором силы воли -->
+                    <div class="strength-indicator-container">
+                        <!-- SVG рука/мышца -->
+                        <div class="strength-arm-container">
+                            <svg class="strength-arm-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Основа руки -->
+                                <path class="arm-base" d="M30 70 Q35 50 45 40 Q55 35 65 40 Q75 50 70 70 Q65 80 50 85 Q35 80 30 70 Z" />
+                                <!-- Мышца -->
+                                <ellipse class="arm-muscle" cx="50" cy="55" rx="15" ry="12" />
+                                <!-- Блики на мышце -->
+                                <ellipse class="arm-highlight" cx="47" cy="52" rx="8" ry="6" opacity="0.3" />
+                            </svg>
+                            
+                            <!-- Частички энергии -->
+                            <div class="energy-particles">
+                                <div class="particle particle-1"></div>
+                                <div class="particle particle-2"></div>
+                                <div class="particle particle-3"></div>
+                                <div class="particle particle-4"></div>
+                                <div class="particle particle-5"></div>
+                                <div class="particle particle-6"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Индикатор прогресса -->
+                        <div class="strength-progress-bar">
+                            <div class="strength-progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Добавляем модальное окно в DOM
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = modalHTML;
+        const modal = tempDiv.firstElementChild;
+        document.body.appendChild(modal);
+
+        // Показываем модальное окно
+        requestAnimationFrame(() => {
+            modal.classList.remove('hidden');
+        });
+
+        // Запускаем анимацию загрузки
+        startStrengthAnimation(modal);
+
+        // Начинаем предзагрузку следующей страницы в фоне
+        preloadNextPage();
+
+        // Haptic feedback если доступен
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        }
+
+        return modal;
+    };
+
+    /**
+     * Запускает анимацию индикатора силы воли
+     * @param {HTMLElement} modal - модальное окно
+     */
+    const startStrengthAnimation = (modal) => {
+        const progressFill = modal.querySelector('.strength-progress-fill');
+        const armSvg = modal.querySelector('.strength-arm-svg');
+        const particles = modal.querySelectorAll('.particle');
+        
+        let progress = 0;
+        const duration = 3000; // 3 секунды
+        const startTime = Date.now();
+        
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            progress = Math.min(elapsed / duration, 1);
+            
+            // Обновляем прогресс-бар
+            progressFill.style.width = `${progress * 100}%`;
+            
+            // Эффект накачивания руки (от 1.0 до 1.3)
+            const muscleScale = 1 + (progress * 0.3);
+            armSvg.style.transform = `scale(${muscleScale})`;
+            
+            // Изменение цвета мышцы от слабого к сильному
+            const muscle = modal.querySelector('.arm-muscle');
+            const hue = 220 - (progress * 40); // От синего к зеленому
+            const saturation = 50 + (progress * 30); // Увеличиваем насыщенность
+            const lightness = 60 + (progress * 20); // Увеличиваем яркость
+            muscle.style.fill = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            
+            // Активация частичек энергии по мере прогресса
+            particles.forEach((particle, index) => {
+                if (progress > (index / particles.length)) {
+                    particle.classList.add('active');
+                }
+            });
+            
+            // Пульсация при достижении определенных этапов
+            if (progress > 0.3 && progress < 0.35) {
+                armSvg.classList.add('pulse-effect');
+            }
+            if (progress > 0.7 && progress < 0.75) {
+                armSvg.classList.add('pulse-effect');
+            }
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                // Анимация завершена
+                setTimeout(() => {
+                    // Здесь будет переход на следующую страницу
+                    completeLoading(modal);
+                }, 500);
+            }
+        };
+        
+        animate();
+    };
+
+    /**
+     * Предзагружает следующую страницу в фоне
+     */
+    const preloadNextPage = () => {
+        // Определяем следующую страницу (пока заглушка)
+        const nextPageUrl = '../next-page/index.html'; // TODO: Заменить на реальный URL
+        
+        // Используем LoadingManager если доступен
+        if (window.LoadingManager && window.LoadingManager.preloadPage) {
+            window.LoadingManager.preloadPage(nextPageUrl);
+        } else {
+            // Fallback - простая предзагрузка через link
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = nextPageUrl;
+            document.head.appendChild(link);
+        }
+        
+        console.log('Началась предзагрузка следующей страницы:', nextPageUrl);
+    };
+
+    /**
+     * Завершает загрузку и переходит на следующую страницу
+     * @param {HTMLElement} modal - модальное окно
+     */
+    const completeLoading = (modal) => {
+        // Добавляем финальный эффект
+        const armSvg = modal.querySelector('.strength-arm-svg');
+        armSvg.classList.add('final-burst');
+        
+        // Закрываем модальное окно и переходим дальше
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            setTimeout(() => {
+                if (modal && modal.parentNode) {
+                    modal.parentNode.removeChild(modal);
+                }
+                
+                // Переход на следующую страницу
+                navigateToNextPage();
+            }, 300);
+        }, 800);
+    };
+
+    /**
+     * Выполняет переход на следующую страницу
+     */
+    const navigateToNextPage = () => {
+        const nextPageUrl = '../next-page/index.html'; // TODO: Заменить на реальный URL
+        
+        // Используем LoadingManager если доступен
+        if (window.LoadingManager && window.LoadingManager.navigateWithTransition) {
+            window.LoadingManager.navigateWithTransition(nextPageUrl);
+        } else {
+            // Простой переход
+            window.location.href = nextPageUrl;
+        }
+        
+        console.log('Переход на следующую страницу:', nextPageUrl);
+    };
+
+    /**
+     * Создает и показывает простое модальное окно с сообщением об успехе (для "Другое")
+     * @param {string} selectedOption - выбранная опция
+     */
+    const showSimpleSuccessModal = (selectedOption) => {
         // Удаляем предыдущее модальное окно, если оно есть
         const existingModal = document.querySelector('.success-modal');
         if (existingModal) {
@@ -96,6 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (modal && modal.parentNode) {
                     modal.parentNode.removeChild(modal);
                 }
+                // После закрытия простого модала запускаем загрузку
+                setTimeout(() => {
+                    showLoadingModal(selectedOption);
+                }, 100);
             }, 300);
         };
 
@@ -164,6 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 font-weight: 500;
                 text-align: center;
                 margin-top: 8px;
+                margin-bottom: 16px;
                 padding: 8px;
                 background: rgba(255, 68, 68, 0.1);
                 border-radius: 8px;
@@ -222,9 +427,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Закрываем модальное окно
                 closeModal();
                 
-                // Показываем обычное модальное окно "Принял!"
+                // Показываем простое модальное окно "Принял!" для "Другое"
                 setTimeout(() => {
-                    showSuccessModal('other');
+                    showSimpleSuccessModal('other');
                 }, 300);
                 
                 // Haptic feedback
@@ -305,9 +510,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Сохраняем выбор в localStorage (для дублирования)
             localStorage.setItem('userSourceInfo', sourceName);
             
-            // Небольшая задержка перед показом модального окна для лучшего UX
+            // Небольшая задержка перед показом модального окна загрузки для лучшего UX
             setTimeout(() => {
-                showSuccessModal(option);
+                showLoadingModal(option);
             }, 200);
         }
         // Если ошибка - она уже обработана в sendSourceToServer, просто убираем выделение

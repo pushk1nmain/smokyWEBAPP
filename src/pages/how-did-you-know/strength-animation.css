@@ -1,0 +1,292 @@
+/**
+ * CSS стили для анимации "Сила воли крепнет" 
+ * Индикатор загрузки с рукой/мышцей
+ */
+
+/* Модальное окно загрузки */
+.loading-progress-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.loading-progress-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.loading-progress-modal-content {
+    position: relative;
+    z-index: 1002;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 32px 24px 24px;
+    margin: 20px;
+    max-width: 400px;
+    width: calc(100% - 40px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    transform: scale(1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loading-progress-modal.hidden .loading-progress-modal-content {
+    transform: scale(0.9);
+}
+
+.loading-progress-modal-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    color: #5A9BF7;
+    line-height: 1.2;
+}
+
+.loading-progress-modal-text-container {
+    margin-bottom: 32px;
+}
+
+.loading-progress-modal-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #666666;
+    margin: 0;
+}
+
+/* Контейнер индикатора силы */
+.strength-indicator-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+/* Контейнер руки */
+.strength-arm-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* SVG рука */
+.strength-arm-svg {
+    width: 80px;
+    height: 80px;
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+/* Основа руки */
+.arm-base {
+    fill: #FFE0B3;
+    stroke: #D4AF7A;
+    stroke-width: 1;
+    transition: all 0.3s ease;
+}
+
+/* Мышца */
+.arm-muscle {
+    fill: #5A9BF7;
+    transition: fill 0.3s ease;
+    transform-origin: center;
+}
+
+/* Блик на мышце */
+.arm-highlight {
+    fill: #ffffff;
+    transition: opacity 0.3s ease;
+}
+
+/* Эффект пульсации */
+.strength-arm-svg.pulse-effect {
+    animation: strengthPulse 0.6s ease-in-out;
+}
+
+@keyframes strengthPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Финальный взрыв */
+.strength-arm-svg.final-burst {
+    animation: finalBurst 0.8s ease-out;
+}
+
+@keyframes finalBurst {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.4); filter: brightness(1.5) drop-shadow(0 0 20px rgba(90, 155, 247, 0.6)); }
+    100% { transform: scale(1.2); filter: brightness(1.2) drop-shadow(0 0 10px rgba(90, 155, 247, 0.4)); }
+}
+
+/* Частички энергии */
+.energy-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #5A9BF7;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.particle.active {
+    opacity: 1;
+    transform: scale(1);
+    animation: particleFloat 2s ease-in-out infinite;
+}
+
+/* Позиционирование частичек */
+.particle-1 {
+    top: 20%;
+    left: 80%;
+    animation-delay: 0s;
+}
+
+.particle-2 {
+    top: 40%;
+    left: 10%;
+    animation-delay: 0.3s;
+}
+
+.particle-3 {
+    top: 60%;
+    left: 85%;
+    animation-delay: 0.6s;
+}
+
+.particle-4 {
+    top: 80%;
+    left: 20%;
+    animation-delay: 0.9s;
+}
+
+.particle-5 {
+    top: 10%;
+    left: 30%;
+    animation-delay: 1.2s;
+}
+
+.particle-6 {
+    top: 30%;
+    left: 70%;
+    animation-delay: 1.5s;
+}
+
+@keyframes particleFloat {
+    0%, 100% { 
+        transform: scale(1) translateY(0px);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.2) translateY(-8px);
+        opacity: 0.8;
+        box-shadow: 0 0 8px rgba(90, 155, 247, 0.6);
+    }
+}
+
+/* Индикатор прогресса */
+.strength-progress-bar {
+    width: 100%;
+    max-width: 200px;
+    height: 8px;
+    background: rgba(90, 155, 247, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.strength-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #5A9BF7, #4CAF50);
+    border-radius: 4px;
+    transition: width 0.1s ease;
+    position: relative;
+}
+
+.strength-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    animation: progressShine 1.5s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    .loading-progress-modal-content {
+        padding: 28px 20px 20px;
+        margin: 16px;
+        width: calc(100% - 32px);
+    }
+
+    .loading-progress-modal-title {
+        font-size: 24px;
+    }
+
+    .loading-progress-modal-text {
+        font-size: 15px;
+    }
+
+    .strength-arm-container {
+        width: 100px;
+        height: 100px;
+    }
+
+    .strength-arm-svg {
+        width: 70px;
+        height: 70px;
+    }
+
+    .particle {
+        width: 5px;
+        height: 5px;
+    }
+}
+
+/* Анимация появления модального окна */
+@keyframes loadingModalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.loading-progress-modal:not(.hidden) .loading-progress-modal-content {
+    animation: loadingModalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
