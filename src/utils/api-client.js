@@ -144,7 +144,7 @@ class APIError extends Error {
 const sendUserSource = async (source) => {
     const telegram_id = getTelegramUserId();
     
-    return await apiRequest('/api/v1/source', {
+    return await apiRequest('/source', {
         method: 'POST',
         body: {
             telegram_id,
@@ -159,7 +159,7 @@ const sendUserSource = async (source) => {
  * @returns {Promise<Array>} массив источников привлечения
  */
 const getUserSources = async (telegram_id) => {
-    return await apiRequest(`/api/v1/source/${telegram_id}`);
+    return await apiRequest(`/source/${telegram_id}`);
 };
 
 /**
@@ -168,7 +168,7 @@ const getUserSources = async (telegram_id) => {
  * @returns {Promise<Object>} информация о городе
  */
 const checkTown = async (town) => {
-    return await apiRequest('/api/v1/check_town', {
+    return await apiRequest('/check_town', {
         method: 'POST',
         body: { town }
     });
@@ -182,7 +182,7 @@ const checkTown = async (town) => {
 const updateUserName = async (name) => {
     const telegram_id = getTelegramUserId();
     
-    return await apiRequest('/api/v1/name', {
+    return await apiRequest('/name', {
         method: 'POST',
         body: {
             telegram_id,
@@ -200,7 +200,7 @@ const updateUserName = async (name) => {
 const updateUserTown = async (town, tz_offset) => {
     const telegram_id = getTelegramUserId();
     
-    return await apiRequest('/api/v1/town', {
+    return await apiRequest('/town', {
         method: 'POST',
         body: {
             telegram_id,
@@ -218,7 +218,7 @@ const updateUserTown = async (town, tz_offset) => {
 const updateProgressStep = async (progress_step) => {
     const telegram_id = getTelegramUserId();
     
-    return await apiRequest('/api/v1/progress_step', {
+    return await apiRequest('/progress_step', {
         method: 'POST',
         body: {
             telegram_id,
@@ -233,7 +233,7 @@ const updateProgressStep = async (progress_step) => {
  * @returns {Promise<Object>} информация о пользователе
  */
 const getUserInfo = async (telegram_id) => {
-    return await apiRequest(`/api/v1/user/${telegram_id}`);
+    return await apiRequest(`/user/${telegram_id}`);
 };
 
 // Экспортируем для использования в других модулях
