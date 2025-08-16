@@ -34,20 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const showLoadingWithText = (text) => {
         showLoading();
     };
-    const pageTitle = document.getElementById('page-title');
     const nameInput = document.querySelector('.name-input');
     const nextButton = document.getElementById('nextButton');
-
-    // 1. Get user's name from localStorage
-    const userName = localStorage.getItem('userName');
-
-    // 2. Update the page title
-    if (userName) {
-        pageTitle.textContent = `${userName}, где Вы живете?`;
-    } else {
-        // Fallback if name is not found
-        pageTitle.textContent = `Где Вы живете?`;
-    }
 
     /**
      * Функция для получения данных Telegram WebApp для API запросов

@@ -52,7 +52,17 @@
             </div>
 
             <div class="content-section">
-                <h1 class="screen-title" id="page-title">..., где Вы живете?</h1>
+                <h1 class="screen-title" id="page-title">Где Вы живете?</h1>
+                
+                <!-- Мгновенное обновление заголовка с именем пользователя -->
+                <script>
+                    (function() {
+                        const userName = localStorage.getItem('userName');
+                        if (userName) {
+                            document.getElementById('page-title').textContent = `${userName}, где Вы живете?`;
+                        }
+                    })();
+                </script>
                 
                 <p class="screen-description">
                     Это поможет мне писать вам в удобное время, а не посреди ночи 😴
