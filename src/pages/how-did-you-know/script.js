@@ -95,6 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Показываем модальное окно
         modal.classList.remove('hidden');
         
+        // Форсируем reflow для корректного применения CSS
+        modal.offsetHeight;
+        
         // Haptic feedback
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
             window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
