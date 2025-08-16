@@ -164,7 +164,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return { isValid: false, error: 'Имя может содержать только буквы, пробелы и дефисы' };
         }
         
-        return { isValid: true, cleanedName: trimmedName };
+        // Капитализация: первая буква каждого слова (разделенного пробелом или дефисом) в верхнем регистре
+        const capitalizedName = trimmedName
+            .split(/(\s+|\-+)/) // Разделяем по пробелам и дефисам, сохраняя разделители
+            .map(part => {
+                // Если это разделитель (пробел или дефис), оставляем как есть
+                if (/^(\s+|\-+)$/.test(part)) {
+                    return part;
+                }
+                // Если это слово, капитализируем первую букву
+                if (part.length > 0) {
+                    return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+                }
+                return part;
+            })
+            .join('');
+        
+        return { isValid: true, cleanedName: capitalizedName };
     };
 
     nextButton.addEventListener('click', async () => {

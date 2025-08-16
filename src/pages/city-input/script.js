@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         
         // Обработчик кнопки "Подтвердить"
-        const handleConfirmClick = () => {
+        const handleConfirmClick = async () => {
             // Сохраняем данные в localStorage
             localStorage.setItem('userCity', confirmedName);
             localStorage.setItem('userTimezone', utcOffset.toString());
@@ -249,14 +249,45 @@ document.addEventListener('DOMContentLoaded', () => {
             // Скрываем модальное окно
             modal.classList.add('hidden');
             
-            // Показываем уведомление об успешном сохранении
-            setTimeout(() => {
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.showAlert(`Отлично! Город ${confirmedName} сохранен. Следующий этап пока в разработке.`);
-                } else {
-                    alert(`Отлично! Город ${confirmedName} сохранен. Следующий этап пока в разработке.`);
+            // Показываем загрузку перед переходом
+            showLoading();
+            
+            try {
+                // Сохраняем город на сервере
+                const telegramData = getTelegramWebAppData();
+                const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+                
+                if (telegramData && telegramId) {
+                    const response = await fetch('/api/v1/town', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Telegram-WebApp-Data': telegramData
+                        },
+                        body: JSON.stringify({
+                            telegram_id: telegramId,
+                            town: confirmedName,
+                            tz_offset: utcOffset
+                        })
+                    });
+
+                    if (!response.ok) {
+                        console.error('Ошибка при сохранении города на сервере');
+                    }
                 }
-            }, 300);
+                
+                // Плавный переход к следующей странице после задержки
+                setTimeout(() => {
+                    window.location.href = '../how-did-you-know/index.html';
+                }, 800);
+                
+            } catch (error) {
+                console.error('Ошибка при сохранении города:', error);
+                // Все равно переходим дальше, даже если не удалось сохранить на сервере
+                setTimeout(() => {
+                    window.location.href = '../how-did-you-know/index.html';
+                }, 800);
+            }
             
             // Очищаем обработчики
             modalBackButton.removeEventListener('click', handleBackClick);

@@ -1,0 +1,523 @@
+/**
+ * SmokyApp - How Did You Know Screen Styles
+ * Стили экрана выбора источника информации оптимизированы для Telegram WebApp
+ */
+
+/* CSS Custom Properties для Telegram Theme */
+:root {
+    /* Базовые цвета (fallback) */
+    --tg-theme-bg-color: #ffffff;
+    --tg-theme-text-color: #000000;
+    --tg-theme-hint-color: #999999;
+    --tg-theme-link-color: #2196F3;
+    --tg-theme-button-color: #2196F3;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-secondary-bg-color: #f1f1f1;
+    
+    /* Кастомные цвета приложения */
+    --smoky-primary: #2196F3;
+    --smoky-secondary: #FFF3E0;
+    --smoky-accent: #FF9800;
+    --smoky-success: #4CAF50;
+    --smoky-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Размеры и отступы */
+    --container-padding: 20px;
+    --border-radius: 16px;
+    --transition-duration: 0.3s;
+
+    /* Цвета для экрана */
+    --color-blue: #5A9BF7;
+    --color-light-pink: #FEB8B1;
+    --color-green: #74E976;
+    --color-title: #235BDF;
+    --color-text: #1C3D8C;
+    --color-placeholder: #B0A5A5;
+}
+
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Основной контейнер */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: var(--tg-theme-text-color);
+    line-height: 1.6;
+    overflow: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100dvh;
+}
+
+.app-container {
+    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Парящие смайлики */
+.floating-emojis {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.emoji {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0.3;
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.6, 1.0);
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+    user-select: none;
+    will-change: transform;
+}
+
+/* Индивидуальные настройки для каждого смайлика */
+.emoji-1 {
+    top: 5%;
+    left: 5%;
+    animation: floatSlow 12s infinite;
+    animation-delay: 0s;
+}
+
+.emoji-2 {
+    top: 8%;
+    right: 5%;
+    animation: floatMedium 10s infinite;
+    animation-delay: 1.5s;
+}
+
+.emoji-3 {
+    top: 92%;
+    left: 8%;
+    animation: floatGentle 8s infinite;
+    animation-delay: 3s;
+}
+
+.emoji-4 {
+    top: 95%;
+    right: 8%;
+    animation: floatSlow 14s infinite;
+    animation-delay: 4.5s;
+}
+
+.emoji-5 {
+    top: 35%;
+    left: 2%;
+    animation: floatMedium 11s infinite;
+    animation-delay: 2s;
+}
+
+.emoji-6 {
+    top: 75%;
+    left: 3%;
+    animation: floatGentle 9s infinite;
+    animation-delay: 3.5s;
+}
+
+.emoji-7 {
+    top: 25%;
+    right: 3%;
+    animation: floatSlow 13s infinite;
+    animation-delay: 1s;
+}
+
+.emoji-8 {
+    top: 65%;
+    right: 2%;
+    animation: floatMedium 10s infinite;
+    animation-delay: 5s;
+}
+
+.emoji-9 {
+    top: 45%;
+    left: 1%;
+    animation: floatGentle 7s infinite;
+    animation-delay: 4s;
+}
+
+.emoji-10 {
+    top: 15%;
+    left: 2%;
+    animation: floatSlow 15s infinite;
+    animation-delay: 2.5s;
+}
+
+.emoji-11 {
+    top: 55%;
+    right: 1%;
+    animation: floatMedium 9s infinite;
+    animation-delay: 5.5s;
+}
+
+/* Анимации для смайликов */
+@keyframes floatSlow {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    16.67% {
+        transform: translateY(-6px) translateX(2px) rotate(0.5deg);
+    }
+    33.33% {
+        transform: translateY(-8px) translateX(3px) rotate(1deg);
+    }
+    50% {
+        transform: translateY(-5px) translateX(-1px) rotate(-0.3deg);
+    }
+    66.67% {
+        transform: translateY(-10px) translateX(4px) rotate(1.2deg);
+    }
+    83.33% {
+        transform: translateY(-3px) translateX(-2px) rotate(-0.7deg);
+    }
+}
+
+@keyframes floatMedium {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    20% {
+        transform: translateY(-4px) translateX(-2px) rotate(-0.5deg);
+    }
+    40% {
+        transform: translateY(-7px) translateX(-3px) rotate(-0.8deg);
+    }
+    60% {
+        transform: translateY(-3px) translateX(2px) rotate(0.4deg);
+    }
+    80% {
+        transform: translateY(-6px) translateX(3px) rotate(0.9deg);
+    }
+}
+
+@keyframes floatGentle {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-3px) translateX(1px) rotate(0.2deg);
+    }
+    50% {
+        transform: translateY(-5px) translateX(-1px) rotate(-0.3deg);
+    }
+    75% {
+        transform: translateY(-2px) translateX(2px) rotate(0.4deg);
+    }
+}
+
+/* Screen Layout */
+.how-did-you-know-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--container-padding);
+    margin: 0 auto;
+    height: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    min-height: 0;
+    transform: translateZ(0);
+    justify-content: center;
+}
+
+/* Content Section */
+.content-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    min-height: 0;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+/* Screen Title */
+.screen-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #235BDF;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    text-align: center;
+}
+
+/* Options Section */
+.options-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+/* Option Button */
+.option-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #74E976, #5BC85F);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(116, 233, 118, 0.3);
+    min-height: 60px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(116, 233, 118, 0.4);
+    background: linear-gradient(135deg, #5BC85F, #4CAF50);
+}
+
+.option-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(116, 233, 118, 0.3);
+}
+
+.option-button.selected {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Option Text */
+.option-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+/* Success Modal тот же стиль что и error modal */
+.success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.success-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.success-modal-content {
+    position: relative;
+    z-index: 1002;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 32px 24px 24px;
+    margin: 20px;
+    max-width: 400px;
+    width: calc(100% - 40px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    transform: scale(1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.success-modal.hidden .success-modal-content {
+    transform: scale(0.9);
+}
+
+.success-modal-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    color: #4CAF50;
+    line-height: 1.2;
+}
+
+.success-modal-text-container {
+    margin-bottom: 32px;
+}
+
+.success-modal-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #666666;
+    margin: 0;
+}
+
+.success-modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.success-modal-button {
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    transition: all 0.2s ease;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.success-modal-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+.success-modal-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Анимация появления модального окна */
+@keyframes successModalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.success-modal:not(.hidden) .success-modal-content {
+    animation: successModalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Адаптивность */
+@media (max-width: 380px) {
+    :root {
+        --container-padding: 16px;
+    }
+    
+    .screen-title {
+        font-size: 24px;
+    }
+    
+    .option-button {
+        padding: 14px 20px;
+        min-height: 56px;
+    }
+    
+    .option-text {
+        font-size: 16px;
+    }
+    
+    .content-section {
+        gap: 30px;
+    }
+}
+
+/* Адаптация для низких экранов */
+@media (max-height: 600px) {
+    .content-section {
+        gap: 25px;
+        justify-content: flex-start;
+        padding-top: 20px;
+    }
+    
+    .screen-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+}
+
+/* Дополнительная защита для очень низких экранов */
+@media (max-height: 400px) {
+    .content-section {
+        gap: 15px;
+        justify-content: flex-start;
+    }
+    
+    .screen-title {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+    
+    .option-button {
+        padding: 12px 20px;
+        min-height: 50px;
+    }
+    
+    .option-text {
+        font-size: 15px;
+    }
+}
+
+/* Поддержка темной темы */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --tg-theme-bg-color: #1a1a1a;
+        --tg-theme-text-color: #ffffff;
+        --tg-theme-hint-color: #aaaaaa;
+        --tg-theme-secondary-bg-color: #2a2a2a;
+        --smoky-shadow: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce) {
+    .option-button {
+        transition: none;
+    }
+    
+    .emoji {
+        animation: none;
+    }
+}
+
+/* Фокус для клавиатурной навигации */
+*:focus {
+    outline: 2px solid var(--tg-theme-button-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Скрытие элементов для скринридеров */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
