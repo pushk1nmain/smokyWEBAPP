@@ -21,6 +21,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const optionCards = document.querySelectorAll('.option-card');
 
     /**
+     * Отправляет данные об источнике на сервер
+     * @param {string} source - источник привлечения
+     * @returns {Promise<boolean>} успешность операции
+     */
+    const sendSourceToServer = async (source) => {
+        try {
+            const result = await window.APIClient.sendUserSource(source);
+            return result.success === true;
+        } catch (error) {
+            console.error('Ошибка при отправке источника:', error);
+            
+            // Показываем ошибку пользователю
+            let errorMessage = 'Произошла ошибка при сохранении данных';
+            
+            if (error instanceof window.APIClient.APIError) {
+                errorMessage = error.getUserMessage();
+            }
+            
+            if (window.showErrorModal) {
+                window.showErrorModal(errorMessage);
+            }
+            
+            return false;
+        }
+    };
+
+    /**
      * Создает и показывает модальное окно с сообщением об успехе
      * @param {string} selectedOption - выбранная опция
      */
@@ -116,32 +143,39 @@ document.addEventListener('DOMContentLoaded', () => {
             optionCards.forEach(card => card.classList.remove('selected'));
         };
         
-        const handleConfirm = () => {
+        const handleConfirm = async () => {
             const customSource = input.value.trim();
-            if (!customSource) {
-                // Показываем ошибку если поле пустое
+            
+            // Валидация минимум 2 символа
+            if (customSource.length < 2) {
                 if (window.showErrorModal) {
-                    window.showErrorModal('Пожалуйста, укажите где вы узнали о Смоки');
+                    window.showErrorModal('Пожалуйста, укажите минимум 2 символа');
                 }
                 return;
             }
             
-            // Сохраняем кастомный источник
-            localStorage.setItem('userSourceInfo', `other: ${customSource}`);
-            console.log(`Пользователь ${userName} выбрал кастомный источник: ${customSource}`);
+            // Отправляем данные на сервер
+            const isSuccess = await sendSourceToServer(customSource);
             
-            // Закрываем модальное окно
-            closeModal();
-            
-            // Показываем обычное модальное окно "Принял!"
-            setTimeout(() => {
-                showSuccessModal('other');
-            }, 300);
-            
-            // Haptic feedback
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            if (isSuccess) {
+                // Сохраняем кастомный источник локально (для дублирования)
+                localStorage.setItem('userSourceInfo', `other: ${customSource}`);
+                console.log(`Пользователь ${userName} выбрал кастомный источник: ${customSource}`);
+                
+                // Закрываем модальное окно
+                closeModal();
+                
+                // Показываем обычное модальное окно "Принял!"
+                setTimeout(() => {
+                    showSuccessModal('other');
+                }, 300);
+                
+                // Haptic feedback
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                }
             }
+            // Если ошибка - она уже обработана в sendSourceToServer
         };
         
         // Добавляем обработчики (удаляем старые если есть)
@@ -175,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Обработчик нажатия на карточку выбора
      * @param {Event} event - событие клика
      */
-    const handleOptionClick = (event) => {
+    const handleOptionClick = async (event) => {
         const card = event.currentTarget;
         const option = card.getAttribute('data-option');
 
@@ -194,23 +228,35 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Для остальных опций показываем обычное модальное окно
         // Убираем выделение с других карточек
         optionCards.forEach(card => card.classList.remove('selected'));
         
         // Выделяем выбранную карточку
         card.classList.add('selected');
 
-        // Небольшая задержка перед показом модального окна для лучшего UX
-        setTimeout(() => {
-            showSuccessModal(option);
-        }, 200);
-
-        // Логируем выбор пользователя
-        console.log(`Пользователь ${userName} выбрал источник: ${option}`);
+        // Получаем точное название кнопки из DOM
+        const optionTextElement = card.querySelector('.option-text');
+        const sourceName = optionTextElement ? optionTextElement.textContent.trim() : option;
         
-        // Сохраняем выбор в localStorage (для будущего использования)
-        localStorage.setItem('userSourceInfo', option);
+        // Отправляем данные на сервер
+        const isSuccess = await sendSourceToServer(sourceName);
+        
+        if (isSuccess) {
+            // Логируем выбор пользователя
+            console.log(`Пользователь ${userName} выбрал источник: ${sourceName}`);
+            
+            // Сохраняем выбор в localStorage (для дублирования)
+            localStorage.setItem('userSourceInfo', sourceName);
+            
+            // Небольшая задержка перед показом модального окна для лучшего UX
+            setTimeout(() => {
+                showSuccessModal(option);
+            }, 200);
+        }
+        // Если ошибка - она уже обработана в sendSourceToServer, просто убираем выделение
+        else {
+            card.classList.remove('selected');
+        }
     };
 
     // Добавляем обработчики событий на все карточки выбора
