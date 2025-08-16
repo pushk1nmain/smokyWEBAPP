@@ -74,16 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     <!-- Контейнер с индикатором силы воли -->
                     <div class="strength-indicator-container">
-                        <!-- SVG рука/мышца -->
-                        <div class="strength-arm-container">
-                            <svg class="strength-arm-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Основа руки -->
-                                <path class="arm-base" d="M30 70 Q35 50 45 40 Q55 35 65 40 Q75 50 70 70 Q65 80 50 85 Q35 80 30 70 Z" />
-                                <!-- Мышца -->
-                                <ellipse class="arm-muscle" cx="50" cy="55" rx="15" ry="12" />
-                                <!-- Блики на мышце -->
-                                <ellipse class="arm-highlight" cx="47" cy="52" rx="8" ry="6" opacity="0.3" />
-                            </svg>
+                        <!-- Эмодзи мышца -->
+                        <div class="strength-emoji-container">
+                            <div class="strength-emoji">💪</div>
                             
                             <!-- Частички энергии -->
                             <div class="energy-particles">
@@ -136,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const startStrengthAnimation = (modal) => {
         const progressFill = modal.querySelector('.strength-progress-fill');
-        const armSvg = modal.querySelector('.strength-arm-svg');
+        const emoji = modal.querySelector('.strength-emoji');
         const particles = modal.querySelectorAll('.particle');
         
         let progress = 0;
@@ -150,16 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Обновляем прогресс-бар
             progressFill.style.width = `${progress * 100}%`;
             
-            // Эффект накачивания руки (от 1.0 до 1.3)
-            const muscleScale = 1 + (progress * 0.3);
-            armSvg.style.transform = `scale(${muscleScale})`;
+            // Эффект накачивания эмодзи (от 1.0 до 1.4)
+            const muscleScale = 1 + (progress * 0.4);
+            emoji.style.transform = `scale(${muscleScale})`;
             
-            // Изменение цвета мышцы от слабого к сильному
-            const muscle = modal.querySelector('.arm-muscle');
-            const hue = 220 - (progress * 40); // От синего к зеленому
-            const saturation = 50 + (progress * 30); // Увеличиваем насыщенность
-            const lightness = 60 + (progress * 20); // Увеличиваем яркость
-            muscle.style.fill = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            // Добавляем свечение по мере прогресса
+            const glowIntensity = progress * 20;
+            emoji.style.filter = `drop-shadow(0 0 ${glowIntensity}px rgba(255, 215, 0, ${progress * 0.8}))`;
             
             // Активация частичек энергии по мере прогресса
             particles.forEach((particle, index) => {
@@ -170,10 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Пульсация при достижении определенных этапов
             if (progress > 0.3 && progress < 0.35) {
-                armSvg.classList.add('pulse-effect');
+                emoji.classList.add('pulse-effect');
             }
             if (progress > 0.7 && progress < 0.75) {
-                armSvg.classList.add('pulse-effect');
+                emoji.classList.add('pulse-effect');
             }
             
             if (progress < 1) {
@@ -217,8 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const completeLoading = (modal) => {
         // Добавляем финальный эффект
-        const armSvg = modal.querySelector('.strength-arm-svg');
-        armSvg.classList.add('final-burst');
+        const emoji = modal.querySelector('.strength-emoji');
+        emoji.classList.add('final-burst');
         
         // Закрываем модальное окно и переходим дальше
         setTimeout(() => {

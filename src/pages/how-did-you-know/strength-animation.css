@@ -71,8 +71,8 @@
     gap: 24px;
 }
 
-/* Контейнер руки */
-.strength-arm-container {
+/* Контейнер эмодзи */
+.strength-emoji-container {
     position: relative;
     width: 120px;
     height: 120px;
@@ -81,54 +81,42 @@
     justify-content: center;
 }
 
-/* SVG рука */
-.strength-arm-svg {
-    width: 80px;
-    height: 80px;
-    transition: transform 0.3s ease;
+/* Эмодзи мышца */
+.strength-emoji {
+    font-size: 64px;
+    transition: transform 0.3s ease, filter 0.3s ease;
     transform-origin: center;
-}
-
-/* Основа руки */
-.arm-base {
-    fill: #FFE0B3;
-    stroke: #D4AF7A;
-    stroke-width: 1;
-    transition: all 0.3s ease;
-}
-
-/* Мышца */
-.arm-muscle {
-    fill: #5A9BF7;
-    transition: fill 0.3s ease;
-    transform-origin: center;
-}
-
-/* Блик на мышце */
-.arm-highlight {
-    fill: #ffffff;
-    transition: opacity 0.3s ease;
+    user-select: none;
 }
 
 /* Эффект пульсации */
-.strength-arm-svg.pulse-effect {
+.strength-emoji.pulse-effect {
     animation: strengthPulse 0.6s ease-in-out;
 }
 
 @keyframes strengthPulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.15); }
 }
 
 /* Финальный взрыв */
-.strength-arm-svg.final-burst {
+.strength-emoji.final-burst {
     animation: finalBurst 0.8s ease-out;
 }
 
 @keyframes finalBurst {
-    0% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.4); filter: brightness(1.5) drop-shadow(0 0 20px rgba(90, 155, 247, 0.6)); }
-    100% { transform: scale(1.2); filter: brightness(1.2) drop-shadow(0 0 10px rgba(90, 155, 247, 0.4)); }
+    0% { 
+        transform: scale(1); 
+        filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0));
+    }
+    50% { 
+        transform: scale(1.6); 
+        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)) drop-shadow(0 0 60px rgba(255, 165, 0, 0.8));
+    }
+    100% { 
+        transform: scale(1.3); 
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+    }
 }
 
 /* Частички энергии */
@@ -259,14 +247,13 @@
         font-size: 15px;
     }
 
-    .strength-arm-container {
+    .strength-emoji-container {
         width: 100px;
         height: 100px;
     }
 
-    .strength-arm-svg {
-        width: 70px;
-        height: 70px;
+    .strength-emoji {
+        font-size: 56px;
     }
 
     .particle {
