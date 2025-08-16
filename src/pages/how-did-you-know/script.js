@@ -92,11 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Персонализируем текст с именем пользователя
         modalText.textContent = `Вы настоящий исследователь! ${userName}, а где же вы обо мне услышали? Может, это был подкаст, статья или даже сарафанное радио в очереди за кофе?`;
         
-        // Показываем модальное окно
-        modal.classList.remove('hidden');
-        
-        // Форсируем reflow для корректного применения CSS
-        modal.offsetHeight;
+        // Показываем модальное окно синхронно с помощью requestAnimationFrame
+        requestAnimationFrame(() => {
+            modal.classList.remove('hidden');
+        });
         
         // Haptic feedback
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
