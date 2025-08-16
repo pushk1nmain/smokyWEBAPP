@@ -557,16 +557,16 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.other-source-modal.show {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.other-source-modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .modal-overlay-blur {
@@ -595,7 +595,7 @@ body {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.other-source-modal.show .other-source-modal-content {
+.other-source-modal:not(.hidden) .other-source-modal-content {
     transform: scale(1);
 }
 
@@ -749,7 +749,7 @@ body {
     }
 }
 
-.other-source-modal.show .other-source-modal-content {
+.other-source-modal:not(.hidden) .other-source-modal-content {
     animation: otherSourceModalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
