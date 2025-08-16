@@ -23,9 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Отправляет данные об источнике на сервер
      * @param {string} source - источник привлечения
+     * @param {Function} errorCallback - callback для показа ошибки (опционально)
      * @returns {Promise<boolean>} успешность операции
      */
-    const sendSourceToServer = async (source) => {
+    const sendSourceToServer = async (source, errorCallback = null) => {
         try {
             const result = await window.APIClient.sendUserSource(source);
             return result.success === true;
@@ -39,7 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessage = error.getUserMessage();
             }
             
-            if (window.showErrorModal) {
+            // Используем переданный callback или глобальную функцию
+            if (errorCallback) {
+                errorCallback(errorMessage);
+            } else if (window.showErrorModal) {
                 window.showErrorModal(errorMessage);
             }
             
@@ -143,19 +147,72 @@ document.addEventListener('DOMContentLoaded', () => {
             optionCards.forEach(card => card.classList.remove('selected'));
         };
         
+        const showModalError = (errorText) => {
+            // Удаляем предыдущую ошибку если есть
+            const existingError = modal.querySelector('.modal-error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Создаем сообщение об ошибке
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'modal-error-message';
+            errorDiv.textContent = errorText;
+            errorDiv.style.cssText = `
+                color: #ff4444;
+                font-size: 14px;
+                font-weight: 500;
+                text-align: center;
+                margin-top: 8px;
+                padding: 8px;
+                background: rgba(255, 68, 68, 0.1);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 68, 68, 0.2);
+                animation: errorShake 0.5s ease-in-out;
+            `;
+            
+            // Добавляем CSS анимацию для тряски
+            if (!document.getElementById('modal-error-styles')) {
+                const style = document.createElement('style');
+                style.id = 'modal-error-styles';
+                style.textContent = `
+                    @keyframes errorShake {
+                        0%, 100% { transform: translateX(0); }
+                        25% { transform: translateX(-5px); }
+                        75% { transform: translateX(5px); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // Вставляем после поля ввода
+            const inputContainer = modal.querySelector('.other-source-input-container');
+            inputContainer.parentNode.insertBefore(errorDiv, inputContainer.nextSibling);
+            
+            // Автоматически убираем ошибку через 3 секунды
+            setTimeout(() => {
+                if (errorDiv && errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+            }, 3000);
+            
+            // Haptic feedback для ошибки
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            }
+        };
+
         const handleConfirm = async () => {
             const customSource = input.value.trim();
             
             // Валидация минимум 2 символа
             if (customSource.length < 2) {
-                if (window.showErrorModal) {
-                    window.showErrorModal('Пожалуйста, укажите минимум 2 символа');
-                }
+                showModalError('Пожалуйста, укажите минимум 2 символа');
                 return;
             }
             
-            // Отправляем данные на сервер
-            const isSuccess = await sendSourceToServer(customSource);
+            // Отправляем данные на сервер с локальным callback для ошибок
+            const isSuccess = await sendSourceToServer(customSource, showModalError);
             
             if (isSuccess) {
                 // Сохраняем кастомный источник локально (для дублирования)
