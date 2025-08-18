@@ -138,6 +138,7 @@ class StepRouter {
     async updateStep(newStep) {
         // Попытаемся получить telegram_id разными способами
         let telegramId = this.telegramId;
+        console.log('🔍 StepRouter.telegramId:', telegramId);
         
         if (!telegramId) {
             console.warn('⚠️ StepRouter telegram_id не найден, пытаемся получить через APIClient...');
@@ -148,11 +149,20 @@ class StepRouter {
                 
                 // Сохраняем для будущих вызовов
                 this.telegramId = telegramId;
+            } else {
+                console.error('❌ APIClient.getTelegramUserId недоступен');
             }
         }
         
         if (!telegramId) {
             console.error('❌ Не можем обновить шаг: Telegram ID не найден ни в StepRouter, ни в APIClient');
+            console.error('❌ Доступные объекты:', {
+                'window.APIClient': !!window.APIClient,
+                'window.Telegram': !!window.Telegram,
+                'window.Telegram.WebApp': !!window.Telegram?.WebApp,
+                'initDataUnsafe': !!window.Telegram?.WebApp?.initDataUnsafe,
+                'user': !!window.Telegram?.WebApp?.initDataUnsafe?.user
+            });
             return false;
         }
 
@@ -186,6 +196,11 @@ class StepRouter {
             
         } catch (error) {
             console.error('❌ Ошибка при обновлении шага:', error);
+            console.error('❌ Детали ошибки:', {
+                name: error?.name,
+                message: error?.message,
+                stack: error?.stack
+            });
             return false;
         }
     }
