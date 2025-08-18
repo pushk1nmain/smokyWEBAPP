@@ -239,7 +239,26 @@ class WakingUpScreen {
 }
 
 // Инициализация экрана при загрузке DOM
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('📱 Waking-up экран загружен, обновляем шаг в БД');
+    
+    // Обновляем шаг в БД при загрузке waking-up экрана
+    try {
+        if (window.StepRouter) {
+            console.log('🔄 Обновляем шаг до 5 (waking-up) через StepRouter');
+            const success = await window.StepRouter.updateStep(5);
+            if (success) {
+                console.log('✅ Шаг успешно обновлен до 5');
+            } else {
+                console.warn('⚠️ Не удалось обновить шаг до 5');
+            }
+        } else {
+            console.warn('⚠️ StepRouter недоступен для обновления шага');
+        }
+    } catch (error) {
+        console.error('❌ Ошибка при обновлении шага:', error);
+    }
+    
     new WakingUpScreen();
 });
 

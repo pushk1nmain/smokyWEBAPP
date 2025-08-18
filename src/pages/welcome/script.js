@@ -89,6 +89,23 @@
     const main = async () => {
         try {
             console.log('🚀 Welcome screen запускается...');
+            
+            // Обновляем шаг в БД при загрузке welcome экрана
+            try {
+                if (window.StepRouter) {
+                    console.log('🔄 Обновляем шаг до 1 (welcome) через StepRouter');
+                    const success = await window.StepRouter.updateStep(1);
+                    if (success) {
+                        console.log('✅ Шаг успешно обновлен до 1');
+                    } else {
+                        console.warn('⚠️ Не удалось обновить шаг до 1');
+                    }
+                } else {
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на welcome экране');
+                }
+            } catch (error) {
+                console.error('❌ Ошибка при обновлении шага на welcome экране:', error);
+            }
 
             // Дожидаемся инициализации SmokyApp если он доступен
             if (window.SmokyApp) {

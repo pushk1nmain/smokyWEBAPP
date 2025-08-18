@@ -3,7 +3,26 @@
  * Обработка выбора источника информации о приложении
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('📱 How-did-you-know экран загружен, обновляем шаг в БД');
+    
+    // Обновляем шаг в БД при загрузке how-did-you-know экрана
+    try {
+        if (window.StepRouter) {
+            console.log('🔄 Обновляем шаг до 4 (how-did-you-know) через StepRouter');
+            const success = await window.StepRouter.updateStep(4);
+            if (success) {
+                console.log('✅ Шаг успешно обновлен до 4');
+            } else {
+                console.warn('⚠️ Не удалось обновить шаг до 4');
+            }
+        } else {
+            console.warn('⚠️ StepRouter недоступен для обновления шага');
+        }
+    } catch (error) {
+        console.error('❌ Ошибка при обновлении шага:', error);
+    }
+    
     // Инициализация Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.ready();

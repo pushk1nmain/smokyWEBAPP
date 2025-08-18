@@ -1,4 +1,23 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('📱 City-input экран загружен, обновляем шаг в БД');
+    
+    // Обновляем шаг в БД при загрузке city-input экрана
+    try {
+        if (window.StepRouter) {
+            console.log('🔄 Обновляем шаг до 3 (city-input) через StepRouter');
+            const success = await window.StepRouter.updateStep(3);
+            if (success) {
+                console.log('✅ Шаг успешно обновлен до 3');
+            } else {
+                console.warn('⚠️ Не удалось обновить шаг до 3');
+            }
+        } else {
+            console.warn('⚠️ StepRouter недоступен для обновления шага');
+        }
+    } catch (error) {
+        console.error('❌ Ошибка при обновлении шага:', error);
+    }
+    
     /**
      * Простые утилиты загрузки без текста
      */
