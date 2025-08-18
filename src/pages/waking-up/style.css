@@ -91,8 +91,8 @@ body {
 .character-section {
     flex: 0 0 auto;
     text-align: center;
-    margin-bottom: 20px; /* Уменьшаем отступ */
-    margin-top: 40px; /* Увеличиваем отступ сверху для лучшего размещения */
+    margin-bottom: 10px; /* Меньше отступ снизу */
+    margin-top: 20px; /* Меньше отступ сверху */
 }
 
 .sleeping-person-container {
@@ -124,8 +124,10 @@ body {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(8px);
     border-radius: 12px;
-    padding: 20px;
-    margin: 16px;
+    padding: 25px 20px; /* Увеличиваем вертикальные отступы */
+    margin: -10px 16px; /* Поднимаем выше до заголовка */
+    position: relative;
+    z-index: 3; /* Поверх персонажа */
 }
 
 .main-title {
@@ -162,7 +164,9 @@ body {
 
 /* Кнопка действия */
 .action-section {
-    margin: 30px 0;
+    margin: -5px 0 20px 0; /* Поднимаем кнопку выше */
+    position: relative;
+    z-index: 3; /* Поверх блока */
 }
 
 /* Анимации */
