@@ -353,21 +353,42 @@ class SmokyApp {
                     }
                     
                     try {
+                        console.log('📱 SmokyApp: показываем загрузку...');
+                        // Показываем загрузку через welcome screen функцию если доступна
+                        if (typeof showLoading === 'function') {
+                            showLoading();
+                        }
+                        
+                        console.log('🔄 SmokyApp: переходим через StepRouter...');
                         // Переходим к следующему шагу через роутер
                         if (this.router) {
                             const success = await this.router.goToNextStep();
-                            if (!success) {
-                                console.error('❌ StepRouter не смог выполнить переход');
-                                // Fallback
-                                window.location.href = '../name-input/index.html';
+                            if (success) {
+                                console.log('✅ SmokyApp: переход выполнен успешно');
+                                return;
+                            } else {
+                                console.error('❌ SmokyApp: StepRouter не смог выполнить переход');
                             }
                         } else {
-                            console.error('❌ Роутер недоступен для перехода');
-                            window.location.href = '../name-input/index.html';
+                            console.error('❌ SmokyApp: роутер недоступен для перехода');
                         }
-                    } catch (error) {
-                        console.error('❌ Ошибка при переходе к следующему шагу:', error);
+                        
+                        // Fallback переход
+                        console.log('🔄 SmokyApp: выполняем fallback переход');
                         window.location.href = '../name-input/index.html';
+                        
+                    } catch (error) {
+                        console.error('❌ SmokyApp: ошибка при переходе к следующему шагу:', error);
+                        
+                        // Скрываем загрузку при ошибке
+                        if (typeof hideLoading === 'function') {
+                            hideLoading();
+                        }
+                        
+                        // Критический fallback
+                        setTimeout(() => {
+                            window.location.href = '../name-input/index.html';
+                        }, 500);
                     }
                 });
                 
