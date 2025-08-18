@@ -86,7 +86,7 @@ const apiRequest = async (endpoint, options = {}) => {
             throw new APIError(data.message || 'Произошла ошибка при выполнении запроса', response.status, data.error_code);
         }
 
-        console.log(`📥 Получили ответ:`, data);
+        // Убираем дублирование - данные уже логируются в global-console
         return data;
     } catch (error) {
         // Обрабатываем различные типы ошибок

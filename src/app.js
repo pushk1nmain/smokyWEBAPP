@@ -175,6 +175,9 @@ class SmokyApp {
             if (this.isAppScreen(currentPath)) {
                 console.log('📱 Находимся на экране приложения, проверяем корректность...');
                 await this.validateCurrentScreen();
+                
+                // Настраиваем обработчики событий для текущего экрана
+                this.setupScreenEventHandlers(currentPath);
                 return;
             }
             
@@ -206,7 +209,9 @@ class SmokyApp {
             '/frontend/index.html'
         ];
         
-        return mainPaths.some(mainPath => path === mainPath || path.endsWith(mainPath));
+        const isMain = mainPaths.some(mainPath => path === mainPath || path.endsWith(mainPath));
+        console.log(`🏠 isMainAppPage(${path}) = ${isMain}`);
+        return isMain;
     }
 
     /**
@@ -322,6 +327,57 @@ class SmokyApp {
             routerState: this.router?.getState() || null,
             timestamp: new Date().toISOString()
         };
+    }
+
+    /**
+     * Настройка обработчиков событий для текущего экрана
+     * @param {string} currentPath Текущий путь
+     */
+    setupScreenEventHandlers(currentPath) {
+        // Обработчик для экрана приветствия
+        if (currentPath.includes('/welcome/')) {
+            console.log('🔧 Настраиваем обработчики для welcome screen');
+            
+            const startButton = document.getElementById('startButton');
+            if (startButton && !startButton.hasAttribute('data-smoky-handler')) {
+                startButton.setAttribute('data-smoky-handler', 'true');
+                startButton.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('🚀 SmokyApp: обработка кнопки Поехали!');
+                    
+                    // Haptic feedback если доступен
+                    if (window.Telegram?.WebApp?.HapticFeedback) {
+                        window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+                    }
+                    
+                    try {
+                        // Переходим к следующему шагу через роутер
+                        if (this.router) {
+                            const success = await this.router.goToNextStep();
+                            if (!success) {
+                                console.error('❌ StepRouter не смог выполнить переход');
+                                // Fallback
+                                window.location.href = '../name-input/index.html';
+                            }
+                        } else {
+                            console.error('❌ Роутер недоступен для перехода');
+                            window.location.href = '../name-input/index.html';
+                        }
+                    } catch (error) {
+                        console.error('❌ Ошибка при переходе к следующему шагу:', error);
+                        window.location.href = '../name-input/index.html';
+                    }
+                });
+                
+                console.log('✅ Обработчик кнопки welcome настроен');
+            }
+        }
+        
+        // Здесь можно добавить обработчики для других экранов
+        // if (currentPath.includes('/name-input/')) { ... }
+        // if (currentPath.includes('/city-input/')) { ... }
     }
 
     /**

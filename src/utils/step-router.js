@@ -193,20 +193,28 @@ class StepRouter {
      */
     async navigateToCurrentStep(force = false) {
         try {
+            console.log(`🔍 navigateToCurrentStep вызван, force=${force}`);
+            
             // Дожидаемся инициализации
             if (!this.isInitialized) {
+                console.log(`⏳ Ожидаем инициализации StepRouter...`);
                 await this.init();
             }
 
             // Получаем текущий шаг
+            console.log(`📊 Получаем текущий шаг пользователя...`);
             const currentStep = await this.getCurrentStep();
+            console.log(`📍 Получен текущий шаг: ${currentStep}`);
+            
             const targetUrl = this.getScreenForStep(currentStep);
+            console.log(`🎯 URL для шага ${currentStep}: ${targetUrl}`);
             
             if (!targetUrl) {
                 console.error(`❌ Не найден экран для шага ${currentStep}`);
                 // Перенаправляем на первый шаг в случае ошибки
                 const fallbackUrl = this.getScreenForStep(1);
                 if (fallbackUrl) {
+                    console.log(`🔄 Fallback на первый экран: ${fallbackUrl}`);
                     window.location.href = fallbackUrl;
                 }
                 return;
@@ -214,20 +222,23 @@ class StepRouter {
 
             // Проверяем, не находимся ли мы уже на нужном экране
             const currentPath = window.location.pathname;
-            const targetPath = targetUrl;
+            console.log(`📍 Текущий путь: ${currentPath}`);
+            console.log(`🎯 Целевой путь: ${targetUrl}`);
             
-            if (!force && (currentPath === targetPath || currentPath.endsWith(targetPath))) {
-                console.log(`📍 Уже находимся на правильном экране для шага ${currentStep}`);
+            if (!force && (currentPath === targetUrl || currentPath.endsWith(targetUrl))) {
+                console.log(`✅ Уже находимся на правильном экране для шага ${currentStep}`);
                 return;
             }
 
             // Выполняем навигацию
-            console.log(`🚀 Переход на шаг ${currentStep}: ${targetUrl}`);
+            console.log(`🚀 ВЫПОЛНЯЕМ ПЕРЕХОД: ${currentPath} → ${targetUrl}`);
             
             // Используем LoadingManager если доступен для плавного перехода
             if (window.LoadingManager?.navigateWithTransition) {
+                console.log(`🔄 Используем LoadingManager для перехода`);
                 window.LoadingManager.navigateWithTransition(targetUrl);
             } else {
+                console.log(`🔄 Прямой переход через window.location.href`);
                 window.location.href = targetUrl;
             }
             
@@ -237,6 +248,7 @@ class StepRouter {
             // В случае критической ошибки перенаправляем на первый экран
             const fallbackUrl = this.getScreenForStep(1);
             if (fallbackUrl) {
+                console.log(`🔄 Критическая ошибка, fallback на: ${fallbackUrl}`);
                 window.location.href = fallbackUrl;
             }
         }
