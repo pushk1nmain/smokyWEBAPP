@@ -18,11 +18,11 @@ class StepRouter {
      * Каждый шаг соответствует определенному экрану
      */
     static STEP_TO_SCREEN = {
-        1: 'src/pages/welcome/index.html',           // Приветствие с Смоки
-        2: 'src/pages/name-input/index.html',        // Ввод имени пользователя
-        3: 'src/pages/city-input/index.html',        // Ввод города и часового пояса
-        4: 'src/pages/how-did-you-know/index.html',  // Источник информации о приложении
-        5: 'src/pages/waking-up/index.html',         // Экран пробуждения (начало истории)
+        1: '/src/pages/welcome/index.html',           // Приветствие с Смоки
+        2: '/src/pages/name-input/index.html',        // Ввод имени пользователя
+        3: '/src/pages/city-input/index.html',        // Ввод города и часового пояса
+        4: '/src/pages/how-did-you-know/index.html',  // Источник информации о приложении
+        5: '/src/pages/waking-up/index.html',         // Экран пробуждения (начало истории)
         // Здесь будут добавляться новые экраны по мере развития приложения
     };
 
@@ -183,8 +183,8 @@ class StepRouter {
             return null;
         }
         
-        // Возвращаем относительный путь от корня проекта
-        return `/${screenPath}`;
+        // Возвращаем абсолютный путь (уже содержит /)
+        return screenPath;
     }
 
     /**

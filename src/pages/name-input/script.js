@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (isSuccess) {
                     // Плавный переход к следующей странице
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         // Используем StepRouter для перехода на следующий шаг
                         if (window.StepRouter) {
                             console.log('📈 Обновляем прогресс до шага 3 (город)');
@@ -244,6 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Ошибка при сохранении имени:', error);
                 hideLoading();
                 localStorage.removeItem('userName');
+                // Восстанавливаем кнопку
+                nextButton.disabled = false;
+                nextButton.classList.remove('loading');
             }
         } else {
             // Показываем загрузку и для fallback

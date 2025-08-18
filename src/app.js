@@ -151,6 +151,11 @@ class SmokyApp {
             // Получаем текущий путь
             const currentPath = window.location.pathname;
             console.log(`📍 Текущий путь: ${currentPath}`);
+            console.log(`🔧 Статус роутера: ${this.router ? 'Доступен' : 'Недоступен'}`);
+            
+            if (this.router) {
+                console.log(`📊 Состояние роутера:`, this.router.getState());
+            }
             
             // Проверяем, не находимся ли мы уже на главной странице приложения
             if (this.isMainAppPage(currentPath)) {
@@ -160,6 +165,7 @@ class SmokyApp {
                 if (this.router) {
                     await this.router.navigateToCurrentStep();
                 } else {
+                    console.error('❌ Роутер недоступен для навигации');
                     this.fallbackToWelcome();
                 }
                 return;
@@ -177,6 +183,7 @@ class SmokyApp {
             if (this.router) {
                 await this.router.navigateToCurrentStep();
             } else {
+                console.error('❌ Роутер недоступен для неизвестной страницы');
                 this.fallbackToWelcome();
             }
             
@@ -242,14 +249,16 @@ class SmokyApp {
             
             // Проверяем, соответствует ли текущий путь ожидаемому
             const currentPath = window.location.pathname;
+            console.log(`🔍 Проверяем соответствие: текущий путь = ${currentPath}, ожидаемый = ${expectedScreenUrl}`);
             
-            if (currentPath.includes(expectedScreenUrl) || expectedScreenUrl.includes(currentPath)) {
+            if (currentPath === expectedScreenUrl || currentPath.includes(expectedScreenUrl) || expectedScreenUrl.includes(currentPath)) {
                 console.log(`✅ Пользователь находится на правильном экране для шага ${currentStep}`);
                 return;
             }
             
             // Пользователь на неправильном экране - перенаправляем
             console.log(`🔄 Перенаправляем с шага ${this.getStepFromPath(currentPath)} на правильный шаг ${currentStep}`);
+            console.log(`🚀 Переход: ${currentPath} → ${expectedScreenUrl}`);
             await this.router.navigateToCurrentStep(true);
             
         } catch (error) {
