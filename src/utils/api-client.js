@@ -75,10 +75,30 @@ const apiRequest = async (endpoint, options = {}) => {
         }
 
         // Выполняем запрос
-        const response = await fetch(`${getApiBaseUrl()}${endpoint}`, requestConfig);
+        const fullUrl = `${getApiBaseUrl()}${endpoint}`;
+        console.log(`🌐 Отправляем запрос: ${method} ${fullUrl}`);
+        console.log(`🌐 Конфигурация запроса:`, {
+            method,
+            headers: requestHeaders,
+            body: body ? JSON.stringify(body) : 'отсутствует'
+        });
+        
+        const response = await fetch(fullUrl, requestConfig);
+        
+        console.log(`🌐 Получен ответ: статус ${response.status} ${response.statusText}`);
+        console.log(`🌐 Заголовки ответа:`, Object.fromEntries(response.headers.entries()));
 
         // Парсим ответ
-        const data = await response.json();
+        let data;
+        try {
+            data = await response.json();
+            console.log(`🌐 Данные ответа:`, data);
+        } catch (parseError) {
+            console.error(`❌ Ошибка парсинга JSON ответа:`, parseError);
+            const textResponse = await response.text();
+            console.error(`❌ Текст ответа:`, textResponse);
+            throw new APIError('Сервер вернул некорректный JSON', response.status, 'PARSE_ERROR');
+        }
 
         // Проверяем статус ответа
         if (!response.ok) {
