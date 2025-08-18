@@ -136,8 +136,23 @@ class StepRouter {
      * @returns {Promise<boolean>} Успешность операции
      */
     async updateStep(newStep) {
-        if (!this.telegramId) {
-            console.warn('⚠️ Не можем обновить шаг: Telegram ID не найден');
+        // Попытаемся получить telegram_id разными способами
+        let telegramId = this.telegramId;
+        
+        if (!telegramId) {
+            console.warn('⚠️ StepRouter telegram_id не найден, пытаемся получить через APIClient...');
+            // Используем API Client для получения telegram_id
+            if (window.APIClient?.getTelegramUserId) {
+                telegramId = window.APIClient.getTelegramUserId();
+                console.log(`🔧 Получен telegram_id через APIClient: ${telegramId}`);
+                
+                // Сохраняем для будущих вызовов
+                this.telegramId = telegramId;
+            }
+        }
+        
+        if (!telegramId) {
+            console.error('❌ Не можем обновить шаг: Telegram ID не найден ни в StepRouter, ни в APIClient');
             return false;
         }
 
@@ -153,10 +168,14 @@ class StepRouter {
                 return false;
             }
 
-            // Отправляем обновление на сервер
-            const result = await window.APIClient.updateProgressStep(this.telegramId, newStep);
+            console.log(`📤 Отправляем обновление шага: telegram_id=${telegramId}, step=${newStep}`);
             
-            if (result.success) {
+            // Отправляем обновление на сервер
+            const result = await window.APIClient.updateProgressStep(telegramId, newStep);
+            
+            console.log(`📥 Получен ответ от сервера:`, result);
+            
+            if (result && result.success) {
                 this.currentStep = newStep;
                 console.log(`✅ Шаг обновлен: ${newStep} (${StepRouter.STEP_NAMES[newStep] || 'Неизвестный'})`);
                 return true;
