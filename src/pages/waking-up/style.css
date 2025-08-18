@@ -51,7 +51,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
+    background: linear-gradient(180deg, #0f1729 0%, #1a2847 25%, #2d4578 50%, #3a5998 100%); /* Ночной градиент от темно-синего к более светлому */
     overflow: auto; /* Разрешаем прокрутку */
 }
 
@@ -66,6 +66,8 @@ body {
     width: 100%;
     overflow: hidden; /* Убираем прокрутку внутри секции */
     justify-content: space-between; /* Равномерное распределение контента */
+    position: relative;
+    z-index: 2; /* Контент поверх звезд */
 }
 
 /* Секция персонажа */
@@ -85,7 +87,7 @@ body {
     width: 180px; /* Немного меньше чем обычно для интимности момента */
     height: auto;
     max-width: 100%;
-    filter: drop-shadow(0 8px 16px var(--smoky-shadow));
+    filter: drop-shadow(0 8px 16px rgba(79, 195, 247, 0.3)) drop-shadow(0 0 20px rgba(79, 195, 247, 0.2));
     border-radius: 50%; /* Мягкие края для создания уютной атмосферы */
 }
 
@@ -103,19 +105,21 @@ body {
 .main-title {
     font-size: 26px; /* Немного меньше для интимности */
     font-weight: 700;
-    color: #235BDF; /* Синий цвет заголовка */
+    color: #e3f2fd; /* Светло-голубой цвет заголовка для ночной темы */
     margin-bottom: 15px;
     line-height: 1.3;
+    text-shadow: 0 0 10px rgba(227, 242, 253, 0.5); /* Мягкое свечение текста */
 }
 
 .main-description {
     font-size: 18px;
-    color: #1C3D8C; /* Темно-синий цвет основного текста */
+    color: #bbdefb; /* Светло-синий цвет основного текста для ночной темы */
     line-height: 1.6; /* Улучшаем читаемость */
     margin-bottom: 25px;
     max-width: 320px; /* Немного шире для большего текста */
     margin-left: auto;
     margin-right: auto;
+    text-shadow: 0 0 5px rgba(187, 222, 251, 0.3); /* Легкое свечение текста */
 }
 
 /* Кнопка действия */
@@ -139,9 +143,74 @@ body {
     }
 }
 
-/* Специфичные анимации для парящих смайликов на этом экране */
-.floating-emojis .emoji {
-    opacity: 0.2; /* Делаем смайлики еще менее заметными для атмосферы пробуждения */
+/* Ночные звезды */
+.night-stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.star {
+    position: absolute;
+    color: #ffffff;
+    text-shadow: 0 0 10px #4fc3f7, 0 0 20px #4fc3f7, 0 0 30px #4fc3f7;
+    animation: twinkle 3s ease-in-out infinite;
+    opacity: 0.8;
+}
+
+/* Размеры звезд */
+.star-1, .star-4, .star-7, .star-10, .star-13 { 
+    font-size: 16px; 
+    top: 15%; left: 20%;
+}
+.star-2, .star-5, .star-8, .star-11, .star-14 { 
+    font-size: 12px; 
+    top: 25%; right: 15%;
+}
+.star-3, .star-6, .star-9, .star-12, .star-15 { 
+    font-size: 20px; 
+    top: 35%; left: 70%;
+}
+
+/* Позиционирование звезд */
+.star-1 { top: 8%; left: 10%; animation-delay: 0s; }
+.star-2 { top: 12%; right: 20%; animation-delay: 0.5s; }
+.star-3 { top: 18%; left: 75%; animation-delay: 1s; }
+.star-4 { top: 25%; left: 15%; animation-delay: 1.5s; }
+.star-5 { top: 30%; right: 10%; animation-delay: 2s; }
+.star-6 { top: 35%; left: 60%; animation-delay: 0.3s; }
+.star-7 { top: 45%; left: 5%; animation-delay: 0.8s; }
+.star-8 { top: 50%; right: 25%; animation-delay: 1.3s; }
+.star-9 { top: 55%; left: 80%; animation-delay: 1.8s; }
+.star-10 { top: 65%; left: 25%; animation-delay: 0.2s; }
+.star-11 { top: 70%; right: 15%; animation-delay: 0.7s; }
+.star-12 { top: 75%; left: 65%; animation-delay: 1.2s; }
+.star-13 { top: 85%; left: 10%; animation-delay: 1.7s; }
+.star-14 { top: 90%; right: 30%; animation-delay: 0.4s; }
+.star-15 { top: 95%; left: 50%; animation-delay: 0.9s; }
+
+/* Анимация мерцания звезд */
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    25% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    75% {
+        opacity: 0.6;
+        transform: scale(1.05);
+    }
 }
 
 /* Адаптивность */
@@ -187,6 +256,12 @@ body {
     .main-title {
         font-size: 22px;
     }
+    
+    /* Уменьшаем интенсивность звезд на маленьких экранах */
+    .star {
+        opacity: 0.4;
+        font-size: 0.8em;
+    }
 }
 
 /* Поддержка темной темы */
@@ -203,12 +278,18 @@ body {
 /* Доступность */
 @media (prefers-reduced-motion: reduce) {
     .sleeping-person-container,
-    .emoji {
+    .star {
         animation: none;
     }
     
     .common-button {
         transition: none;
+    }
+    
+    /* Статичное состояние звезд без анимации */
+    .star {
+        opacity: 0.6;
+        transform: none;
     }
 }
 
