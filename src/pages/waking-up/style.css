@@ -125,7 +125,7 @@ body {
     backdrop-filter: blur(8px);
     border-radius: 12px;
     padding: 25px 20px; /* Увеличиваем вертикальные отступы */
-    margin: -20px 16px; /* Поднимаем еще выше над заголовком */
+    margin: -20px 16px 20px 16px; /* Добавляем отступ снизу */
     position: relative;
     z-index: 3; /* Поверх персонажа */
 }
