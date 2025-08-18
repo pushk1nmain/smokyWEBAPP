@@ -400,12 +400,9 @@ const setupUI = () => {
  * Настройка обработчиков событий
  */
 const setupEventListeners = () => {
-    const startButton = document.getElementById('startButton');
-    if (startButton) {
-        startButton.addEventListener('click', handleStartClick);
-        startButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleStartClick());
-    }
-    console.log('⚡ Обработчики событий настроены');
+    // Обработчики кнопки теперь управляются через app.js (SmokyApp)
+    // Убираем дублирующий обработчик из welcome/script.js
+    console.log('⚡ Welcome screen готов для app.js обработчиков');
 };
 
 /**
