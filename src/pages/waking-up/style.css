@@ -113,19 +113,18 @@ body {
 
 /* Контентная секция */
 .content-section {
-    flex: 1;
+    flex-shrink: 0; /* Не сжимаем блок */
     display: flex;
     flex-direction: column;
-    justify-content: center;
     text-align: center;
-    gap: 12px; /* Уменьшаем отступы чтобы текст поместился */
-    min-height: 0; /* Предотвращаем переполнение */
+    gap: 12px; /* Отступы между элементами */
+    align-self: center; /* Центрируем блок в родительском контейнере */
     /* Полупрозрачная подложка под текст */
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(8px);
     border-radius: 12px;
-    padding: 30px 20px; /* Увеличиваем вертикальные отступы для размещения всего текста */
-    margin: 10px 16px 10px 16px; /* Уменьшаем верхний отступ чтобы дать больше места для контента */
+    padding: 24px 20px; /* Отступы внутри блока для красивого обрамления текста */
+    margin: 20px 16px; /* Отступы от краев экрана */
     position: relative;
     z-index: 3; /* Поверх персонажа */
 }
