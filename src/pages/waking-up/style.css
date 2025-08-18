@@ -118,7 +118,7 @@ body {
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    gap: 20px; /* Увеличиваем отступы для лучшей читаемости */
+    gap: 12px; /* Уменьшаем отступы чтобы текст поместился */
     min-height: 0; /* Предотвращаем переполнение */
     /* Полупрозрачная подложка под текст */
     background: rgba(0, 0, 0, 0.3);
@@ -132,7 +132,7 @@ body {
     font-size: 26px;
     font-weight: 700;
     color: #FFFFFF !important; /* Заголовок - чистый белый цвет */
-    margin-bottom: 15px;
+    margin-bottom: 0; /* Убираем отступ, используем gap в родителе */
     line-height: 1.3;
     /* Усиленная тень для лучшего контраста */
     text-shadow: 
@@ -146,8 +146,8 @@ body {
 .main-description {
     font-size: 18px;
     color: #E0E6ED !important; /* Текст - светло-серый цвет для мягкого контраста */
-    line-height: 1.6;
-    margin-bottom: 25px;
+    line-height: 1.5; /* Уменьшаем межстрочный интервал */
+    margin-bottom: 0; /* Убираем отступ, используем gap в родителе */
     max-width: 320px;
     margin-left: auto;
     margin-right: auto;
