@@ -124,8 +124,8 @@ body {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(8px);
     border-radius: 12px;
-    padding: 25px 20px; /* Увеличиваем вертикальные отступы */
-    margin: -20px 16px 10px 16px; /* Добавляем небольшой отступ снизу */
+    padding: 10px 20px; /* Равномерные отступы: 10px сверху и снизу от контента */
+    margin: 0 16px 10px 16px; /* Убираем отрицательный margin сверху, добавляем небольшой отступ снизу */
     position: relative;
     z-index: 3; /* Поверх персонажа */
 }
