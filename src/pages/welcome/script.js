@@ -400,9 +400,15 @@ const setupUI = () => {
  * Настройка обработчиков событий
  */
 const setupEventListeners = () => {
-    // Обработчики кнопки теперь управляются через app.js (SmokyApp)
-    // Убираем дублирующий обработчик из welcome/script.js
-    console.log('⚡ Welcome screen готов для app.js обработчиков');
+    const startButton = document.getElementById('startButton');
+    if (startButton) {
+        startButton.addEventListener('click', handleStartClick);
+        startButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleStartClick());
+        console.log('⚡ Обработчик кнопки Поехали подключен');
+    } else {
+        console.error('❌ Кнопка startButton не найдена');
+    }
+    console.log('⚡ Обработчики событий настроены');
 };
 
 /**
@@ -429,7 +435,7 @@ const handleStartClick = () => {
  * Навигация к следующему экрану
  */
 const navigateToNextScreen = async () => {
-    console.log('🚀 navigateToNextScreen вызван');
+    console.log('🚀 navigateToNextScreen вызван - простой переход без API');
     
     if (tg?.sendData) {
         try {
@@ -440,44 +446,9 @@ const navigateToNextScreen = async () => {
         }
     }
     
-    try {
-        // Проверяем доступность StepRouter
-        console.log('🔍 Проверяем доступность StepRouter:', !!window.StepRouter);
-        
-        if (window.StepRouter) {
-            console.log('🔧 StepRouter найден, проверяем состояние:', window.StepRouter.getState());
-            
-            console.log('🔄 Вызываем StepRouter.goToNextStep()...');
-            const success = await window.StepRouter.goToNextStep();
-            
-            console.log('📊 Результат StepRouter.goToNextStep():', success);
-            
-            if (success) {
-                console.log('✅ Переход к следующему шагу выполнен успешно через StepRouter');
-                return;
-            } else {
-                console.warn('⚠️ StepRouter.goToNextStep() вернул false, используем fallback');
-            }
-        } else {
-            console.warn('⚠️ window.StepRouter недоступен');
-        }
-        
-        // Fallback переход на следующий экран
-        console.log('🔄 Выполняем fallback переход на экран ввода имени');
-        window.location.href = '../name-input/index.html';
-        
-    } catch (error) {
-        console.error('❌ Ошибка при переходе к следующему шагу:', error);
-        
-        // Скрываем загрузку при ошибке
-        hideLoading();
-        
-        // Критический fallback
-        console.log('🚨 Выполняем критический fallback переход');
-        setTimeout(() => {
-            window.location.href = '../name-input/index.html';
-        }, 500);
-    }
+    // Простой переход на следующий экран без API запросов
+    console.log('🔄 Переходим на экран ввода имени');
+    window.location.href = '../name-input/index.html';
 };
 
 /**

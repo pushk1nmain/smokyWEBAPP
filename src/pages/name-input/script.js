@@ -1,4 +1,23 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('📱 Name-input экран загружен, обновляем шаг в БД');
+    
+    // Обновляем шаг в БД при загрузке name-input экрана
+    try {
+        if (window.StepRouter) {
+            console.log('🔄 Обновляем шаг до 2 (name-input) через StepRouter');
+            const success = await window.StepRouter.updateStep(2);
+            if (success) {
+                console.log('✅ Шаг успешно обновлен до 2');
+            } else {
+                console.warn('⚠️ Не удалось обновить шаг до 2');
+            }
+        } else {
+            console.warn('⚠️ StepRouter недоступен для обновления шага');
+        }
+    } catch (error) {
+        console.error('❌ Ошибка при обновлении шага:', error);
+    }
+    
     // Предзагружаем следующую страницу
     if (window.LoadingManager) {
         LoadingManager.preloadPage('../city-input/index.html');
