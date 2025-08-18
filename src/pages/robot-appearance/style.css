@@ -119,11 +119,6 @@ body {
     text-align: center;
     gap: 12px; /* Отступы между элементами */
     align-self: center; /* Центрируем блок в родительском контейнере */
-    /* Полупрозрачная подложка под текст */
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(8px);
-    border-radius: 12px;
-    padding: 24px 20px; /* Отступы внутри блока для красивого обрамления текста */
     margin: 20px 16px; /* Отступы от краев экрана */
     position: relative;
     z-index: 3; /* Поверх персонажа */
