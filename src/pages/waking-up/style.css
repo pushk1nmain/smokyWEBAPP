@@ -1,0 +1,233 @@
+/**
+ * SmokyApp - Waking Up Screen Styles
+ * Стили экрана пробуждения оптимизированы для Telegram WebApp
+ */
+
+/* CSS Custom Properties для Telegram Theme */
+:root {
+    /* Базовые цвета (fallback) */
+    --tg-theme-bg-color: #ffffff;
+    --tg-theme-text-color: #000000;
+    --tg-theme-hint-color: #999999;
+    --tg-theme-link-color: #2196F3;
+    --tg-theme-button-color: #2196F3;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-secondary-bg-color: #f1f1f1;
+    
+    /* Кастомные цвета приложения */
+    --smoky-primary: #2196F3;
+    --smoky-secondary: #FFF3E0;
+    --smoky-accent: #FF9800;
+    --smoky-success: #4CAF50;
+    --smoky-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Размеры и отступы */
+    --container-padding: 20px;
+    --border-radius: 16px;
+    --transition-duration: 0.3s;
+}
+
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Основной контейнер */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: var(--tg-theme-text-color);
+    line-height: 1.6;
+    overflow: auto; /* Разрешаем прокрутку */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
+}
+
+.app-container {
+    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
+    overflow: auto; /* Разрешаем прокрутку */
+}
+
+/* Экран пробуждения */
+.waking-up-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--container-padding);
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden; /* Убираем прокрутку внутри секции */
+    justify-content: space-between; /* Равномерное распределение контента */
+}
+
+/* Секция персонажа */
+.character-section {
+    flex: 0 0 auto;
+    text-align: center;
+    margin-bottom: 20px; /* Уменьшаем отступ */
+    margin-top: 40px; /* Увеличиваем отступ сверху для лучшего размещения */
+}
+
+.sleeping-person-container {
+    display: inline-block;
+    animation: sleepingAnimation 4s ease-in-out infinite;
+}
+
+.sleeping-person {
+    width: 180px; /* Немного меньше чем обычно для интимности момента */
+    height: auto;
+    max-width: 100%;
+    filter: drop-shadow(0 8px 16px var(--smoky-shadow));
+    border-radius: 50%; /* Мягкие края для создания уютной атмосферы */
+}
+
+/* Контентная секция */
+.content-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 20px; /* Увеличиваем отступы для лучшей читаемости */
+    min-height: 0; /* Предотвращаем переполнение */
+}
+
+.main-title {
+    font-size: 26px; /* Немного меньше для интимности */
+    font-weight: 700;
+    color: #235BDF; /* Синий цвет заголовка */
+    margin-bottom: 15px;
+    line-height: 1.3;
+}
+
+.main-description {
+    font-size: 18px;
+    color: #1C3D8C; /* Темно-синий цвет основного текста */
+    line-height: 1.6; /* Улучшаем читаемость */
+    margin-bottom: 25px;
+    max-width: 320px; /* Немного шире для большего текста */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Кнопка действия */
+.action-section {
+    margin: 30px 0;
+}
+
+/* Анимации */
+@keyframes sleepingAnimation {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    25% {
+        transform: translateY(-3px) scale(1.02);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.01);
+    }
+    75% {
+        transform: translateY(-2px) scale(1.02);
+    }
+}
+
+/* Специфичные анимации для парящих смайликов на этом экране */
+.floating-emojis .emoji {
+    opacity: 0.2; /* Делаем смайлики еще менее заметными для атмосферы пробуждения */
+}
+
+/* Адаптивность */
+@media (max-width: 380px) {
+    :root {
+        --container-padding: 16px;
+    }
+    
+    .sleeping-person {
+        width: 140px;
+    }
+    
+    .main-title {
+        font-size: 22px;
+    }
+    
+    .main-description {
+        font-size: 16px;
+        max-width: 280px;
+    }
+    
+    .common-button {
+        padding: 14px 24px;
+        font-size: 16px;
+        min-width: 180px;
+    }
+}
+
+@media (max-height: 600px) {
+    .character-section {
+        margin-bottom: 15px;
+        margin-top: 20px;
+    }
+    
+    .sleeping-person {
+        width: 120px;
+    }
+    
+    .content-section {
+        gap: 15px;
+    }
+    
+    .main-title {
+        font-size: 22px;
+    }
+}
+
+/* Поддержка темной темы */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --tg-theme-bg-color: #1a1a1a;
+        --tg-theme-text-color: #ffffff;
+        --tg-theme-hint-color: #aaaaaa;
+        --tg-theme-secondary-bg-color: #2a2a2a;
+        --smoky-shadow: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce) {
+    .sleeping-person-container,
+    .emoji {
+        animation: none;
+    }
+    
+    .common-button {
+        transition: none;
+    }
+}
+
+/* Фокус для клавиатурной навигации */
+*:focus {
+    outline: 2px solid var(--tg-theme-button-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Скрытие элементов для скринридеров */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
