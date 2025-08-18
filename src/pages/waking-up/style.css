@@ -131,20 +131,21 @@ body {
 .main-title {
     font-size: 26px;
     font-weight: 700;
-    color: #ffffff; /* Чистый белый для максимального контраста */
+    color: #FFFFFF !important; /* Заголовок - чистый белый цвет */
     margin-bottom: 15px;
     line-height: 1.3;
     /* Усиленная тень для лучшего контраста */
     text-shadow: 
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 8px rgba(0, 0, 0, 0.6);
-    /* Более жирный шрифт */
+    /* Космическое свечение белого цвета */
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
     font-weight: 600;
 }
 
 .main-description {
     font-size: 18px;
-    color: #ffffff; /* Белый цвет для максимального контраста */
+    color: #E0E6ED !important; /* Текст - светло-серый цвет для мягкого контраста */
     line-height: 1.6;
     margin-bottom: 25px;
     max-width: 320px;
@@ -154,7 +155,8 @@ body {
     text-shadow: 
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 8px rgba(0, 0, 0, 0.6);
-    /* Более жирный шрифт */
+    /* Космическое свечение белого цвета */
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
     font-weight: 600;
 }
 
