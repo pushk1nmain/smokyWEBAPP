@@ -450,12 +450,34 @@ class GlobalDevConsole {
             self.logToConsole('api', `🌐 API Запрос: ${options.method || 'GET'} ${url}`);
             
             return originalFetch.apply(this, args)
-                .then(response => {
+                .then(async response => {
                     const status = response.status;
                     const statusText = response.statusText;
                     const logType = status >= 400 ? 'error' : status >= 300 ? 'warn' : 'api';
                     
-                    self.logToConsole(logType, `🌐 API Ответ: ${status} ${statusText} - ${url}`);
+                    // Клонируем response чтобы можно было прочитать body дважды
+                    const responseClone = response.clone();
+                    
+                    try {
+                        // Пытаемся прочитать response как JSON
+                        const responseData = await responseClone.json();
+                        
+                        // Логируем ответ с данными
+                        self.logToConsole(logType, `🌐 API Ответ: ${status} ${statusText} - ${url}`, responseData);
+                    } catch (parseError) {
+                        // Если не JSON, пытаемся как текст
+                        try {
+                            const responseText = await responseClone.text();
+                            if (responseText) {
+                                self.logToConsole(logType, `🌐 API Ответ: ${status} ${statusText} - ${url}`, `Текст: ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`);
+                            } else {
+                                self.logToConsole(logType, `🌐 API Ответ: ${status} ${statusText} - ${url}`, 'Пустой ответ');
+                            }
+                        } catch (textError) {
+                            self.logToConsole(logType, `🌐 API Ответ: ${status} ${statusText} - ${url}`, 'Не удалось прочитать ответ');
+                        }
+                    }
+                    
                     return response;
                 })
                 .catch(error => {
@@ -547,6 +569,39 @@ class GlobalDevConsole {
             <span class="log-type">${icons[logEntry.type] || '📝'}</span>
             <span class="log-message ${logEntry.type}">${this.escapeHtml(logEntry.message)}</span>
         `;
+        
+        // Если есть объекты в сыром виде, показываем их отдельно
+        if (logEntry.raw.some(arg => typeof arg === 'object' && arg !== null)) {
+            const objectsDiv = document.createElement('div');
+            objectsDiv.className = 'log-object';
+            
+            const objects = logEntry.raw.filter(arg => typeof arg === 'object' && arg !== null);
+            objects.forEach(obj => {
+                const pre = document.createElement('pre');
+                pre.style.cssText = `
+                    background: #2a2a2a;
+                    border: 1px solid #444;
+                    border-radius: 4px;
+                    padding: 8px;
+                    margin: 4px 0;
+                    font-family: 'SF Mono', 'Monaco', 'Consolas', 'Roboto Mono', monospace;
+                    overflow-x: auto;
+                    font-size: 11px;
+                    color: #e0e0e0;
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                `;
+                
+                try {
+                    pre.textContent = JSON.stringify(obj, null, 2);
+                } catch (e) {
+                    pre.textContent = String(obj);
+                }
+                objectsDiv.appendChild(pre);
+            });
+            
+            logElement.appendChild(objectsDiv);
+        }
         
         this.contentElement.appendChild(logElement);
         this.applyFilter();

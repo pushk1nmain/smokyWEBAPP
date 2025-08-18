@@ -71,6 +71,7 @@ const apiRequest = async (endpoint, options = {}) => {
         // Добавляем тело запроса если есть
         if (body && method !== 'GET') {
             requestConfig.body = JSON.stringify(body);
+            console.log(`📤 Отправляем данные:`, body);
         }
 
         // Выполняем запрос
@@ -81,9 +82,11 @@ const apiRequest = async (endpoint, options = {}) => {
 
         // Проверяем статус ответа
         if (!response.ok) {
+            console.error(`❌ Ошибка API:`, data);
             throw new APIError(data.message || 'Произошла ошибка при выполнении запроса', response.status, data.error_code);
         }
 
+        console.log(`📥 Получили ответ:`, data);
         return data;
     } catch (error) {
         // Обрабатываем различные типы ошибок
