@@ -1,9 +1,32 @@
 /**
- * SmokyApp - Waking Up Screen Script
- * Скрипт экрана пробуждения с анимациями и переходами
+ * SmokyApp - Robot Appearance Screen Script
+ * Скрипт экрана появления робота с анимациями и переходами
  */
 
-class WakingUpScreen {
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('📱 Robot-appearance экран загружен, обновляем шаг в БД');
+    
+    // Обновляем шаг в БД при загрузке robot-appearance экрана
+    try {
+        if (window.StepRouter) {
+            console.log('🔄 Обновляем шаг до 6 (robot-appearance) через StepRouter');
+            const success = await window.StepRouter.updateStep(6);
+            if (success) {
+                console.log('✅ Шаг успешно обновлен до 6');
+            } else {
+                console.warn('⚠️ Не удалось обновить шаг до 6');
+            }
+        } else {
+            console.warn('⚠️ StepRouter недоступен для обновления шага');
+        }
+    } catch (error) {
+        console.error('❌ Ошибка при обновлении шага:', error);
+    }
+    
+    new RobotAppearanceScreen();
+});
+
+class RobotAppearanceScreen {
     constructor() {
         this.continueButton = document.getElementById('continueButton');
         this.loadingOverlay = document.getElementById('loadingOverlay');
@@ -12,7 +35,7 @@ class WakingUpScreen {
     }
 
     /**
-     * Инициализация компонента экрана пробуждения
+     * Инициализация компонента экрана появления робота
      * Настройка Telegram WebApp API и обработчиков событий
      */
     init() {
@@ -44,7 +67,7 @@ class WakingUpScreen {
             // Скрываем главную кнопку Telegram (используем свою)
             window.Telegram.WebApp.MainButton.hide();
             
-            console.log('🌟 Telegram WebApp инициализирован для экрана пробуждения');
+            console.log('🌟 Telegram WebApp инициализирован для экрана появления робота');
         }
     }
 
@@ -83,31 +106,32 @@ class WakingUpScreen {
     setupAnimations() {
         // Добавляем класс для анимации появления контента
         setTimeout(() => {
-            document.querySelector('.waking-up-screen').classList.add('content-visible');
+            document.querySelector('.robot-appearance-screen').classList.add('content-visible');
         }, 100);
 
-        // Создаем эффект мерцания для создания атмосферы пробуждения
-        this.createGlowEffect();
+        // Создаем эффект голубого свечения для робота
+        this.createRobotGlow();
     }
 
     /**
-     * Создание эффекта свечения для усиления атмосферы
-     * Добавление тонких световых эффектов
+     * Создание эффекта свечения для робота
+     * Добавление голубых световых эффектов
      */
-    createGlowEffect() {
-        const sleepingPerson = document.querySelector('.sleeping-person');
-        if (sleepingPerson) {
-            // Добавляем тонкое голубое свечение
-            sleepingPerson.style.filter = `
-                drop-shadow(0 8px 16px var(--smoky-shadow))
-                drop-shadow(0 0 20px rgba(33, 150, 243, 0.1))
+    createRobotGlow() {
+        const robot = document.querySelector('.robot-character');
+        if (robot) {
+            // Добавляем голубое свечение с пульсацией
+            robot.style.filter = `
+                drop-shadow(0 0 20px rgba(33, 150, 243, 0.6))
+                drop-shadow(0 0 40px rgba(33, 150, 243, 0.4))
+                drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))
             `;
         }
     }
 
     /**
      * Плавное появление контента с задержкой
-     * Создание эффекта постепенного пробуждения
+     * Создание эффекта материализации робота
      */
     showContentWithDelay() {
         const elements = [
@@ -145,7 +169,7 @@ class WakingUpScreen {
         this.continueButton.classList.add('processing');
         
         // Логируем действие пользователя
-        console.log('👆 Пользователь нажал "Далее" на экране пробуждения');
+        console.log('👆 Пользователь нажал "Далее" на экране появления робота');
         
         // Плавный переход к следующему экрану
         this.transitionToNextScreen();
@@ -164,7 +188,7 @@ class WakingUpScreen {
             // В реальном приложении здесь будет переход к следующему экрану истории
             console.log('🚀 Переход к следующему экрану истории');
             
-            // Пример перехода (замените на реальную логику навигации)
+            // Пока что переход обратно к welcome для тестирования
             this.navigateToNextScreen();
         }, 1000);
     }
@@ -191,13 +215,13 @@ class WakingUpScreen {
 
     /**
      * Навигация к следующему экрану
-     * Переход к экрану появления робота
+     * Переход в рамках приложения или к внешнему ресурсу
      */
     navigateToNextScreen() {
-        console.log('📍 Переход к экрану появления робота');
+        console.log('📍 Переход к следующему этапу истории');
         
-        // Переход на экран появления робота
-        window.location.href = '../robot-appearance/index.html';
+        // Пока что переход на welcome экран для тестирования
+        window.location.href = '../welcome/index.html';
         
         // Скрываем загрузку после "перехода"
         this.hideLoading();
@@ -210,7 +234,7 @@ class WakingUpScreen {
      * Показ сообщений об ошибках пользователю
      */
     handleError(error) {
-        console.error('❌ Ошибка в экране пробуждения:', error);
+        console.error('❌ Ошибка в экране появления робота:', error);
         
         this.hideLoading();
         this.continueButton.disabled = false;
@@ -224,30 +248,6 @@ class WakingUpScreen {
         }
     }
 }
-
-// Инициализация экрана при загрузке DOM
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('📱 Waking-up экран загружен, обновляем шаг в БД');
-    
-    // Обновляем шаг в БД при загрузке waking-up экрана
-    try {
-        if (window.StepRouter) {
-            console.log('🔄 Обновляем шаг до 5 (waking-up) через StepRouter');
-            const success = await window.StepRouter.updateStep(5);
-            if (success) {
-                console.log('✅ Шаг успешно обновлен до 5');
-            } else {
-                console.warn('⚠️ Не удалось обновить шаг до 5');
-            }
-        } else {
-            console.warn('⚠️ StepRouter недоступен для обновления шага');
-        }
-    } catch (error) {
-        console.error('❌ Ошибка при обновлении шага:', error);
-    }
-    
-    new WakingUpScreen();
-});
 
 // Обработка ошибок JavaScript
 window.addEventListener('error', (event) => {
