@@ -34,16 +34,33 @@
     box-sizing: border-box;
 }
 
+html {
+    background: 
+        radial-gradient(ellipse at top, #1e3c72 0%, #2a5298 50%, #1e3c72 100%),
+        linear-gradient(180deg, #0f1729 0%, #1a2847 30%, #2d4578 70%, #1e3c72 100%) !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    min-height: 100vh;
+}
+
 /* Основной контейнер */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #ffffff;
+    background: 
+        radial-gradient(ellipse at top, #1e3c72 0%, #2a5298 50%, #1e3c72 100%),
+        linear-gradient(180deg, #0f1729 0%, #1a2847 30%, #2d4578 70%, #1e3c72 100%) !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
     color: var(--tg-theme-text-color);
     line-height: 1.6;
     overflow: auto; /* Разрешаем прокрутку */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
+    margin: 0;
+    padding: 0;
 }
 
 .app-container {
@@ -51,9 +68,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: 
-        radial-gradient(ellipse at top, #1e3c72 0%, #2a5298 50%, #1e3c72 100%),
-        linear-gradient(180deg, #0f1729 0%, #1a2847 30%, #2d4578 70%, #1e3c72 100%);
+    background: transparent; /* Делаем прозрачным чтобы показать фон body */
     overflow: auto; /* Разрешаем прокрутку */
 }
 
