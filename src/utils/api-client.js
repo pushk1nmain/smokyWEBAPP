@@ -239,7 +239,7 @@ const updateUserTown = async (town, tz_offset) => {
  * @param {number} progress_step - шаг прогресса
  * @returns {Promise<Object>} результат API запроса
  */
-const updateProgressStep = async (telegram_id_param, progress_step) => {
+const updateProgressStep = async function(telegram_id_param, progress_step) {
     // Если передан только один параметр, то это progress_step, а telegram_id берем из WebApp
     let telegram_id, step;
     
