@@ -428,32 +428,41 @@ const handleStartClick = () => {
  * Навигация к следующему экрану
  */
 const navigateToNextScreen = async () => {
+    console.log('🚀 navigateToNextScreen вызван');
+    
     if (tg?.sendData) {
         try {
             tg.sendData(JSON.stringify({ type: 'welcome_completed', timestamp: new Date().toISOString() }));
+            console.log('📤 Данные отправлены в Telegram');
         } catch (error) {
             console.error('❌ Ошибка отправки данных:', error);
         }
     }
     
     try {
-        // Используем StepRouter для корректного перехода к следующему шагу
+        // Проверяем доступность StepRouter
+        console.log('🔍 Проверяем доступность StepRouter:', !!window.StepRouter);
+        
         if (window.StepRouter) {
-            console.log('🔄 Переходим к следующему шагу через StepRouter');
+            console.log('🔧 StepRouter найден, проверяем состояние:', window.StepRouter.getState());
+            
+            console.log('🔄 Вызываем StepRouter.goToNextStep()...');
             const success = await window.StepRouter.goToNextStep();
             
+            console.log('📊 Результат StepRouter.goToNextStep():', success);
+            
             if (success) {
-                console.log('✅ Переход к следующему шагу выполнен успешно');
+                console.log('✅ Переход к следующему шагу выполнен успешно через StepRouter');
                 return;
             } else {
-                console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
+                console.warn('⚠️ StepRouter.goToNextStep() вернул false, используем fallback');
             }
         } else {
-            console.warn('⚠️ StepRouter недоступен');
+            console.warn('⚠️ window.StepRouter недоступен');
         }
         
         // Fallback переход на следующий экран
-        console.log('🔄 Используем прямой переход на экран ввода имени');
+        console.log('🔄 Выполняем fallback переход на экран ввода имени');
         window.location.href = '../name-input/index.html';
         
     } catch (error) {
@@ -463,6 +472,7 @@ const navigateToNextScreen = async () => {
         hideLoading();
         
         // Критический fallback
+        console.log('🚨 Выполняем критический fallback переход');
         setTimeout(() => {
             window.location.href = '../name-input/index.html';
         }, 500);
