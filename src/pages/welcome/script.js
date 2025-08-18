@@ -88,9 +88,39 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 Приложение запускается со встроенной конфигурацией...');
+            console.log('🚀 Welcome screen запускается...');
 
-            // Настройка UI и событий
+            // Дожидаемся инициализации SmokyApp если он доступен
+            if (window.SmokyApp) {
+                console.log('🔧 SmokyApp уже доступен, дожидаемся его инициализации...');
+                let waitCount = 0;
+                while (!window.SmokyApp.isInitialized && waitCount < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    waitCount++;
+                }
+                
+                if (window.SmokyApp.isInitialized) {
+                    console.log('✅ SmokyApp инициализирован, проверяем навигацию...');
+                    
+                    // Позволяем SmokyApp обработать навигацию
+                    if (window.StepRouter) {
+                        const currentStep = await window.StepRouter.getCurrentStep();
+                        console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
+                        
+                        if (currentStep > 1) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 1, выполняем переход через StepRouter');
+                            
+                            // Принудительно выполняем навигацию к правильному шагу
+                            await window.StepRouter.navigateToCurrentStep(true);
+                            return;
+                        }
+                    }
+                } else {
+                    console.warn('⚠️ SmokyApp не инициализировался за 5 секунд');
+                }
+            }
+
+            // Настройка UI и событий только если остаемся на welcome screen
             setupUI();
             setupEventListeners();
             
@@ -110,7 +140,7 @@
             }
 
             isReady = true;
-            console.log('✅ Приложение SmokyApp успешно инициализировано!');
+            console.log('✅ Welcome screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
