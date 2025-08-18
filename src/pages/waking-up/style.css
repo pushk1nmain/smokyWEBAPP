@@ -125,7 +125,7 @@ body {
     backdrop-filter: blur(8px);
     border-radius: 12px;
     padding: 25px 20px; /* Увеличиваем вертикальные отступы */
-    margin: -10px 16px; /* Поднимаем выше до заголовка */
+    margin: -20px 16px; /* Поднимаем еще выше над заголовком */
     position: relative;
     z-index: 3; /* Поверх персонажа */
 }
@@ -164,7 +164,7 @@ body {
 
 /* Кнопка действия */
 .action-section {
-    margin: -5px 0 20px 0; /* Поднимаем кнопку выше */
+    margin: 0px 0 20px 0; /* Чуть увеличиваем расстояние от блока до кнопки */
     position: relative;
     z-index: 3; /* Поверх блока */
 }
