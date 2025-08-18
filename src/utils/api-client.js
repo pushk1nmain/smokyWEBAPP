@@ -212,28 +212,48 @@ const updateUserTown = async (town, tz_offset) => {
 
 /**
  * Обновляет шаг прогресса пользователя
+ * @param {number} telegram_id - ID пользователя в Telegram (опционально, если не указан - берется из Telegram WebApp)
  * @param {number} progress_step - шаг прогресса
  * @returns {Promise<Object>} результат API запроса
  */
-const updateProgressStep = async (progress_step) => {
-    const telegram_id = getTelegramUserId();
+const updateProgressStep = async (telegram_id_param, progress_step) => {
+    // Если передан только один параметр, то это progress_step, а telegram_id берем из WebApp
+    let telegram_id, step;
+    
+    if (arguments.length === 1) {
+        telegram_id = getTelegramUserId();
+        step = telegram_id_param;
+    } else {
+        telegram_id = telegram_id_param;
+        step = progress_step;
+    }
     
     return await apiRequest('/progress_step', {
         method: 'POST',
         body: {
             telegram_id,
-            progress_step
+            progress_step: step
         }
     });
 };
 
 /**
  * Получает информацию о пользователе
- * @param {number} telegram_id - ID пользователя в Telegram
+ * @param {number} telegram_id - ID пользователя в Telegram (опционально, если не указан - берется из Telegram WebApp)
  * @returns {Promise<Object>} информация о пользователе
  */
 const getUserInfo = async (telegram_id) => {
-    return await apiRequest(`/user/${telegram_id}`);
+    const userId = telegram_id || getTelegramUserId();
+    return await apiRequest(`/user/${userId}`);
+};
+
+/**
+ * Псевдоним для getUserInfo для совместимости со StepRouter
+ * @param {number} telegram_id - ID пользователя в Telegram (опционально)
+ * @returns {Promise<Object>} информация о пользователе
+ */
+const getUser = async (telegram_id) => {
+    return await getUserInfo(telegram_id);
 };
 
 // Экспортируем для использования в других модулях
@@ -248,6 +268,7 @@ if (typeof module !== 'undefined' && module.exports) {
         updateUserTown,
         updateProgressStep,
         getUserInfo,
+        getUser,
         getTelegramUserId,
         getTelegramWebAppData
     };
@@ -263,6 +284,7 @@ if (typeof module !== 'undefined' && module.exports) {
         updateUserTown,
         updateProgressStep,
         getUserInfo,
+        getUser,
         getTelegramUserId,
         getTelegramWebAppData
     };

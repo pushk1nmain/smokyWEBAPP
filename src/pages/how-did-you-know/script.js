@@ -204,8 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * Предзагружает следующую страницу в фоне
      */
     const preloadNextPage = () => {
-        // Определяем следующую страницу (пока заглушка)
-        const nextPageUrl = '../next-page/index.html'; // TODO: Заменить на реальный URL
+        // Определяем следующую страницу - экран пробуждения
+        const nextPageUrl = '../waking-up/index.html';
         
         // Используем LoadingManager если доступен
         if (window.LoadingManager && window.LoadingManager.preloadPage) {
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.head.appendChild(link);
         }
         
-        console.log('Началась предзагрузка следующей страницы:', nextPageUrl);
+        console.log('Началась предзагрузка экрана пробуждения:', nextPageUrl);
     };
 
     /**
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Выполняет переход на следующую страницу
      */
     const navigateToNextPage = () => {
-        const nextPageUrl = '../next-page/index.html'; // TODO: Заменить на реальный URL
+        const nextPageUrl = '../waking-up/index.html'; // Переход на экран пробуждения
         
         // Используем LoadingManager если доступен
         if (window.LoadingManager && window.LoadingManager.navigateWithTransition) {
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = nextPageUrl;
         }
         
-        console.log('Переход на следующую страницу:', nextPageUrl);
+        console.log('Переход на экран пробуждения:', nextPageUrl);
     };
 
 

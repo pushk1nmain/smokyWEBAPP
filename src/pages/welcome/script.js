@@ -397,7 +397,7 @@ const handleStartClick = () => {
 /**
  * Навигация к следующему экрану
  */
-const navigateToNextScreen = () => {
+const navigateToNextScreen = async () => {
     if (tg?.sendData) {
         try {
             tg.sendData(JSON.stringify({ type: 'welcome_completed', timestamp: new Date().toISOString() }));
@@ -406,7 +406,20 @@ const navigateToNextScreen = () => {
         }
     }
     
-    // Переход на следующий экран
+    // Используем StepRouter для перехода на следующий шаг
+    if (window.StepRouter) {
+        console.log('📈 Обновляем прогресс до шага 2');
+        const success = await window.StepRouter.goToNextStep();
+        
+        if (success) {
+            console.log('✅ Переход к следующему шагу выполнен через StepRouter');
+            return; // StepRouter сам выполнит навигацию
+        } else {
+            console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
+        }
+    }
+    
+    // Fallback переход на следующий экран
     window.location.href = '../name-input/index.html';
 };
 

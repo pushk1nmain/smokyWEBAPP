@@ -220,6 +220,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isSuccess) {
                     // Плавный переход к следующей странице
                     setTimeout(() => {
+                        // Используем StepRouter для перехода на следующий шаг
+                        if (window.StepRouter) {
+                            console.log('📈 Обновляем прогресс до шага 3 (город)');
+                            const success = await window.StepRouter.goToNextStep();
+                            
+                            if (success) {
+                                console.log('✅ Переход к следующему шагу выполнен через StepRouter');
+                                return;
+                            } else {
+                                console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
+                            }
+                        }
+                        
+                        // Fallback навигация
                         window.location.href = '../city-input/index.html';
                     }, 800);
                 } else {
@@ -235,7 +249,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // Показываем загрузку и для fallback
             console.warn('Telegram data not available. Redirecting in test mode.');
             showLoading();
-            setTimeout(() => {
+            setTimeout(async () => {
+                // Используем StepRouter для перехода на следующий шаг
+                if (window.StepRouter) {
+                    console.log('📈 Обновляем прогресс до шага 3 (город) - тестовый режим');
+                    const success = await window.StepRouter.goToNextStep();
+                    
+                    if (success) {
+                        console.log('✅ Переход к следующему шагу выполнен через StepRouter');
+                        return;
+                    } else {
+                        console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
+                    }
+                }
+                
+                // Fallback навигация
                 window.location.href = '../city-input/index.html';
             }, 1000);
         }

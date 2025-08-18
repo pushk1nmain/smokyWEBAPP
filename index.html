@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>SmokyApp - Свобода от никотина</title>
+    
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Основные стили -->
+    <link rel="stylesheet" href="src/styles/main.css">
+    
+    <!-- Отключение кэширования для разработки -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Дополнительные мета-теги для борьбы с кэшированием -->
+    <meta name="cache-control" content="no-cache">
+    <meta name="expires" content="0">
+    <meta name="pragma" content="no-cache">
+    
+    <!-- Meta теги для Telegram WebApp -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- SEO и описание -->
+    <meta name="description" content="SmokyApp - ваш персональный помощник в путешествии к жизни без сигарет">
+    <meta name="keywords" content="бросить курить, здоровье, никотин, мотивация">
+    
+    <style>
+        /* Стили для экрана загрузки */
+        .app-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(198, 255, 221, 0.95) 0%, rgba(198, 255, 221, 0.8) 25%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 0.98) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        .loading-character {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 30px;
+            position: relative;
+            animation: loadingFloat 2s ease-in-out infinite;
+        }
+        
+        .loading-character img {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 16px rgba(33, 150, 243, 0.3));
+        }
+        
+        .loading-rings {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+        }
+        
+        .loading-ring {
+            position: absolute;
+            border: 3px solid transparent;
+            border-top: 3px solid #2196F3;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        .loading-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            animation-duration: 1.5s;
+        }
+        
+        .loading-ring:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            animation-duration: 2s;
+            animation-direction: reverse;
+            border-top-color: #FF9800;
+            opacity: 0.7;
+        }
+        
+        .loading-text {
+            color: #235BDF;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .loading-subtitle {
+            color: #1C3D8C;
+            font-size: 14px;
+            text-align: center;
+            opacity: 0.8;
+        }
+        
+        @keyframes loadingFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .app-loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Экран загрузки -->
+    <div class="app-loading" id="appLoading">
+        <div class="loading-character">
+            <img src="src/assets/icons/smoky_basic.svg" alt="Смоки" onerror="this.style.display='none'">
+            <div class="loading-rings">
+                <div class="loading-ring"></div>
+                <div class="loading-ring"></div>
+            </div>
+        </div>
+        <div class="loading-text">Запускаем SmokyApp...</div>
+        <div class="loading-subtitle">Подготавливаем ваше путешествие к свободе</div>
+    </div>
+
+    <!-- Основной контент будет подгружен динамически -->
+    <div id="appContent" style="display: none;">
+        <!-- Здесь будет содержимое приложения после инициализации -->
+    </div>
+    
+    <!-- Скрипты загружаются в правильном порядке -->
+    <script>
+        console.log('🚀 Начинаем загрузку SmokyApp...');
+        
+        // Функция для скрытия экрана загрузки
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('appLoading');
+            if (loadingScreen) {
+                loadingScreen.classList.add('hidden');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
+        }
+        
+        // Таймер безопасности - скрываем загрузку через 15 секунд в любом случае
+        setTimeout(() => {
+            console.warn('⚠️ Превышено время загрузки, принудительно скрываем экран загрузки');
+            hideLoadingScreen();
+        }, 15000);
+    </script>
+    
+    <!-- Конфигурация -->
+    <script src="config.js"></script>
+    
+    <!-- Утилиты -->
+    <script src="src/utils/loading-manager.js"></script>
+    <script src="src/utils/error-modal.js"></script>
+    <script src="src/utils/api-client.js"></script>
+    
+    <!-- Система шагов -->
+    <script src="src/utils/step-router.js"></script>
+    
+    <!-- Главное приложение -->
+    <script src="src/app.js"></script>
+    
+    <script>
+        // Дожидаемся полной загрузки и скрываем экран загрузки
+        window.addEventListener('load', () => {
+            // Небольшая задержка для плавности
+            setTimeout(() => {
+                hideLoadingScreen();
+            }, 1000);
+        });
+        
+        // Обработка ошибок загрузки скриптов
+        window.addEventListener('error', (event) => {
+            if (event.target.tagName === 'SCRIPT') {
+                console.error('❌ Ошибка загрузки скрипта:', event.target.src);
+            }
+        });
+    </script>
+</body>
+</html>
