@@ -38,7 +38,7 @@
     box-sizing: border-box;
 }
 
-/* HTML начальное состояние - космический фон */
+/* HTML начальное состояние - темный космический фон */
 html {
     background: 
         radial-gradient(ellipse at top, #1e3c72 0%, #2a5298 50%, #1e3c72 100%),
@@ -47,12 +47,10 @@ html {
     background-repeat: no-repeat !important;
     background-size: cover !important;
     min-height: 100vh;
-    /* Плавное увеличение яркости */
-    filter: brightness(0.8);
     transition: all var(--brightness-transition-duration) ease-in-out;
 }
 
-/* HTML финальное состояние - светлый фон с увеличенной яркостью */
+/* HTML финальное состояние - светлый фон */
 html.light-theme {
     background: 
         linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%),
@@ -60,7 +58,6 @@ html.light-theme {
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
-    filter: brightness(1.2);
 }
 
 /* Основной контейнер */
