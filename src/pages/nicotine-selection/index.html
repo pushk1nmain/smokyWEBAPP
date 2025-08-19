@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>SmokyApp - Выберите тип никотина</title>
+    
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    
+    <!-- Отключение кэширования для разработки -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Дополнительные мета-теги для борьбы с кэшированием -->
+    <meta name="cache-control" content="no-cache">
+    <meta name="expires" content="0">
+    <meta name="pragma" content="no-cache">
+    
+    <!-- Meta теги для Telegram WebApp -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Начальное звездное небо -->
+        <div class="starry-sky" id="starrySky">
+            <div class="star star-1"></div>
+            <div class="star star-2"></div>
+            <div class="star star-3"></div>
+            <div class="star star-4"></div>
+            <div class="star star-5"></div>
+            <div class="star star-6"></div>
+            <div class="star star-7"></div>
+            <div class="star star-8"></div>
+            <div class="star star-9"></div>
+            <div class="star star-10"></div>
+            <div class="star star-11"></div>
+            <div class="star star-12"></div>
+            <div class="star star-13"></div>
+            <div class="star star-14"></div>
+            <div class="star star-15"></div>
+            <div class="star star-16"></div>
+            <div class="star star-17"></div>
+            <div class="star star-18"></div>
+            <div class="star star-19"></div>
+            <div class="star star-20"></div>
+            <div class="star star-21"></div>
+            <div class="star star-22"></div>
+            <div class="star star-23"></div>
+            <div class="star star-24"></div>
+            <div class="star star-25"></div>
+            <div class="star star-26"></div>
+            <div class="star star-27"></div>
+            <div class="star star-28"></div>
+            <div class="star star-29"></div>
+            <div class="star star-30"></div>
+            <div class="star star-31"></div>
+            <div class="star star-32"></div>
+            <div class="star star-33"></div>
+            <div class="star star-34"></div>
+            <div class="star star-35"></div>
+            <div class="star star-36"></div>
+            <div class="star star-37"></div>
+            <div class="star star-38"></div>
+            <div class="star star-39"></div>
+            <div class="star star-40"></div>
+        </div>
+
+        <!-- Парящие смайлики (скрыты в начале) -->
+        <div class="floating-emojis hidden" id="floatingEmojis">
+            <span class="emoji emoji-1">🔥</span>
+            <span class="emoji emoji-2">🚀</span>
+            <span class="emoji emoji-3">🚭</span>
+            <span class="emoji emoji-4">💨</span>
+            <span class="emoji emoji-5">🌿</span>
+            <span class="emoji emoji-6">💚</span>
+            <span class="emoji emoji-7">🤝</span>
+            <span class="emoji emoji-8">📈</span>
+            <span class="emoji emoji-9">🪴</span>
+            <span class="emoji emoji-10">⏳</span>
+            <span class="emoji emoji-11">🏆</span>
+        </div>
+
+        <!-- Основной контент -->
+        <main class="nicotine-selection-screen">
+            <div class="content-section" id="contentSection">
+                <h1 class="screen-title" id="screenTitle">Выберите тип никотина</h1>
+                
+                <div class="nicotine-options" id="nicotineOptions">
+                    <button class="nicotine-button" data-type="cigarettes" tabindex="0" aria-label="Сигареты">
+                        <span class="nicotine-text">🚬 Сигареты</span>
+                    </button>
+                    
+                    <button class="nicotine-button" data-type="vape" tabindex="0" aria-label="Вейп">
+                        <span class="nicotine-text">💨 Вейп</span>
+                    </button>
+                    
+                    <button class="nicotine-button" data-type="iqos" tabindex="0" aria-label="Айкос">
+                        <span class="nicotine-text">📱 Айкос</span>
+                    </button>
+                    
+                    <button class="nicotine-button" data-type="hookah" tabindex="0" aria-label="Кальян">
+                        <span class="nicotine-text">🪴 Кальян</span>
+                    </button>
+                    
+                    <button class="nicotine-button" data-type="snus" tabindex="0" aria-label="Снюс">
+                        <span class="nicotine-text">🥫 Снюс</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Простая загрузка с логотипом Смоки -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-character">
+                <img src="../../assets/icons/smoky_basic.svg" alt="Смоки">
+                <div class="loading-rings">
+                    <div class="loading-ring"></div>
+                    <div class="loading-ring"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="../../config.js"></script>
+    <script src="../../utils/loading-manager.js"></script>
+    <script src="../../utils/error-modal.js"></script>
+    <script src="../../utils/api-client.js"></script>
+    <script src="../../utils/global-console.js"></script>
+    <script src="../../utils/step-router.js"></script>
+    <script src="script.js" defer></script>
+</body>
+</html>

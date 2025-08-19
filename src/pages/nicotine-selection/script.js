@@ -1,13 +1,14 @@
 /**
- * SmokyApp - Health Realization Screen JavaScript
- * Скрипт экрана осознания ценности здоровья для интеграции с Telegram WebApp API
+ * SmokyApp - Nicotine Selection Screen JavaScript with Cosmic to Light Transition
+ * Скрипт экрана выбора типа никотина с анимацией перехода от космического к светлому дизайну
  */
 
 (function() {
     // Глобальные переменные и встроенная конфигурация
     let tg = null;
     let isReady = false;
-    let userName = null;
+    let selectedNicotineType = null;
+    let transitionCompleted = false;
 
     // --- Telegram WebApp Keyboard Handling ---
     if (window.Telegram && window.Telegram.WebApp) {
@@ -56,6 +57,18 @@
             loadingAnimationDuration: 500,
             notificationDuration: 3000,
             enableAnimations: true
+        },
+        transition: {
+            // Тайминги анимации перехода (в миллисекундах)
+            starsDisappearDelay: 1000,      // Когда звезды начинают исчезать
+            starsDisappearDuration: 1500,   // Длительность исчезновения звезд
+            backgroundTransitionDelay: 500, // Когда фон начинает меняться
+            backgroundTransitionDuration: 3000, // Длительность смены фона
+            emojisAppearDelay: 2500,        // Когда смайлики появляются
+            emojisAppearDuration: 1000,     // Длительность появления смайликов
+            contentAppearDelay: 3500,       // Когда контент появляется
+            contentAppearDuration: 800,     // Длительность появления контента
+            totalDuration: 4500             // Общая длительность перехода
         }
     };
 
@@ -84,131 +97,105 @@
     };
 
     /**
-     * Получение telegram_id пользователя
+     * Анимация перехода от космического к светлому дизайну
      */
-    const getUserTelegramId = () => {
-        // Пытаемся получить ID из Telegram
-        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
-            return tg.initDataUnsafe.user.id;
-        }
-        
-        // Fallback для режима разработки
-        if (config.development.enableBrowserTestMode) {
-            return config.development.testUser.id;
-        }
-        
-        return null;
-    };
+    const startCosmicToLightTransition = async () => {
+        console.log('🌌➡️☀️ Запуск анимации перехода от космического к светлому дизайну...');
 
-    /**
-     * Загрузка имени пользователя по API из БД
-     */
-    const loadUserName = async () => {
         try {
-            console.log('🔍 Загружаем имя пользователя из БД...');
+            const starrySky = document.getElementById('starrySky');
+            const floatingEmojis = document.getElementById('floatingEmojis');
+            const contentSection = document.getElementById('contentSection');
+            const screenTitle = document.getElementById('screenTitle');
+            const htmlElement = document.documentElement;
+            const bodyElement = document.body;
 
-            // Получаем telegram_id пользователя
-            const telegramId = getUserTelegramId();
-            if (!telegramId) {
-                console.warn('⚠️ Не удалось получить telegram_id, используем fallback');
-                userName = 'Друг';
-                return userName;
-            }
-
-            console.log(`👤 Используем telegram_id: ${telegramId}`);
-
-            // Основной запрос к API для получения имени из БД
-            if (window.apiClient && typeof window.apiClient.get === 'function') {
-                try {
-                    const endpoint = `/user/${telegramId}`;
-                    console.log(`🔗 API Client запрос: ${endpoint}`);
-                    const response = await window.apiClient.get(endpoint);
-                    
-                    if (response && response.name) {
-                        userName = response.name;
-                        console.log(`✅ Имя пользователя получено из БД через API Client: ${userName}`);
-                        return userName;
-                    }
-                } catch (apiError) {
-                    console.error('❌ Ошибка API Client запроса к БД:', apiError);
-                }
-            }
-
-            // Fallback: прямой fetch запрос к API
-            try {
-                const apiUrl = `${config.api.baseUrl}/user/${telegramId}`;
-                console.log(`🌐 Выполняем прямой fetch запрос: ${apiUrl}`);
+            // Фаза 1: Начальное состояние (0-1с) - показываем космический фон
+            console.log('🌌 Фаза 1: Начальное космическое состояние');
+            
+            // Фаза 2: Запуск изменения фона (0.5с)
+            setTimeout(() => {
+                console.log('🌈 Фаза 2: Начало изменения фона');
+                htmlElement.classList.add('light-theme');
+                bodyElement.classList.add('light-theme');
                 
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('light');
+                }
+            }, config.transition.backgroundTransitionDelay);
 
-                // Добавляем заголовок авторизации согласно документации
-                if (tg && tg.initData) {
-                    headers['X-Telegram-WebApp-Data'] = tg.initData;
-                    console.log('🔐 Добавлен заголовок X-Telegram-WebApp-Data для авторизации');
+            // Фаза 3: Исчезновение звезд (1с)
+            setTimeout(() => {
+                console.log('⭐ Фаза 3: Исчезновение звезд');
+                if (starrySky) {
+                    starrySky.classList.add('disappearing');
+                    // Добавляем класс исчезновения к каждой звезде
+                    const stars = starrySky.querySelectorAll('.star');
+                    stars.forEach(star => {
+                        star.classList.add('disappearing');
+                    });
                 }
                 
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
-                    headers
-                });
-
-                if (response.ok) {
-                    const userData = await response.json();
-                    console.log('📊 Полученные данные пользователя:', userData);
-                    
-                    if (userData && userData.name) {
-                        userName = userData.name;
-                        console.log(`✅ Имя пользователя получено через fetch из БД: ${userName}`);
-                        return userName;
-                    } else {
-                        console.warn('⚠️ В ответе API отсутствует поле name');
-                    }
-                } else {
-                    console.error(`❌ API вернул ошибку: ${response.status} ${response.statusText}`);
-                    const errorText = await response.text();
-                    console.error('❌ Текст ошибки:', errorText);
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
                 }
-            } catch (fetchError) {
-                console.error('❌ Ошибка fetch запроса:', fetchError);
-            }
+            }, config.transition.starsDisappearDelay);
 
-            // Второй fallback: получаем имя из Telegram (если API недоступно)
-            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const telegramUser = tg.initDataUnsafe.user;
-                userName = telegramUser.first_name || telegramUser.username || 'Друг';
-                console.log(`⚠️ Fallback: Имя получено из Telegram: ${userName}`);
-                return userName;
-            }
+            // Фаза 4: Появление смайликов (2.5с)
+            setTimeout(() => {
+                console.log('😊 Фаза 4: Появление парящих смайликов');
+                if (floatingEmojis) {
+                    floatingEmojis.classList.remove('hidden');
+                    floatingEmojis.classList.add('visible');
+                }
+                
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
+                }
+            }, config.transition.emojisAppearDelay);
 
-            // Третий fallback: тестовый пользователь в режиме разработки
-            if (config.development.enableBrowserTestMode) {
-                userName = config.development.testUser.first_name;
-                console.log(`⚠️ Fallback: Имя тестового пользователя: ${userName}`);
-                return userName;
-            }
+            // Фаза 5: Изменение цвета заголовка (3с)
+            setTimeout(() => {
+                console.log('🎨 Фаза 5: Изменение цвета заголовка');
+                if (screenTitle) {
+                    screenTitle.classList.add('light-theme');
+                }
+            }, config.transition.emojisAppearDelay + 500);
 
-            // Последний fallback
-            userName = 'Друг';
-            console.warn('⚠️ Все способы получения имени не сработали, используем финальный fallback');
-            return userName;
+            // Фаза 6: Появление контента (3.5с)
+            setTimeout(() => {
+                console.log('📝 Фаза 6: Появление контента экрана');
+                if (contentSection) {
+                    contentSection.classList.add('visible');
+                }
+                
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            }, config.transition.contentAppearDelay);
+
+            // Фаза 7: Завершение перехода (4.5с)
+            setTimeout(() => {
+                console.log('✅ Фаза 7: Переход завершен');
+                transitionCompleted = true;
+                
+                // Удаляем звездное небо из DOM после завершения анимации
+                if (starrySky) {
+                    starrySky.remove();
+                }
+                
+                console.log('🎉 Анимация перехода от космического к светлому дизайну завершена!');
+            }, config.transition.totalDuration);
 
         } catch (error) {
-            console.error('❌ Критическая ошибка при загрузке имени пользователя:', error);
-            userName = 'Друг';
-            return userName;
-        }
-    };
-
-    /**
-     * Обновление заголовка с именем пользователя
-     */
-    const updateTitleWithUserName = (name) => {
-        const userNameElement = document.getElementById('userName');
-        if (userNameElement && name) {
-            userNameElement.textContent = name;
-            console.log(`✨ Заголовок обновлен с именем: ${name}`);
+            console.error('❌ Ошибка во время анимации перехода:', error);
+            handleError(error, 'CosmicToLightTransition');
+            // В случае ошибки принудительно показываем контент
+            const contentSection = document.getElementById('contentSection');
+            if (contentSection) {
+                contentSection.classList.add('visible');
+            }
+            transitionCompleted = true;
         }
     };
 
@@ -217,23 +204,23 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 Health realization screen запускается...');
+            console.log('🚀 Nicotine selection screen запускается...');
             
-            // Обновляем шаг в БД при загрузке health-realization экрана
+            // Обновляем шаг в БД при загрузке nicotine-selection экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 10 (health-realization) через StepRouter');
-                    const success = await window.StepRouter.updateStep(10);
+                    console.log('🔄 Обновляем шаг до 11 (nicotine-selection) через StepRouter');
+                    const success = await window.StepRouter.updateStep(11);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 10');
+                        console.log('✅ Шаг успешно обновлен до 11');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 10');
+                        console.warn('⚠️ Не удалось обновить шаг до 11');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на health-realization экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на nicotine-selection экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на health-realization экране:', error);
+                console.error('❌ Ошибка при обновлении шага на nicotine-selection экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -253,8 +240,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 10) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 10, выполняем переход через StepRouter');
+                        if (currentStep > 11) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 11, выполняем переход через StepRouter');
                             
                             // Принудительно выполняем навигацию к правильному шагу
                             await window.StepRouter.navigateToCurrentStep(true);
@@ -266,7 +253,7 @@
                 }
             }
 
-            // Настройка UI и событий только если остаемся на health-realization screen
+            // Настройка UI и событий только если остаемся на nicotine-selection screen
             setupUI();
             setupEventListeners();
 
@@ -280,12 +267,11 @@
                 await setupBrowserMode();
             }
 
-            // Загружаем имя пользователя и обновляем заголовок
-            const name = await loadUserName();
-            updateTitleWithUserName(name);
+            // Запускаем анимацию перехода от космического к светлому дизайну
+            await startCosmicToLightTransition();
 
             isReady = true;
-            console.log('✅ Health realization screen успешно инициализирован!');
+            console.log('✅ Nicotine selection screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -326,7 +312,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                console.log(`👤 ID пользователя: ${user.id}. Health realization screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. Nicotine selection screen загружен.`);
 
             } else {
                 // Эта ситуация не должна происходить, но добавим обработку
@@ -353,7 +339,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ Health realization screen загружен в режиме браузера');
+        console.log('✅ Nicotine selection screen загружен в режиме браузера');
     };
 
     /**
@@ -396,7 +382,7 @@
     const setupTelegramButtons = () => {
         if (!tg) return;
         
-        // Скрываем кнопку "Назад" на экране истории
+        // Скрываем кнопку "Назад" на экране выбора никотина
         tg.BackButton.hide();
         
         // Настраиваем главную кнопку (пока скрываем)
@@ -420,48 +406,91 @@
      * Настройка обработчиков событий
      */
     const setupEventListeners = () => {
-        const continueButton = document.getElementById('continueButton');
-
-        if (continueButton) {
-            continueButton.addEventListener('click', () => handleContinueClick());
-            continueButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleContinueClick());
-            console.log('⚡ Обработчик кнопки "Продолжить" подключен');
-        } else {
-            console.error('❌ Кнопка continueButton не найдена');
-        }
-
-        console.log('⚡ Обработчики событий настроены');
+        const nicotineButtons = document.querySelectorAll('.nicotine-button');
+        
+        nicotineButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (!transitionCompleted) {
+                    console.log('⚠️ Переход еще не завершен, клик игнорируется');
+                    return;
+                }
+                
+                const nicotineType = button.getAttribute('data-type');
+                handleNicotineChoice(nicotineType, button);
+            });
+            
+            button.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (!transitionCompleted) {
+                        console.log('⚠️ Переход еще не завершен, клик игнорируется');
+                        return;
+                    }
+                    
+                    const nicotineType = button.getAttribute('data-type');
+                    handleNicotineChoice(nicotineType, button);
+                }
+            });
+        });
+        
+        console.log('⚡ Обработчики событий для кнопок выбора никотина настроены');
     };
 
     /**
-     * Обработчик нажатия кнопки "Продолжить"
+     * Обработчик выбора типа никотина
      */
-    const handleContinueClick = () => {
-        console.log(`🚀 handleContinueClick вызван`);
+    const handleNicotineChoice = (nicotineType, buttonElement) => {
+        console.log(`🚀 handleNicotineChoice вызван с выбором: ${nicotineType}`);
+        
+        // Предотвращаем повторные клики
+        if (selectedNicotineType) return;
+        
+        selectedNicotineType = nicotineType;
         
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
         }
         
-        // Бесшовный переход - переходим к следующему экрану
-        console.log(`🔄 Выполняем переход к следующему экрану`);
+        // Визуально выделяем выбранную кнопку
+        highlightSelectedButton(buttonElement);
+        
+        // Переходим к следующему экрану после выбора
+        console.log(`🔄 Выполняем переход с выбранным типом никотина: ${nicotineType}`);
         setTimeout(() => {
             console.log('⏰ Таймер сработал, вызываем navigateToNextScreen...');
-            navigateToNextScreen();
-        }, 300); // Небольшая задержка для визуального фидбека
+            navigateToNextScreen(nicotineType);
+        }, 800); // Задержка чтобы пользователь увидел выделение
+    };
+
+    /**
+     * Выделение выбранной кнопки
+     */
+    const highlightSelectedButton = (selectedButton) => {
+        const allButtons = document.querySelectorAll('.nicotine-button');
+        
+        // Убираем выделение с всех кнопок
+        allButtons.forEach(button => {
+            button.classList.remove('selected');
+        });
+        
+        // Выделяем выбранную кнопку
+        selectedButton.classList.add('selected');
+        
+        const nicotineType = selectedButton.getAttribute('data-type');
+        console.log(`✨ Кнопка с типом никотина "${nicotineType}" выделена`);
     };
 
     /**
      * Навигация к следующему экрану
      */
-    const navigateToNextScreen = async () => {
-        console.log(`🚀 navigateToNextScreen вызван`);
+    const navigateToNextScreen = async (nicotineType) => {
+        console.log(`🚀 navigateToNextScreen вызван с выбранным типом никотина: ${nicotineType}`);
         
         if (tg?.sendData) {
             try {
                 tg.sendData(JSON.stringify({ 
-                    type: 'health_realization_completed',
-                    user_name: userName,
+                    type: 'nicotine_selection_completed', 
+                    nicotine_type: nicotineType,
                     timestamp: new Date().toISOString() 
                 }));
                 console.log('📤 Данные отправлены в Telegram');
@@ -470,9 +499,16 @@
             }
         }
         
-        // Переход на экран выбора типа никотина
-        console.log('🔄 Переходим на экран выбора типа никотина');
-        window.location.href = '../nicotine-selection/index.html';
+        // Сохраняем выбранный тип никотина для следующего экрана
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem('selectedNicotineType', nicotineType);
+            console.log(`💾 Тип никотина "${nicotineType}" сохранен в localStorage`);
+        }
+        
+        // Переход на следующий экран (будет создан позже)
+        console.log('🔄 Переходим на следующий экран приложения');
+        // Временно переходим на welcome для тестирования
+        window.location.href = '../welcome/index.html';
     };
 
     /**
@@ -543,11 +579,12 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokyHealthRealization = {
+    window.SmokyNicotineSelection = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
-        getUserName: () => userName,
+        getSelectedNicotineType: () => selectedNicotineType,
+        isTransitionCompleted: () => transitionCompleted,
     };
 
 })();
