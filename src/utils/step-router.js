@@ -32,6 +32,7 @@ class StepRouter {
         12: '/src/pages/nicotine-amount/index.html',  // Ввод количества потребления никотина
         13: '/src/pages/nicotine-cost/index.html',   // Ввод стоимости никотина
         14: '/src/pages/nicotine-experience/index.html', // Ввод стажа потребления никотина
+        15: '/src/pages/calculation-results/index.html', // Результаты расчета никотинового воздействия
         // Здесь будут добавляться новые экраны по мере развития приложения
     };
 
@@ -53,6 +54,7 @@ class StepRouter {
         12: 'Количество потребления',
         13: 'Стоимость никотина',
         14: 'Стаж потребления',
+        15: 'Результаты расчета',
     };
 
     /**

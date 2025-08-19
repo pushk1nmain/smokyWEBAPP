@@ -1,6 +1,6 @@
 /**
- * SmokyApp - Nicotine Experience Screen Styles
- * Стили экрана ввода стажа потребления никотина (светлый дизайн со смайликами)
+ * SmokyApp - Calculation Results Screen Styles
+ * Стили экрана результатов расчета (светлый дизайн со смайликами)
  */
 
 /* CSS Custom Properties для Telegram Theme */
@@ -26,13 +26,14 @@
     --border-radius: 16px;
     --transition-duration: 0.3s;
 
-    /* Цвета для экрана ввода стажа */
+    /* Цвета для экрана результатов */
     --color-blue: #5A9BF7;
     --color-light-pink: #FEB8B1;
     --color-green: #74E976;
     --color-title: #235BDF;
     --color-text: #1C3D8C;
-    --color-placeholder: #B0A5A5;
+    --color-amount: #FF6B35;
+    --color-currency: #FF6B35;
 }
 
 /* Сброс стилей */
@@ -89,7 +90,7 @@ body {
 }
 
 /* Основной экран */
-.nicotine-experience-screen {
+.calculation-results-screen {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -123,7 +124,7 @@ body {
     overflow: hidden;
 }
 
-.nicotine-icon {
+.results-icon {
     font-size: 48px;
     line-height: 1;
     display: flex;
@@ -141,8 +142,8 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 24px;
-    max-width: 320px;
+    gap: 32px;
+    max-width: 360px;
     width: 100%;
     flex-grow: 1;
     justify-content: center;
@@ -158,70 +159,60 @@ body {
     text-align: center;
 }
 
-/* Описание экрана */
-.screen-description {
-    font-size: 16px;
-    color: var(--color-text);
-    margin: 0;
-    line-height: 1.5;
-    text-align: center;
-    opacity: 0.8;
+/* Контейнер результатов */
+.results-container {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 32px 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(90, 155, 247, 0.1);
 }
 
-/* Секция ввода */
-.input-section {
-    width: 100%;
-    margin: 16px 0;
-}
-
-.input-field-container {
-    position: relative;
-    width: 100%;
+.total-spent-section {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    background: #ffffff;
-    border: 2px solid #E5E5E5;
-    border-radius: var(--border-radius);
-    padding: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: all var(--transition-duration) ease;
+    gap: 16px;
 }
 
-.input-field-container:focus-within {
-    border-color: var(--color-blue);
-    box-shadow: 0 4px 20px rgba(90, 155, 247, 0.2);
-}
-
-.experience-input {
-    flex: 1;
-    padding: 18px 20px;
-    border: none;
-    outline: none !important;
-    font-size: 16px;
+.total-spent-text {
+    font-size: 18px;
+    font-weight: 600;
     color: var(--color-text);
-    background: transparent;
-    border-radius: var(--border-radius);
-    font-weight: 500;
+    margin: 0;
     text-align: center;
 }
 
-.experience-input:focus {
-    outline: none !important;
+.amount-container {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin: 8px 0;
 }
 
-.experience-input::placeholder {
-    color: var(--color-placeholder);
-    font-weight: 400;
+.amount-value {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--color-amount);
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
 }
 
-.experience-input::-webkit-outer-spin-button,
-.experience-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+.currency {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-currency);
+    line-height: 1;
+}
+
+.amount-description {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-text);
     margin: 0;
-}
-
-.experience-input[type=number] {
-    -moz-appearance: textfield;
+    opacity: 0.8;
 }
 
 /* Секция действий */
@@ -232,9 +223,8 @@ body {
 
 .navigation-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: 20px;
     width: 100%;
 }
 
@@ -270,48 +260,19 @@ body {
     outline-offset: 2px;
 }
 
-/* Кнопка "Назад" */
-.back-button {
-    background: linear-gradient(135deg, #ff6b6b, #e55353);
-    color: white;
-}
-
-.back-button:hover {
-    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
-}
-
 /* Кнопка "Вперед" */
 .forward-button {
-    background: linear-gradient(135deg, #cccccc, #aaaaaa);
-    color: white;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.forward-button.active {
     background: linear-gradient(135deg, var(--color-green), #66d969);
+    color: white;
     cursor: pointer;
     opacity: 1;
 }
 
-.forward-button.active:hover {
+.forward-button:hover {
     box-shadow: 0 6px 20px rgba(116, 233, 118, 0.3);
 }
 
-.forward-button:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
 /* Иконки стрелок */
-.back-arrow-icon {
-    width: 0;
-    height: 0;
-    border-right: 8px solid white;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-}
-
 .forward-arrow-icon {
     width: 0;
     height: 0;
@@ -391,6 +352,25 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+/* Анимация появления суммы */
+@keyframes countUp {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.amount-value.animate {
+    animation: countUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 380px) {
     :root {
@@ -401,36 +381,43 @@ body {
         font-size: 20px;
     }
     
-    .screen-description {
-        font-size: 14px;
-    }
-    
     .character-container {
         width: 100px;
         height: 100px;
     }
     
-    .nicotine-icon {
+    .results-icon {
         font-size: 40px;
     }
     
     .content-section {
-        gap: 20px;
-        max-width: 280px;
+        gap: 24px;
+        max-width: 300px;
     }
     
-    .experience-input {
-        padding: 16px 18px;
-        font-size: 15px;
+    .results-container {
+        padding: 24px 20px;
+    }
+    
+    .amount-value {
+        font-size: 36px;
+    }
+    
+    .currency {
+        font-size: 24px;
+    }
+    
+    .total-spent-text {
+        font-size: 16px;
+    }
+    
+    .amount-description {
+        font-size: 14px;
     }
     
     .nav-button {
         width: 56px;
         height: 56px;
-    }
-    
-    .navigation-buttons {
-        gap: 16px;
     }
     
     .emoji {
@@ -448,24 +435,28 @@ body {
         height: 80px;
     }
     
-    .nicotine-icon {
+    .results-icon {
         font-size: 32px;
     }
     
     .content-section {
-        gap: 16px;
+        gap: 20px;
     }
     
     .screen-title {
         font-size: 20px;
     }
     
-    .screen-description {
-        font-size: 14px;
+    .results-container {
+        padding: 20px 16px;
     }
     
-    .experience-input {
-        padding: 14px 16px;
+    .amount-value {
+        font-size: 36px;
+    }
+    
+    .currency {
+        font-size: 24px;
     }
     
     .nav-button {
@@ -495,7 +486,7 @@ body {
     .nav-button,
     .loading-ring,
     .emoji,
-    .input-field-container {
+    .amount-value {
         animation: none !important;
         transition: none !important;
     }
@@ -510,102 +501,6 @@ body {
     outline: 2px solid var(--tg-theme-button-color);
     outline-offset: 2px;
     border-radius: 4px;
-}
-
-/* Попап расчета данных */
-.calculation-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1001;
-    opacity: 1;
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.calculation-modal.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.calculation-modal-content {
-    position: relative;
-    z-index: 1002;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 32px 24px 24px;
-    margin: 20px;
-    max-width: 400px;
-    width: calc(100% - 40px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    transform: scale(1);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.calculation-modal.hidden .calculation-modal-content {
-    transform: scale(0.9);
-}
-
-.calculation-modal-title {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 0 0 20px 0;
-    color: #5A9BF7;
-    line-height: 1.2;
-}
-
-.calculation-modal-text-container {
-    margin-bottom: 0;
-}
-
-.calculation-modal-text {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1.5;
-    color: #666666;
-    margin: 0;
-    transition: opacity 0.3s ease;
-}
-
-/* Анимация появления попапа расчета */
-@keyframes calculationModalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.calculation-modal:not(.hidden) .calculation-modal-content {
-    animation: calculationModalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Адаптив для мобильных устройств */
-@media (max-width: 480px) {
-    .calculation-modal-content {
-        padding: 28px 20px 20px;
-        margin: 16px;
-        width: calc(100% - 32px);
-    }
-    
-    .calculation-modal-title {
-        font-size: 24px;
-    }
-    
-    .calculation-modal-text {
-        font-size: 15px;
-    }
 }
 
 /* Вспомогательные классы */

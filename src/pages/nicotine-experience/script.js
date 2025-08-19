@@ -534,13 +534,74 @@
     };
 
     /**
+     * Показывает попап с анимированным текстом расчета
+     */
+    const showCalculationModal = () => {
+        const modal = document.getElementById('calculationModal');
+        const textElement = document.getElementById('calculationProgressText');
+        
+        if (!modal || !textElement) {
+            console.error('❌ Элементы попапа расчета не найдены');
+            return;
+        }
+
+        // Показываем попап
+        modal.classList.remove('hidden');
+        
+        // Массив текстов для анимации (по 2 секунды каждый)
+        const progressTexts = [
+            '🔄 Запускаю супер-мега-калькулятор...',
+            '🤖 Заставляю роботов считать на пальцах...',
+            '💸 Запрашиваю курс валют на Марсе...',
+            '🚀 Сравниваю цены с космическими кораблями...',
+            '😱 Цифры не помещаются на экран!'
+        ];
+
+        let currentTextIndex = 0;
+        
+        // Устанавливаем первый текст
+        textElement.textContent = progressTexts[currentTextIndex];
+        
+        // Интервал смены текста каждые 2 секунды
+        const textInterval = setInterval(() => {
+            currentTextIndex++;
+            
+            if (currentTextIndex < progressTexts.length) {
+                textElement.style.opacity = '0';
+                
+                setTimeout(() => {
+                    textElement.textContent = progressTexts[currentTextIndex];
+                    textElement.style.opacity = '1';
+                }, 150);
+            } else {
+                // Все тексты показаны, останавливаем интервал
+                clearInterval(textInterval);
+            }
+        }, 2000);
+        
+        // Сохраняем интервал для возможной очистки
+        return textInterval;
+    };
+
+    /**
+     * Скрывает попап расчета
+     */
+    const hideCalculationModal = () => {
+        const modal = document.getElementById('calculationModal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    };
+
+    /**
      * Сбор всех данных из localStorage и отправка на API для расчета влияния никотина
      */
     const calculateAndSendNicotineImpact = async () => {
         try {
             console.log('🧮 Начинаем расчет влияния никотина...');
             
-            showLoading();
+            // Показываем попап с анимированным текстом вместо обычной загрузки
+            const textInterval = showCalculationModal();
 
             // Собираем все необходимые данные из localStorage
             const nicotineType = localStorage.getItem('selectedNicotineType');
@@ -634,21 +695,29 @@
                 }
             }
 
-            hideLoading();
+            // Скрываем попап и очищаем интервал
+            if (textInterval) {
+                clearInterval(textInterval);
+            }
+            hideCalculationModal();
 
-            // Переходим на экран с результатами (пока на welcome для тестирования)
+            // Переходим на экран с результатами расчета
             console.log('🔄 Переходим на экран с результатами расчета');
             
             if (window.LoadingManager?.navigateWithTransition) {
-                window.LoadingManager.navigateWithTransition('../welcome/index.html');
+                window.LoadingManager.navigateWithTransition('../calculation-results/index.html');
             } else {
-                window.location.href = '../welcome/index.html';
+                window.location.href = '../calculation-results/index.html';
             }
 
         } catch (error) {
             console.error('❌ Ошибка при расчете влияния никотина:', error);
             
-            hideLoading();
+            // Скрываем попап и очищаем интервал при ошибке
+            if (textInterval) {
+                clearInterval(textInterval);
+            }
+            hideCalculationModal();
             
             // Показываем уведомление об ошибке
             const errorMessage = `Произошла ошибка при расчете: ${error.message}`;

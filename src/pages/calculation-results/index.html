@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>SmokyApp - Стаж потребления</title>
+    <title>SmokyApp - Результаты расчета</title>
     
     <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -45,46 +45,32 @@
             <span class="emoji emoji-11">🏆</span>
         </div>
         
-        <main class="nicotine-experience-screen">
+        <main class="calculation-results-screen">
             <div class="character-section">
                 <div class="character-container">
-                    <!-- Динамическая иконка в зависимости от типа никотина -->
-                    <div class="nicotine-icon" id="nicotineIcon">⏰</div>
+                    <!-- Иконка денег для результатов -->
+                    <div class="results-icon">💸</div>
                 </div>
             </div>
 
             <div class="content-section">
-                <h1 class="screen-title" id="dynamicTitle">Ваш стаж в годах?</h1>
+                <h1 class="screen-title">Ваши траты на никотин</h1>
                 
-                <p class="screen-description" id="dynamicDescription">
-                    Это поможет понять ваш опыт
-                </p>
-                
-                <div class="input-section">
-                    <div class="input-field-container">
-                        <input type="number" 
-                               placeholder="Лет" 
-                               class="experience-input" 
-                               id="experienceInput"
-                               min="1" 
-                               max="80" 
-                               step="1"
-                               inputmode="numeric">
+                <div class="results-container">
+                    <div class="total-spent-section">
+                        <p class="total-spent-text">💸 За всё время Вы потратили</p>
+                        <div class="amount-container">
+                            <span class="amount-value" id="totalAmountSpent">0</span>
+                            <span class="currency">₽</span>
+                        </div>
+                        <p class="amount-description">на никотин</p>
                     </div>
                 </div>
 
                 <div class="action-section">
                     <div class="navigation-buttons">
-                        <!-- Кнопка назад -->
-                        <button class="nav-button back-button" 
-                                id="backButton"
-                                tabindex="0" 
-                                aria-label="Вернуться назад">
-                            <span class="back-arrow-icon"></span>
-                        </button>
-                        
-                        <!-- Кнопка вперед -->
-                        <button class="nav-button forward-button" 
+                        <!-- Кнопка "Далее" -->
+                        <button class="nav-button forward-button active" 
                                 id="forwardButton"
                                 tabindex="0" 
                                 aria-label="Продолжить">
@@ -102,16 +88,6 @@
                 <div class="loading-rings">
                     <div class="loading-ring"></div>
                     <div class="loading-ring"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Попап расчета данных -->
-        <div class="calculation-modal hidden" id="calculationModal">
-            <div class="calculation-modal-content">
-                <h3 class="calculation-modal-title">🎉 Спасибо за ответы!</h3>
-                <div class="calculation-modal-text-container">
-                    <p class="calculation-modal-text" id="calculationProgressText">🔄 Запускаю супер-мега-калькулятор...</p>
                 </div>
             </div>
         </div>
