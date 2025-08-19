@@ -59,15 +59,15 @@
             enableAnimations: true
         },
         transition: {
-            // Тайминги для плавной анимации "легкий бриз"
+            // Тайминги для organic gentle анимации с инерцией
             starDissolveDelay: 500,         // Звезды начинают растворяться
             starDissolveDuration: 1500,     // Длительность растворения звезд  
             rippleStartDelay: 800,          // Ripple начинается
             rippleDuration: 2500,           // Длительность Ripple расширения
             titleAppearDelay: 2000,         // Заголовок появляется
-            buttonsStartDelay: 2300,        // Кнопки начинают появляться
-            buttonInterval: 180,            // Ритмичный интервал между кнопками 180мс
-            totalDuration: 4500             // Общая длительность перехода (4.5с)
+            buttonsStartDelay: 2400,        // Кнопки начинают появляться (позже)
+            buttonInterval: 300,            // Медленный интервал для плавности 300мс
+            totalDuration: 5500             // Общая длительность перехода (5.5с)
         }
     };
 
