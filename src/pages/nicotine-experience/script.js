@@ -600,10 +600,10 @@
         try {
             console.log('🧮 Начинаем расчет влияния никотина...');
             
-            // Показываем попап с анимированным текстом вместо обычной загрузки
+            // ОДНОВРЕМЕННО запускаем анимацию и API запросы
             const textInterval = showCalculationModal();
 
-            // Собираем все необходимые данные из localStorage
+            // Подготавливаем данные для API запроса
             const nicotineType = localStorage.getItem('selectedNicotineType');
             const nicotineAmount = localStorage.getItem('nicotineAmount');
             const nicotineCost = localStorage.getItem('nicotineCost');
@@ -646,54 +646,113 @@
                 experience_years: parseFloat(nicotineExperience)
             };
 
-            console.log('📤 Отправляем запрос на расчет:', requestData);
-
             // Получаем Telegram WebApp Data для заголовка
             let telegramWebAppData = '';
             if (tg?.initData) {
                 telegramWebAppData = tg.initData;
             }
 
-            // Отправляем запрос на API
-            const response = await fetch('/api/v1/calculate-nicotine-impact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Telegram-WebApp-Data': telegramWebAppData
-                },
-                body: JSON.stringify(requestData)
-            });
+            // ПАРАЛЛЕЛЬНО запускаем API запросы с retry логикой и анимацию
+            let apiResult = null;
+            let retryCount = 0;
+            const maxRetries = 10; // Максимум попыток
+            const retryDelay = 5000; // 5 секунд между попытками
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(`Ошибка API: ${response.status} - ${errorData.message || 'Неизвестная ошибка'}`);
-            }
+            // Функция для выполнения API запроса с таймаутом
+            const makeApiRequest = async () => {
+                console.log(`📤 API запрос #${retryCount + 1}:`, requestData);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), retryDelay);
 
-            const resultData = await response.json();
-            console.log('📥 Получен ответ от API:', resultData);
-
-            if (!resultData.success) {
-                throw new Error(resultData.message || 'API вернул неуспешный результат');
-            }
-
-            // Сохраняем результаты расчета в localStorage
-            localStorage.setItem('nicotineCalculationResult', JSON.stringify(resultData.data));
-            console.log('💾 Результаты расчета сохранены в localStorage');
-
-            // Отправляем результат в Telegram если доступно
-            if (tg?.sendData) {
                 try {
-                    tg.sendData(JSON.stringify({ 
-                        type: 'nicotine_calculation_completed', 
-                        telegram_id: telegramId,
-                        calculation_result: resultData.data,
-                        timestamp: new Date().toISOString() 
-                    }));
-                    console.log('📤 Результаты расчета отправлены в Telegram');
+                    const response = await fetch('/api/v1/calculate-nicotine-impact', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Telegram-WebApp-Data': telegramWebAppData
+                        },
+                        body: JSON.stringify(requestData),
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(`Ошибка API: ${response.status} - ${errorData.message || 'Неизвестная ошибка'}`);
+                    }
+
+                    const resultData = await response.json();
+                    
+                    if (!resultData.success) {
+                        throw new Error(resultData.message || 'API вернул неуспешный результат');
+                    }
+
+                    return resultData;
                 } catch (error) {
-                    console.error('❌ Ошибка отправки результатов в Telegram:', error);
+                    clearTimeout(timeoutId);
+                    if (error.name === 'AbortError') {
+                        throw new Error('API запрос превысил таймаут 5 секунд');
+                    }
+                    throw error;
+                }
+            };
+
+            // Цикл retry с интервалом 5 секунд
+            while (!apiResult && retryCount < maxRetries) {
+                try {
+                    apiResult = await makeApiRequest();
+                    console.log(`✅ API запрос #${retryCount + 1} успешен:`, apiResult);
+                    break;
+                } catch (error) {
+                    retryCount++;
+                    console.warn(`⚠️ API запрос #${retryCount} неудачен: ${error.message}`);
+                    
+                    if (retryCount < maxRetries) {
+                        console.log(`🔄 Повторный запрос через 5 секунд... (попытка ${retryCount + 1}/${maxRetries})`);
+                        await new Promise(resolve => setTimeout(resolve, retryDelay));
+                    } else {
+                        throw new Error(`Все ${maxRetries} попыток API запроса неудачны. Последняя ошибка: ${error.message}`);
+                    }
                 }
             }
+
+            // Сохраняем результаты сразу после получения
+            if (apiResult) {
+                localStorage.setItem('nicotineCalculationResult', JSON.stringify(apiResult.data));
+                console.log('💾 Результаты расчета сохранены в localStorage');
+
+                // Отправляем результат в Telegram если доступно
+                if (tg?.sendData) {
+                    try {
+                        tg.sendData(JSON.stringify({ 
+                            type: 'nicotine_calculation_completed', 
+                            telegram_id: telegramId,
+                            calculation_result: apiResult.data,
+                            timestamp: new Date().toISOString() 
+                        }));
+                        console.log('📤 Результаты расчета отправлены в Telegram');
+                    } catch (error) {
+                        console.error('❌ Ошибка отправки результатов в Telegram:', error);
+                    }
+                }
+            }
+
+            // Теперь дожидаемся окончания всей анимации (10 секунд)
+            console.log('✅ API данные получены. Дожидаемся окончания анимации...');
+            const totalAnimationTime = 10000; // 10 секунд для всех 5 текстов
+            const animationStartTime = Date.now();
+            
+            // Ждем до завершения анимации, если она еще не закончилась
+            const elapsedTime = Date.now() - animationStartTime;
+            const remainingAnimationTime = Math.max(0, totalAnimationTime - elapsedTime);
+            
+            if (remainingAnimationTime > 0) {
+                await new Promise(resolve => setTimeout(resolve, remainingAnimationTime));
+            }
+
+            console.log('🎬 Анимация завершена, переходим на экран результатов');
 
             // Скрываем попап и очищаем интервал
             if (textInterval) {
@@ -714,7 +773,7 @@
             console.error('❌ Ошибка при расчете влияния никотина:', error);
             
             // Скрываем попап и очищаем интервал при ошибке
-            if (textInterval) {
+            if (typeof textInterval !== 'undefined') {
                 clearInterval(textInterval);
             }
             hideCalculationModal();
