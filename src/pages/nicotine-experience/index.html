@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>SmokyApp - Стаж потребления</title>
+    
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    
+    <!-- Отключение кэширования для разработки -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Дополнительные мета-теги для борьбы с кэшированием -->
+    <meta name="cache-control" content="no-cache">
+    <meta name="expires" content="0">
+    <meta name="pragma" content="no-cache">
+    
+    <!-- Meta теги для Telegram WebApp -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Парящие смайлики на фоне -->
+        <div class="floating-emojis">
+            <span class="emoji emoji-1">🔥</span>
+            <span class="emoji emoji-2">🚀</span>
+            <span class="emoji emoji-3">🚭</span>
+            <span class="emoji emoji-4">💨</span>
+            <span class="emoji emoji-5">🌿</span>
+            <span class="emoji emoji-6">💚</span>
+            <span class="emoji emoji-7">🤝</span>
+            <span class="emoji emoji-8">📈</span>
+            <span class="emoji emoji-9">🪴</span>
+            <span class="emoji emoji-10">⏳</span>
+            <span class="emoji emoji-11">🏆</span>
+        </div>
+        
+        <main class="nicotine-experience-screen">
+            <div class="character-section">
+                <div class="character-container">
+                    <!-- Динамическая иконка в зависимости от типа никотина -->
+                    <div class="nicotine-icon" id="nicotineIcon">⏰</div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h1 class="screen-title" id="dynamicTitle">Ваш стаж в годах?</h1>
+                
+                <p class="screen-description" id="dynamicDescription">
+                    Это поможет понять ваш опыт
+                </p>
+                
+                <div class="input-section">
+                    <div class="input-field-container">
+                        <input type="number" 
+                               placeholder="Лет" 
+                               class="experience-input" 
+                               id="experienceInput"
+                               min="1" 
+                               max="80" 
+                               step="1"
+                               inputmode="numeric">
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <div class="navigation-buttons">
+                        <!-- Кнопка назад -->
+                        <button class="nav-button back-button" 
+                                id="backButton"
+                                tabindex="0" 
+                                aria-label="Вернуться назад">
+                            <span class="back-arrow-icon"></span>
+                        </button>
+                        
+                        <!-- Кнопка вперед -->
+                        <button class="nav-button forward-button" 
+                                id="forwardButton"
+                                tabindex="0" 
+                                aria-label="Продолжить">
+                            <span class="forward-arrow-icon"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Простая загрузка с логотипом Смоки -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-character">
+                <img src="../../assets/icons/smoky_basic.svg" alt="Смоки">
+                <div class="loading-rings">
+                    <div class="loading-ring"></div>
+                    <div class="loading-ring"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="../../config.js"></script>
+    <script src="../../utils/loading-manager.js"></script>
+    <script src="../../utils/error-modal.js"></script>
+    <script src="../../utils/api-client.js"></script>
+    <script src="../../utils/global-console.js"></script>
+    <script src="../../utils/step-router.js"></script>
+    <script src="script.js" defer></script>
+</body>
+</html>
