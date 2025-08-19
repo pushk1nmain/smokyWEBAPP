@@ -123,10 +123,11 @@ class WakingUpScreen {
                 element.style.transform = 'translateY(20px)';
                 element.style.transition = 'all 0.6s ease-out';
                 
+                // Начинаем анимацию сразу с минимальными задержками
                 setTimeout(() => {
                     element.style.opacity = '1';
                     element.style.transform = 'translateY(0)';
-                }, 200 + (index * 150));
+                }, index * 100); // Уменьшили с 200 + (index * 150) до index * 100
             }
         });
     }
