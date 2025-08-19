@@ -371,7 +371,7 @@
         // Обработчик кнопки вперед
         if (forwardButton) {
             forwardButton.addEventListener('click', goForward);
-            console.log('🔘 Кнопка вперед найдена с классами:', forwardButton.className);
+            console.log('🔘 Кнопка "Продолжить" найдена с классами:', forwardButton.className);
         } else {
             console.error('❌ Кнопка forwardButton не найдена!');
         }
