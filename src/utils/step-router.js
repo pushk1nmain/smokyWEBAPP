@@ -27,6 +27,7 @@ class StepRouter {
         7: '/src/pages/navigator-broken/index.html',  // Сломанный навигатор
         8: '/src/pages/charger-question/index.html',  // Вопрос о курении
         9: '/src/pages/system-explanation/index.html', // Объяснение системы 4 в 1
+        10: '/src/pages/price-question/index.html',   // Вопрос о цене жизни
         // Здесь будут добавляться новые экраны по мере развития приложения
     };
 
@@ -43,6 +44,7 @@ class StepRouter {
         7: 'Сломанный навигатор',
         8: 'Вопрос о курении',
         9: 'Система 4 в 1',
+        10: 'Цена жизни',
     };
 
     /**

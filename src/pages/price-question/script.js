@@ -1,12 +1,13 @@
 /**
- * SmokyApp - System Explanation Screen JavaScript
- * Скрипт экрана объяснения системы 4 в 1 для интеграции с Telegram WebApp API
+ * SmokyApp - Price Question Screen JavaScript
+ * Скрипт экрана вопроса о цене жизни для интеграции с Telegram WebApp API
  */
 
 (function() {
     // Глобальные переменные и встроенная конфигурация
     let tg = null;
     let isReady = false;
+    let userChoice = null;
 
     // --- Telegram WebApp Keyboard Handling ---
     if (window.Telegram && window.Telegram.WebApp) {
@@ -87,23 +88,23 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 System explanation screen запускается...');
+            console.log('🚀 Price question screen запускается...');
             
-            // Обновляем шаг в БД при загрузке system-explanation экрана
+            // Обновляем шаг в БД при загрузке price-question экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 9 (system-explanation) через StepRouter');
-                    const success = await window.StepRouter.updateStep(9);
+                    console.log('🔄 Обновляем шаг до 10 (price-question) через StepRouter');
+                    const success = await window.StepRouter.updateStep(10);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 9');
+                        console.log('✅ Шаг успешно обновлен до 10');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 9');
+                        console.warn('⚠️ Не удалось обновить шаг до 10');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на system-explanation экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на price-question экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на system-explanation экране:', error);
+                console.error('❌ Ошибка при обновлении шага на price-question экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -123,8 +124,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 9) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 9, выполняем переход через StepRouter');
+                        if (currentStep > 10) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 10, выполняем переход через StepRouter');
                             
                             // Принудительно выполняем навигацию к правильному шагу
                             await window.StepRouter.navigateToCurrentStep(true);
@@ -136,7 +137,7 @@
                 }
             }
 
-            // Настройка UI и событий только если остаемся на system-explanation screen
+            // Настройка UI и событий только если остаемся на price-question screen
             setupUI();
             setupEventListeners();
 
@@ -151,7 +152,7 @@
             }
 
             isReady = true;
-            console.log('✅ System explanation screen успешно инициализирован!');
+            console.log('✅ Price question screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -192,7 +193,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                console.log(`👤 ID пользователя: ${user.id}. System explanation screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. Price question screen загружен.`);
 
             } else {
                 // Эта ситуация не должна происходить, но добавим обработку
@@ -219,7 +220,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ System explanation screen загружен в режиме браузера');
+        console.log('✅ Price question screen загружен в режиме браузера');
     };
 
     /**
@@ -286,52 +287,92 @@
      * Настройка обработчиков событий
      */
     const setupEventListeners = () => {
-        const continueButton = document.getElementById('continueButton');
-        if (continueButton) {
-            continueButton.addEventListener('click', handleContinueClick);
-            continueButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleContinueClick());
-            console.log('⚡ Обработчик кнопки Продолжить подключен');
-        } else {
-            console.error('❌ Кнопка continueButton не найдена');
-        }
-        console.log('⚡ Обработчики событий настроены');
+        const priceButtons = document.querySelectorAll('.price-button');
+        
+        priceButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const price = button.getAttribute('data-price');
+                handlePriceChoice(price, button);
+            });
+            
+            button.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    const price = button.getAttribute('data-price');
+                    handlePriceChoice(price, button);
+                }
+            });
+        });
+        
+        console.log('⚡ Обработчики событий для кнопок цен настроены');
     };
 
     /**
-     * Обработчик нажатия кнопки "Продолжить" с бесшовным переходом
+     * Обработчик выбора цены
      */
-    const handleContinueClick = () => {
-        console.log('🚀 handleContinueClick вызван - Продолжаем после объяснения системы!');
+    const handlePriceChoice = (price, buttonElement) => {
+        console.log(`🚀 handlePriceChoice вызван с выбором: ${price}`);
+        
+        // Предотвращаем повторные клики
+        if (userChoice) return;
+        
+        userChoice = price;
+        
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
         }
         
-        // Бесшовный переход без загрузки для темных экранов истории
-        console.log('🔄 Выполняем бесшовный переход...');
+        // Визуально выделяем выбранную кнопку
+        highlightSelectedButton(buttonElement);
+        
+        // Бесшовный переход - переходим к следующему экрану после выбора
+        console.log(`🔄 Выполняем бесшовный переход с выбором цены: ${price}`);
         setTimeout(() => {
             console.log('⏰ Таймер сработал, вызываем navigateToNextScreen...');
-            navigateToNextScreen();
-        }, 300); // Минимальная задержка для haptic feedback
+            navigateToNextScreen(price);
+        }, 800); // Немного больше задержки чтобы пользователь увидел выделение
+    };
+
+    /**
+     * Выделение выбранной кнопки
+     */
+    const highlightSelectedButton = (selectedButton) => {
+        const allButtons = document.querySelectorAll('.price-button');
+        
+        // Убираем выделение с всех кнопок
+        allButtons.forEach(button => {
+            button.classList.remove('selected');
+        });
+        
+        // Выделяем выбранную кнопку
+        selectedButton.classList.add('selected');
+        
+        const price = selectedButton.getAttribute('data-price');
+        console.log(`✨ Кнопка с ценой "${price}" выделена`);
     };
 
     /**
      * Навигация к следующему экрану
      */
-    const navigateToNextScreen = async () => {
-        console.log('🚀 navigateToNextScreen вызван - переход к следующему экрану');
+    const navigateToNextScreen = async (priceChoice) => {
+        console.log(`🚀 navigateToNextScreen вызван с выбором цены: ${priceChoice}`);
         
         if (tg?.sendData) {
             try {
-                tg.sendData(JSON.stringify({ type: 'system_explanation_completed', timestamp: new Date().toISOString() }));
+                tg.sendData(JSON.stringify({ 
+                    type: 'price_question_completed', 
+                    price_choice: priceChoice,
+                    timestamp: new Date().toISOString() 
+                }));
                 console.log('📤 Данные отправлены в Telegram');
             } catch (error) {
                 console.error('❌ Ошибка отправки данных:', error);
             }
         }
         
-        // Переход на экран вопроса о цене жизни
-        console.log('🔄 Переходим на экран вопроса о цене жизни');
-        window.location.href = '../price-question/index.html';
+        // Переход на следующий экран (пока на welcome для тестирования)
+        console.log('🔄 Переходим на следующий экран приложения');
+        window.location.href = '../welcome/index.html';
     };
 
     /**
@@ -402,10 +443,11 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokySystemExplanation = {
+    window.SmokyPriceQuestion = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
+        getUserChoice: () => userChoice,
     };
 
 })();
