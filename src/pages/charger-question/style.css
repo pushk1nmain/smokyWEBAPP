@@ -254,12 +254,9 @@ body {
 /* CSS звезды */
 .star {
     position: absolute;
-    width: 3px;
-    height: 3px;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 6px #fff, 0 0 12px #fff;
-    animation: starTwinkle 3s ease-in-out infinite alternate;
+    background: #ffffff;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    animation: starTwinkle 4s ease-in-out infinite;
 }
 
 /* Размеры звезд и их позиции */
@@ -308,20 +305,37 @@ body {
 
 /* Анимация мерцания звезд */
 @keyframes starTwinkle {
-    0% {
-        opacity: 0.3;
+    0%, 100% {
+        opacity: 0.4;
         transform: scale(1);
-        box-shadow: 0 0 6px #fff, 0 0 12px #fff;
+        box-shadow: 
+            0 0 6px rgba(255, 255, 255, 0.6),
+            0 0 12px rgba(135, 206, 250, 0.4),
+            0 0 18px rgba(135, 206, 250, 0.2);
     }
-    50% {
+    25% {
         opacity: 0.8;
         transform: scale(1.2);
-        box-shadow: 0 0 8px #fff, 0 0 16px #fff, 0 0 24px #fff;
+        box-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.8),
+            0 0 20px rgba(135, 206, 250, 0.6),
+            0 0 30px rgba(135, 206, 250, 0.4);
     }
-    100% {
+    50% {
         opacity: 1;
-        transform: scale(1);
-        box-shadow: 0 0 6px #fff, 0 0 12px #fff;
+        transform: scale(1.5);
+        box-shadow: 
+            0 0 15px rgba(255, 255, 255, 1),
+            0 0 25px rgba(135, 206, 250, 0.8),
+            0 0 35px rgba(135, 206, 250, 0.6);
+    }
+    75% {
+        opacity: 0.6;
+        transform: scale(1.1);
+        box-shadow: 
+            0 0 8px rgba(255, 255, 255, 0.7),
+            0 0 16px rgba(135, 206, 250, 0.5),
+            0 0 24px rgba(135, 206, 250, 0.3);
     }
 }
 
