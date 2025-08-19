@@ -389,16 +389,6 @@
                 // Убираем все нечисловые символы
                 value = value.replace(/[^0-9]/g, '');
                 
-                // Ограничиваем диапазон от 1 до 30
-                if (value) {
-                    const numValue = parseInt(value);
-                    if (numValue > 30) {
-                        value = '30';
-                    } else if (numValue < 1) {
-                        value = '1';
-                    }
-                }
-                
                 // Обновляем значение в поле ввода
                 e.target.value = value;
                 
@@ -419,13 +409,7 @@
                 paste = paste.replace(/[^0-9]/g, '');
                 
                 if (paste) {
-                    let numValue = parseInt(paste);
-                    if (numValue > 30) {
-                        numValue = 30;
-                    } else if (numValue < 1) {
-                        numValue = 1;
-                    }
-                    amountInput.value = numValue.toString();
+                    amountInput.value = paste;
                     
                     // Имитируем событие input для обновления состояния
                     amountInput.dispatchEvent(new Event('input'));
@@ -446,7 +430,7 @@
                     
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        if (currentAmount && currentAmount >= 1 && currentAmount <= 30) {
+                        if (currentAmount && currentAmount >= 1 && currentAmount <= 60) {
                             goForward();
                         }
                     }
@@ -484,7 +468,7 @@
         const forwardButton = document.getElementById('forwardButton');
         if (!forwardButton) return;
 
-        const isValid = currentAmount && currentAmount >= 1 && currentAmount <= 30;
+        const isValid = currentAmount && currentAmount >= 1 && currentAmount <= 60;
         
         if (isValid) {
             forwardButton.classList.add('active');
@@ -514,11 +498,56 @@
     };
 
     /**
+     * Показ модального окна с ошибкой валидации
+     */
+    const showAmountErrorModal = () => {
+        const modal = document.getElementById('amountErrorModal');
+        const okButton = document.getElementById('amountErrorOkButton');
+        
+        // Показываем модальное окно
+        modal.classList.remove('hidden');
+        
+        // Haptic feedback при показе модального окна
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('error');
+        }
+        
+        // Обработчик кнопки "OK"
+        const handleOkClick = () => {
+            modal.classList.add('hidden');
+            
+            // Haptic feedback для кнопки OK
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+            
+            // Фокус на поле ввода
+            const amountInput = document.getElementById('amountInput');
+            if (amountInput) {
+                amountInput.focus();
+            }
+            
+            // Очищаем обработчик
+            okButton.removeEventListener('click', handleOkClick);
+        };
+        
+        okButton.addEventListener('click', handleOkClick);
+        
+        // Обработчик клика по overlay для закрытия модального окна
+        const modalOverlay = document.getElementById('amountErrorOverlay');
+        const handleOverlayClick = () => {
+            handleOkClick();
+            modalOverlay.removeEventListener('click', handleOverlayClick);
+        };
+        modalOverlay.addEventListener('click', handleOverlayClick);
+    };
+
+    /**
      * Переход вперед
      */
     const goForward = () => {
-        if (!currentAmount || currentAmount < 1 || currentAmount > 30) {
-            showNotification('Пожалуйста, введите число от 1 до 30');
+        if (!currentAmount || currentAmount < 1 || currentAmount > 60) {
+            showAmountErrorModal();
             return;
         }
 

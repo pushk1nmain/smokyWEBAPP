@@ -67,7 +67,7 @@
                                class="amount-input" 
                                id="amountInput"
                                min="1" 
-                               max="30" 
+                               max="60" 
                                step="1"
                                inputmode="numeric">
                     </div>
@@ -102,6 +102,24 @@
                 <div class="loading-rings">
                     <div class="loading-ring"></div>
                     <div class="loading-ring"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно ошибки валидации количества -->
+        <div class="amount-error-modal hidden" id="amountErrorModal">
+            <div class="modal-overlay-blur" id="amountErrorOverlay"></div>
+            <div class="error-modal-content">
+                <h2 class="error-modal-title">Упс! 🤔</h2>
+                <div class="error-modal-text-container">
+                    <p class="error-modal-text" id="amountErrorText">
+                        Пожалуйста, введите число от 1 до 60
+                    </p>
+                </div>
+                <div class="error-modal-buttons">
+                    <button class="error-modal-button" id="amountErrorOkButton">
+                        <span class="confirm-icon">✓</span>
+                    </button>
                 </div>
             </div>
         </div>

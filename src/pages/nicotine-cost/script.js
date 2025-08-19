@@ -389,16 +389,6 @@
                 // Убираем все нечисловые символы
                 value = value.replace(/[^0-9]/g, '');
                 
-                // Ограничиваем диапазон от 100 до 5000
-                if (value) {
-                    const numValue = parseInt(value);
-                    if (numValue > 5000) {
-                        value = '5000';
-                    } else if (numValue > 0 && numValue < 100) {
-                        value = '100';
-                    }
-                }
-                
                 // Обновляем значение в поле ввода
                 e.target.value = value;
                 
@@ -419,13 +409,7 @@
                 paste = paste.replace(/[^0-9]/g, '');
                 
                 if (paste) {
-                    let numValue = parseInt(paste);
-                    if (numValue > 5000) {
-                        numValue = 5000;
-                    } else if (numValue > 0 && numValue < 100) {
-                        numValue = 100;
-                    }
-                    costInput.value = numValue.toString();
+                    costInput.value = paste;
                     
                     // Имитируем событие input для обновления состояния
                     costInput.dispatchEvent(new Event('input'));
@@ -514,11 +498,56 @@
     };
 
     /**
+     * Показ модального окна с ошибкой валидации
+     */
+    const showCostErrorModal = () => {
+        const modal = document.getElementById('costErrorModal');
+        const okButton = document.getElementById('costErrorOkButton');
+        
+        // Показываем модальное окно
+        modal.classList.remove('hidden');
+        
+        // Haptic feedback при показе модального окна
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('error');
+        }
+        
+        // Обработчик кнопки "OK"
+        const handleOkClick = () => {
+            modal.classList.add('hidden');
+            
+            // Haptic feedback для кнопки OK
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+            
+            // Фокус на поле ввода
+            const costInput = document.getElementById('costInput');
+            if (costInput) {
+                costInput.focus();
+            }
+            
+            // Очищаем обработчик
+            okButton.removeEventListener('click', handleOkClick);
+        };
+        
+        okButton.addEventListener('click', handleOkClick);
+        
+        // Обработчик клика по overlay для закрытия модального окна
+        const modalOverlay = document.getElementById('costErrorOverlay');
+        const handleOverlayClick = () => {
+            handleOkClick();
+            modalOverlay.removeEventListener('click', handleOverlayClick);
+        };
+        modalOverlay.addEventListener('click', handleOverlayClick);
+    };
+
+    /**
      * Переход вперед
      */
     const goForward = () => {
         if (!currentCost || currentCost < 100 || currentCost > 5000) {
-            showNotification('Пожалуйста, введите стоимость от 100 до 5000 рублей');
+            showCostErrorModal();
             return;
         }
 
