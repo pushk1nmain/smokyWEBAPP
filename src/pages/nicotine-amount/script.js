@@ -252,6 +252,15 @@
             console.log('✅ Nicotine amount screen успешно инициализирован!');
             hideLoading();
 
+            // Устанавливаем фокус на input поле после инициализации
+            setTimeout(() => {
+                const amountInput = document.getElementById('amountInput');
+                if (amountInput) {
+                    amountInput.focus();
+                    console.log('🎯 Автофокус установлен на поле ввода количества');
+                }
+            }, 500);
+
         } catch (error) {
             console.error('❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ИНИЦИАЛИЗАЦИИ:', error);
             showCriticalError('Ошибка при запуске приложения', error.message);

@@ -252,6 +252,15 @@
             console.log('✅ Nicotine cost screen успешно инициализирован!');
             hideLoading();
 
+            // Устанавливаем фокус на input поле после инициализации
+            setTimeout(() => {
+                const costInput = document.getElementById('costInput');
+                if (costInput) {
+                    costInput.focus();
+                    console.log('🎯 Автофокус установлен на поле ввода стоимости');
+                }
+            }, 500);
+
         } catch (error) {
             console.error('❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ИНИЦИАЛИЗАЦИИ:', error);
             showCriticalError('Ошибка при запуске приложения', error.message);

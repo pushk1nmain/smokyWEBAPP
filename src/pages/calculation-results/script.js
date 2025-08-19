@@ -108,11 +108,36 @@
         }
     };
 
+    // Конфигурация отображения типов никотина
+    const nicotineDisplayConfig = {
+        cigarettes: {
+            text: 'сигареты',
+            name: 'на сигареты'
+        },
+        vape: {
+            text: 'вейп',
+            name: 'на вейп'
+        },
+        iqos: {
+            text: 'IQOS',
+            name: 'на IQOS'
+        },
+        hookah: {
+            text: 'кальян',
+            name: 'на кальян'
+        },
+        snus: {
+            text: 'снюс',
+            name: 'на снюс'
+        }
+    };
+
     /**
-     * Отображение суммы трат с анимацией
+     * Отображение суммы трат с анимацией и типом никотина
      */
     const displayTotalSpent = () => {
         const amountElement = document.getElementById('totalAmountSpent');
+        const descriptionElement = document.getElementById('nicotineTypeDescription');
         
         if (!amountElement || !calculationResults?.calculations?.total_spent_rubles) {
             console.error('❌ Не удалось найти элемент суммы или данные отсутствуют');
@@ -121,6 +146,15 @@
 
         const totalAmount = calculationResults.calculations.total_spent_rubles;
         console.log('💰 Отображаем сумму трат:', totalAmount);
+
+        // Получаем тип никотина из localStorage
+        const nicotineType = localStorage.getItem('selectedNicotineType');
+        const nicotineConfig = nicotineDisplayConfig[nicotineType];
+        
+        if (nicotineConfig && descriptionElement) {
+            descriptionElement.innerHTML = `на <strong>${nicotineConfig.text}</strong>`;
+            console.log('📝 Обновлен тип никотина в описании:', nicotineConfig.text);
+        }
 
         // Форматируем число с разделителями тысяч
         const formattedAmount = new Intl.NumberFormat('ru-RU').format(totalAmount);
@@ -337,6 +371,9 @@
         // Обработчик кнопки вперед
         if (forwardButton) {
             forwardButton.addEventListener('click', goForward);
+            console.log('🔘 Кнопка вперед найдена с классами:', forwardButton.className);
+        } else {
+            console.error('❌ Кнопка forwardButton не найдена!');
         }
         
         console.log('⚡ Обработчики событий настроены');

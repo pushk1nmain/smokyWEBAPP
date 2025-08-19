@@ -9,8 +9,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Стили -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../styles/main.css?v=20250819">
+    <link rel="stylesheet" href="style.css?v=20250819">
     
     <!-- Отключение кэширования для разработки -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -21,6 +21,8 @@
     <meta name="cache-control" content="no-cache">
     <meta name="expires" content="0">
     <meta name="pragma" content="no-cache">
+    
+    <!-- Версионирование CSS для борьбы с кэшированием -->
     
     <!-- Meta теги для Telegram WebApp -->
     <meta name="theme-color" content="#2196F3">
@@ -63,7 +65,7 @@
                             <span class="amount-value" id="totalAmountSpent">0</span>
                             <span class="currency">₽</span>
                         </div>
-                        <p class="amount-description">на никотин</p>
+                        <p class="amount-description" id="nicotineTypeDescription">на никотин</p>
                     </div>
                 </div>
 
