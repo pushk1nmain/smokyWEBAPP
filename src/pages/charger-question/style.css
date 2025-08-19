@@ -212,14 +212,15 @@ body {
 }
 
 .choice-button.selected {
-    background: linear-gradient(135deg, #2196F3, #1976D2);
-    box-shadow: 0 4px 20px rgba(33, 150, 243, 0.4);
-    filter: drop-shadow(0 0 12px rgba(33, 150, 243, 0.6));
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.5);
+    transform: translateY(-3px);
+    filter: drop-shadow(0 0 12px rgba(76, 175, 80, 0.6));
 }
 
 .choice-button.selected:hover {
-    background: linear-gradient(135deg, #1976D2, #1565C0);
-    box-shadow: 0 8px 28px rgba(33, 150, 243, 0.6);
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    box-shadow: 0 8px 28px rgba(76, 175, 80, 0.6);
 }
 
 .button-text {
