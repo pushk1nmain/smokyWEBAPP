@@ -60,10 +60,10 @@ html.light-theme {
     background-size: cover !important;
 }
 
-/* Основной контейнер */
+/* Переопределяем стили основного контейнера для nicotine-selection экрана */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: transparent; /* Делаем прозрачным чтобы показать фон html */
+    background: transparent !important; /* Принудительно убираем белый фон из main.css */
     color: var(--tg-theme-text-color);
     line-height: 1.6;
     overflow: auto;
@@ -85,7 +85,7 @@ body.light-theme {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: transparent;
+    background: transparent !important; /* Принудительно убираем зеленый градиент из main.css */
     overflow: auto;
 }
 
@@ -338,46 +338,69 @@ body.light-theme {
     }
 }
 
-/* Парящие смайлики - копируем паттерн из светлых экранов */
+/* Переопределяем смайлики из main.css для nicotine-selection экрана */
 .floating-emojis {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity var(--brightness-transition-duration) ease-in-out;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+    overflow: hidden !important;
+    opacity: 0 !important; /* Принудительно скрываем изначально, переопределяя main.css */
+    transition: opacity var(--brightness-transition-duration) ease-in-out !important;
 }
 
 /* Плавное появление смайликов одновременно с исчезновением звезд */
 .floating-emojis.appearing {
-    opacity: 1;
+    opacity: 1 !important;
 }
 
-/* Базовые стили для смайликов */
+/* Переопределяем базовые стили смайликов из main.css */
 .emoji {
-    position: absolute;
-    font-size: 32px;
-    opacity: 0.6;
-    user-select: none;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    position: absolute !important;
+    font-size: 32px !important;
+    opacity: 0.6 !important;
+    user-select: none !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) !important;
+    /* Отключаем анимации из main.css изначально */
+    animation: none !important;
 }
 
-/* Позиционирование смайликов по краям экрана */
-.emoji-1 { top: 10%; left: 5%; animation: floatSlow 12s ease-in-out infinite; animation-delay: 0s; }
-.emoji-2 { top: 20%; right: 8%; animation: floatMedium 15s ease-in-out infinite; animation-delay: 2s; }
-.emoji-3 { top: 35%; left: 3%; animation: floatGentle 18s ease-in-out infinite; animation-delay: 4s; }
-.emoji-4 { top: 50%; right: 5%; animation: floatSlow 14s ease-in-out infinite; animation-delay: 1s; }
-.emoji-5 { top: 65%; left: 7%; animation: floatMedium 16s ease-in-out infinite; animation-delay: 3s; }
-.emoji-6 { top: 80%; right: 6%; animation: floatGentle 13s ease-in-out infinite; animation-delay: 5s; }
-.emoji-7 { top: 15%; left: 85%; animation: floatSlow 17s ease-in-out infinite; animation-delay: 0.5s; }
-.emoji-8 { top: 30%; left: 90%; animation: floatMedium 11s ease-in-out infinite; animation-delay: 2.5s; }
-.emoji-9 { top: 45%; right: 2%; animation: floatGentle 19s ease-in-out infinite; animation-delay: 4.5s; }
-.emoji-10 { top: 75%; left: 88%; animation: floatSlow 20s ease-in-out infinite; animation-delay: 1.5s; }
-.emoji-11 { top: 90%; left: 10%; animation: floatMedium 14s ease-in-out infinite; animation-delay: 3.5s; }
+/* Включаем анимации только после появления смайликов */
+.floating-emojis.appearing .emoji {
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.6, 1.0) !important;
+    animation-iteration-count: infinite !important;
+    animation-fill-mode: both !important;
+    will-change: transform !important;
+}
+
+/* Переопределяем позиционирование смайликов - изначально без анимаций */
+.emoji-1 { top: 10% !important; left: 5% !important; animation: none !important; }
+.emoji-2 { top: 20% !important; right: 8% !important; animation: none !important; }
+.emoji-3 { top: 35% !important; left: 3% !important; animation: none !important; }
+.emoji-4 { top: 50% !important; right: 5% !important; animation: none !important; }
+.emoji-5 { top: 65% !important; left: 7% !important; animation: none !important; }
+.emoji-6 { top: 80% !important; right: 6% !important; animation: none !important; }
+.emoji-7 { top: 15% !important; left: 85% !important; animation: none !important; }
+.emoji-8 { top: 30% !important; left: 90% !important; animation: none !important; }
+.emoji-9 { top: 45% !important; right: 2% !important; animation: none !important; }
+.emoji-10 { top: 75% !important; left: 88% !important; animation: none !important; }
+.emoji-11 { top: 90% !important; left: 10% !important; animation: none !important; }
+
+/* Включаем анимации только после появления смайликов */
+.floating-emojis.appearing .emoji-1 { animation: floatSlow 12s ease-in-out infinite !important; animation-delay: 0s !important; }
+.floating-emojis.appearing .emoji-2 { animation: floatMedium 15s ease-in-out infinite !important; animation-delay: 2s !important; }
+.floating-emojis.appearing .emoji-3 { animation: floatGentle 18s ease-in-out infinite !important; animation-delay: 4s !important; }
+.floating-emojis.appearing .emoji-4 { animation: floatSlow 14s ease-in-out infinite !important; animation-delay: 1s !important; }
+.floating-emojis.appearing .emoji-5 { animation: floatMedium 16s ease-in-out infinite !important; animation-delay: 3s !important; }
+.floating-emojis.appearing .emoji-6 { animation: floatGentle 13s ease-in-out infinite !important; animation-delay: 5s !important; }
+.floating-emojis.appearing .emoji-7 { animation: floatSlow 17s ease-in-out infinite !important; animation-delay: 0.5s !important; }
+.floating-emojis.appearing .emoji-8 { animation: floatMedium 11s ease-in-out infinite !important; animation-delay: 2.5s !important; }
+.floating-emojis.appearing .emoji-9 { animation: floatGentle 19s ease-in-out infinite !important; animation-delay: 4.5s !important; }
+.floating-emojis.appearing .emoji-10 { animation: floatSlow 20s ease-in-out infinite !important; animation-delay: 1.5s !important; }
+.floating-emojis.appearing .emoji-11 { animation: floatMedium 14s ease-in-out infinite !important; animation-delay: 3.5s !important; }
 
 /* Анимации парения смайликов */
 @keyframes floatSlow {
