@@ -59,13 +59,15 @@
             enableAnimations: true
         },
         transition: {
-            // Новые тайминги анимации перехода (в миллисекундах)
-            backgroundTransitionDelay: 0,   // Фон и звезды/смайлики меняются сразу
-            backgroundTransitionDuration: 2000, // Длительность плавной смены (2с)
-            titleAppearDelay: 1000,         // Заголовок появляется на 1с
-            buttonsStartDelay: 1200,        // Кнопки начинают появляться на 1.2с
+            // Новые тайминги для Ripple анимации (в миллисекундах)
+            starDissolveDelay: 500,         // Звезды начинают растворяться
+            starDissolveDuration: 1500,     // Длительность растворения звезд  
+            rippleStartDelay: 800,          // Ripple начинается
+            rippleDuration: 2500,           // Длительность Ripple расширения
+            titleAppearDelay: 2000,         // Заголовок появляется
+            buttonsStartDelay: 2200,        // Кнопки начинают появляться  
             buttonInterval: 200,            // Интервал между кнопками 200мс
-            totalDuration: 3000             // Общая длительность перехода (3с)
+            totalDuration: 4000             // Общая длительность перехода (4с)
         }
     };
 
@@ -94,56 +96,54 @@
     };
 
     /**
-     * Анимация перехода от космического к светлому дизайну
+     * Анимация перехода с Ripple эффектом
      */
     const startCosmicToLightTransition = async () => {
-        console.log('🌌➡️☀️ Запуск плавной анимации перехода от космического к светлому дизайну...');
+        console.log('🌊✨ Запуск Ripple анимации перехода от космического к светлому дизайну...');
 
         try {
             const starrySky = document.getElementById('starrySky');
-            const floatingEmojis = document.getElementById('floatingEmojis');
+            const themeRippleOverlay = document.getElementById('themeRippleOverlay');
             const screenTitle = document.getElementById('screenTitle');
             const nicotineButtons = document.querySelectorAll('.nicotine-button');
-            const htmlElement = document.documentElement;
-            const bodyElement = document.body;
 
-            // Фаза 1: Начальное состояние - показываем только космический фон со звездами
-            console.log('🌌 Фаза 1: Начальное космическое состояние (только фон и звезды)');
-            
-            // Фаза 2: Одновременный запуск смены фона и звезд/смайликов (0с)
+            // Фаза 1: Начальное состояние - показываем только темный космический фон со звездами
+            console.log('🌌 Фаза 1: Начальное космическое состояние (темный фон + звезды)');
+
+            // Фаза 2: Растворение звезд в частицы света (0.5с)
             setTimeout(() => {
-                console.log('🌅 Фаза 2: Плавное увеличение яркости фона и смена звезд на смайлики');
-                
-                // Запускаем смену фона
-                htmlElement.classList.add('light-theme');
-                bodyElement.classList.add('light-theme');
-                
-                // Одновременно запускаем исчезновение звезд
+                console.log('⭐💫 Фаза 2: Звезды растворяются в частицы света');
                 if (starrySky) {
-                    starrySky.classList.add('fading');
-                }
-                
-                // И появление смайликов
-                if (floatingEmojis) {
-                    floatingEmojis.classList.remove('hidden');
-                    floatingEmojis.classList.add('appearing');
+                    starrySky.classList.add('dissolving');
                 }
                 
                 if (tg?.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('light');
                 }
-            }, config.transition.backgroundTransitionDelay);
+            }, config.transition.starDissolveDelay);
 
-            // Фаза 3: Появление заголовка (1с)
+            // Фаза 3: Запуск Ripple эффекта (0.8с)
             setTimeout(() => {
-                console.log('📝 Фаза 3: Появление заголовка');
+                console.log('🌊 Фаза 3: Запуск Ripple эффекта - светлый круг расширяется от центра');
+                if (themeRippleOverlay) {
+                    themeRippleOverlay.classList.add('expanding');
+                }
+                
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
+                }
+            }, config.transition.rippleStartDelay);
+
+            // Фаза 4: Появление заголовка (2с)
+            setTimeout(() => {
+                console.log('📝 Фаза 4: Появление заголовка');
                 if (screenTitle) {
                     screenTitle.classList.remove('hidden');
                     screenTitle.classList.add('appearing');
-                    // Также сразу применяем стиль светлой темы
+                    // Сразу применяем стиль светлой темы
                     setTimeout(() => {
                         screenTitle.classList.add('light-theme');
-                    }, 500);
+                    }, 300);
                 }
                 
                 if (tg?.HapticFeedback) {
@@ -151,7 +151,7 @@
                 }
             }, config.transition.titleAppearDelay);
 
-            // Фаза 4: Поочередное появление кнопок (1.2с + интервалы)
+            // Фаза 5: Поочередное появление кнопок (2.2с + интервалы)
             nicotineButtons.forEach((button, index) => {
                 const delay = config.transition.buttonsStartDelay + (index * config.transition.buttonInterval);
                 
@@ -166,9 +166,9 @@
                 }, delay);
             });
 
-            // Фаза 5: Завершение перехода (3с)
+            // Фаза 6: Завершение перехода (4с)
             setTimeout(() => {
-                console.log('✅ Переход завершен - кнопки активны');
+                console.log('✅ Ripple анимация завершена - кнопки активны');
                 transitionCompleted = true;
                 
                 // Удаляем звездное небо из DOM после завершения анимации
@@ -176,19 +176,25 @@
                     starrySky.remove();
                 }
                 
+                // Финальный haptic feedback
                 if (tg?.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('success');
                 }
                 
-                console.log('🎉 Плавная анимация перехода завершена! Длительность: 3 секунды');
+                console.log('🎉 Потрясающая Ripple анимация завершена! Длительность: 4 секунды');
             }, config.transition.totalDuration);
 
         } catch (error) {
-            console.error('❌ Ошибка во время анимации перехода:', error);
-            handleError(error, 'CosmicToLightTransition');
+            console.error('❌ Ошибка во время Ripple анимации:', error);
+            handleError(error, 'RippleTransition');
             // В случае ошибки принудительно показываем весь контент
+            const themeRippleOverlay = document.getElementById('themeRippleOverlay');
             const screenTitle = document.getElementById('screenTitle');
             const nicotineButtons = document.querySelectorAll('.nicotine-button');
+            
+            if (themeRippleOverlay) {
+                themeRippleOverlay.classList.add('expanding');
+            }
             
             if (screenTitle) {
                 screenTitle.classList.remove('hidden');
