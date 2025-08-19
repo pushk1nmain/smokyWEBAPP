@@ -435,7 +435,7 @@ body {
 }
 
 .floating-emojis-light .emoji-2 {
-    top: 8%;
+    top: 3%; /* Поднимаем 🚀 выше в зону градиента */
     right: 5%;
     animation: floatMedium 10s infinite;
     animation-delay: 1.5s;
@@ -470,7 +470,7 @@ body {
 }
 
 .floating-emojis-light .emoji-7 {
-    top: 25%;
+    top: 8%; /* Поднимаем 🤝 выше в зону градиента */
     right: 3%;
     animation: floatSlow 13s infinite;
     animation-delay: 1s;
