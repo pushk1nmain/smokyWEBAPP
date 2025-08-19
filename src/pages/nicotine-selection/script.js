@@ -59,15 +59,15 @@
             enableAnimations: true
         },
         transition: {
-            // Тайминги для organic gentle анимации с инерцией
+            // Тайминги для GPU-оптимизированной анимации
             starDissolveDelay: 500,         // Звезды начинают растворяться
             starDissolveDuration: 1500,     // Длительность растворения звезд  
-            rippleStartDelay: 800,          // Ripple начинается
-            rippleDuration: 2500,           // Длительность Ripple расширения
-            titleAppearDelay: 2000,         // Заголовок появляется
-            buttonsStartDelay: 2400,        // Кнопки начинают появляться (позже)
+            rippleStartDelay: 800,          // GPU Ripple начинается
+            rippleDuration: 1800,           // Оптимизированная длительность Ripple (1.8с)
+            titleAppearDelay: 1800,         // Заголовок появляется раньше
+            buttonsStartDelay: 2000,        // Кнопки начинают появляться раньше
             buttonInterval: 300,            // Медленный интервал для плавности 300мс
-            totalDuration: 5500             // Общая длительность перехода (5.5с)
+            totalDuration: 4000             // Общая длительность перехода (4с)
         }
     };
 
@@ -104,6 +104,7 @@
         try {
             const starrySky = document.getElementById('starrySky');
             const themeRippleOverlay = document.getElementById('themeRippleOverlay');
+            const rippleCircle = document.getElementById('rippleCircle');
             const screenTitle = document.getElementById('screenTitle');
             const nicotineButtons = document.querySelectorAll('.nicotine-button');
 
@@ -122,11 +123,12 @@
                 }
             }, config.transition.starDissolveDelay);
 
-            // Фаза 3: Запуск Ripple эффекта (0.8с)
+            // Фаза 3: Запуск GPU-оптимизированного Ripple эффекта (0.8с)
             setTimeout(() => {
-                console.log('🌊 Фаза 3: Запуск Ripple эффекта - светлый круг расширяется от центра');
-                if (themeRippleOverlay) {
-                    themeRippleOverlay.classList.add('expanding');
+                console.log('🚀 Фаза 3: Запуск GPU-оптимизированного Ripple эффекта - светлый круг расширяется');
+                if (rippleCircle) {
+                    rippleCircle.classList.add('expanding');
+                    console.log('✅ Ripple circle анимация запущена (GPU-ускорена)');
                 }
                 
                 if (tg?.HapticFeedback) {
@@ -188,12 +190,12 @@
             console.error('❌ Ошибка во время Ripple анимации:', error);
             handleError(error, 'RippleTransition');
             // В случае ошибки принудительно показываем весь контент
-            const themeRippleOverlay = document.getElementById('themeRippleOverlay');
+            const rippleCircle = document.getElementById('rippleCircle');
             const screenTitle = document.getElementById('screenTitle');
             const nicotineButtons = document.querySelectorAll('.nicotine-button');
             
-            if (themeRippleOverlay) {
-                themeRippleOverlay.classList.add('expanding');
+            if (rippleCircle) {
+                rippleCircle.classList.add('expanding');
             }
             
             if (screenTitle) {
