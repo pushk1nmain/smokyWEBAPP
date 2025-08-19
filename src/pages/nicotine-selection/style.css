@@ -430,78 +430,78 @@ body {
 .floating-emojis-light .emoji-1 {
     top: 5%;
     left: 5%;
-    animation: floatSlow 12s infinite;
-    animation-delay: 0s;
+    animation: floatSlow 12s infinite !important;
+    animation-delay: 0s !important;
 }
 
 .floating-emojis-light .emoji-2 {
     top: 3% !important; /* Поднимаем 🚀 выше в зону градиента */
     right: 12% !important; /* Отодвигаем дальше от центра чтобы не перекрывал заголовок */
-    animation: floatMedium 10s infinite;
-    animation-delay: 1.5s;
+    animation: floatMedium 10s infinite !important;
+    animation-delay: 1.5s !important;
 }
 
 .floating-emojis-light .emoji-3 {
     top: 92%;
     left: 8%;
-    animation: floatGentle 8s infinite;
-    animation-delay: 3s;
+    animation: floatGentle 8s infinite !important;
+    animation-delay: 3s !important;
 }
 
 .floating-emojis-light .emoji-4 {
     top: 95%;
     right: 8%;
-    animation: floatSlow 14s infinite;
-    animation-delay: 4.5s;
+    animation: floatSlow 14s infinite !important;
+    animation-delay: 4.5s !important;
 }
 
 .floating-emojis-light .emoji-5 {
     top: 35%;
     left: 2%;
-    animation: floatMedium 11s infinite;
-    animation-delay: 2s;
+    animation: floatMedium 11s infinite !important;
+    animation-delay: 2s !important;
 }
 
 .floating-emojis-light .emoji-6 {
     top: 75%;
     left: 3%;
-    animation: floatGentle 9s infinite;
-    animation-delay: 3.5s;
+    animation: floatGentle 9s infinite !important;
+    animation-delay: 3.5s !important;
 }
 
 .floating-emojis-light .emoji-7 {
     top: 8% !important; /* Поднимаем 🤝 выше в зону градиента */
-    left: 5% !important; /* Переносим на левую сторону чтобы не перекрывал заголовок */
-    animation: floatSlow 13s infinite;
-    animation-delay: 1s;
+    left: 15% !important; /* Сдвигаем правее чтобы не накладывался на 🔥 */
+    animation: floatSlow 13s infinite !important;
+    animation-delay: 1s !important;
 }
 
 .floating-emojis-light .emoji-8 {
     top: 65%;
     right: 2%;
-    animation: floatMedium 10s infinite;
-    animation-delay: 5s;
+    animation: floatMedium 10s infinite !important;
+    animation-delay: 5s !important;
 }
 
 .floating-emojis-light .emoji-9 {
     top: 45%;
     left: 1%;
-    animation: floatGentle 7s infinite;
-    animation-delay: 4s;
+    animation: floatGentle 7s infinite !important;
+    animation-delay: 4s !important;
 }
 
 .floating-emojis-light .emoji-10 {
     top: 15%;
     left: 2%;
-    animation: floatSlow 15s infinite;
-    animation-delay: 2.5s;
+    animation: floatSlow 15s infinite !important;
+    animation-delay: 2.5s !important;
 }
 
 .floating-emojis-light .emoji-11 {
     top: 55%;
     right: 1%;
-    animation: floatMedium 9s infinite;
-    animation-delay: 5.5s;
+    animation: floatMedium 9s infinite !important;
+    animation-delay: 5.5s !important;
 }
 
 /* GPU-оптимизированная Ripple анимация через clip-path */
