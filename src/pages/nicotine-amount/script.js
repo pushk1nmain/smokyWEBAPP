@@ -498,56 +498,10 @@
     };
 
     /**
-     * Показ модального окна с ошибкой валидации
-     */
-    const showAmountErrorModal = () => {
-        const modal = document.getElementById('amountErrorModal');
-        const okButton = document.getElementById('amountErrorOkButton');
-        
-        // Показываем модальное окно
-        modal.classList.remove('hidden');
-        
-        // Haptic feedback при показе модального окна
-        if (tg?.HapticFeedback) {
-            tg.HapticFeedback.notificationOccurred('error');
-        }
-        
-        // Обработчик кнопки "OK"
-        const handleOkClick = () => {
-            modal.classList.add('hidden');
-            
-            // Haptic feedback для кнопки OK
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
-            
-            // Фокус на поле ввода
-            const amountInput = document.getElementById('amountInput');
-            if (amountInput) {
-                amountInput.focus();
-            }
-            
-            // Очищаем обработчик
-            okButton.removeEventListener('click', handleOkClick);
-        };
-        
-        okButton.addEventListener('click', handleOkClick);
-        
-        // Обработчик клика по overlay для закрытия модального окна
-        const modalOverlay = document.getElementById('amountErrorOverlay');
-        const handleOverlayClick = () => {
-            handleOkClick();
-            modalOverlay.removeEventListener('click', handleOverlayClick);
-        };
-        modalOverlay.addEventListener('click', handleOverlayClick);
-    };
-
-    /**
      * Переход вперед
      */
     const goForward = () => {
         if (!currentAmount || currentAmount < 1 || currentAmount > 60) {
-            showAmountErrorModal();
             return;
         }
 
