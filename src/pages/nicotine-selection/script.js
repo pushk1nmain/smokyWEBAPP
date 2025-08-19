@@ -59,16 +59,13 @@
             enableAnimations: true
         },
         transition: {
-            // Тайминги анимации перехода (в миллисекундах)
-            starsDisappearDelay: 1000,      // Когда звезды начинают исчезать
-            starsDisappearDuration: 1500,   // Длительность исчезновения звезд
-            backgroundTransitionDelay: 500, // Когда фон начинает меняться
-            backgroundTransitionDuration: 3000, // Длительность смены фона
-            emojisAppearDelay: 2500,        // Когда смайлики появляются
-            emojisAppearDuration: 1000,     // Длительность появления смайликов
-            contentAppearDelay: 3500,       // Когда контент появляется
-            contentAppearDuration: 800,     // Длительность появления контента
-            totalDuration: 4500             // Общая длительность перехода
+            // Новые тайминги анимации перехода (в миллисекундах)
+            backgroundTransitionDelay: 0,   // Фон и звезды/смайлики меняются сразу
+            backgroundTransitionDuration: 2000, // Длительность плавной смены (2с)
+            titleAppearDelay: 1000,         // Заголовок появляется на 1с
+            buttonsStartDelay: 1200,        // Кнопки начинают появляться на 1.2с
+            buttonInterval: 200,            // Интервал между кнопками 200мс
+            totalDuration: 3000             // Общая длительность перехода (3с)
         }
     };
 
@@ -100,83 +97,78 @@
      * Анимация перехода от космического к светлому дизайну
      */
     const startCosmicToLightTransition = async () => {
-        console.log('🌌➡️☀️ Запуск анимации перехода от космического к светлому дизайну...');
+        console.log('🌌➡️☀️ Запуск плавной анимации перехода от космического к светлому дизайну...');
 
         try {
             const starrySky = document.getElementById('starrySky');
             const floatingEmojis = document.getElementById('floatingEmojis');
-            const contentSection = document.getElementById('contentSection');
             const screenTitle = document.getElementById('screenTitle');
+            const nicotineButtons = document.querySelectorAll('.nicotine-button');
             const htmlElement = document.documentElement;
             const bodyElement = document.body;
 
-            // Фаза 1: Начальное состояние (0-1с) - показываем космический фон
-            console.log('🌌 Фаза 1: Начальное космическое состояние');
+            // Фаза 1: Начальное состояние - показываем только космический фон со звездами
+            console.log('🌌 Фаза 1: Начальное космическое состояние (только фон и звезды)');
             
-            // Фаза 2: Запуск изменения фона (0.5с)
+            // Фаза 2: Одновременный запуск смены фона и звезд/смайликов (0с)
             setTimeout(() => {
-                console.log('🌈 Фаза 2: Начало изменения фона');
+                console.log('🌅 Фаза 2: Плавное увеличение яркости фона и смена звезд на смайлики');
+                
+                // Запускаем смену фона
                 htmlElement.classList.add('light-theme');
                 bodyElement.classList.add('light-theme');
+                
+                // Одновременно запускаем исчезновение звезд
+                if (starrySky) {
+                    starrySky.classList.add('fading');
+                }
+                
+                // И появление смайликов
+                if (floatingEmojis) {
+                    floatingEmojis.classList.remove('hidden');
+                    floatingEmojis.classList.add('appearing');
+                }
                 
                 if (tg?.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('light');
                 }
             }, config.transition.backgroundTransitionDelay);
 
-            // Фаза 3: Исчезновение звезд (1с)
+            // Фаза 3: Появление заголовка (1с)
             setTimeout(() => {
-                console.log('⭐ Фаза 3: Исчезновение звезд');
-                if (starrySky) {
-                    starrySky.classList.add('disappearing');
-                    // Добавляем класс исчезновения к каждой звезде
-                    const stars = starrySky.querySelectorAll('.star');
-                    stars.forEach(star => {
-                        star.classList.add('disappearing');
-                    });
-                }
-                
-                if (tg?.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('medium');
-                }
-            }, config.transition.starsDisappearDelay);
-
-            // Фаза 4: Появление смайликов (2.5с)
-            setTimeout(() => {
-                console.log('😊 Фаза 4: Появление парящих смайликов');
-                if (floatingEmojis) {
-                    floatingEmojis.classList.remove('hidden');
-                    floatingEmojis.classList.add('visible');
-                }
-                
-                if (tg?.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('medium');
-                }
-            }, config.transition.emojisAppearDelay);
-
-            // Фаза 5: Изменение цвета заголовка (3с)
-            setTimeout(() => {
-                console.log('🎨 Фаза 5: Изменение цвета заголовка');
+                console.log('📝 Фаза 3: Появление заголовка');
                 if (screenTitle) {
-                    screenTitle.classList.add('light-theme');
-                }
-            }, config.transition.emojisAppearDelay + 500);
-
-            // Фаза 6: Появление контента (3.5с)
-            setTimeout(() => {
-                console.log('📝 Фаза 6: Появление контента экрана');
-                if (contentSection) {
-                    contentSection.classList.add('visible');
+                    screenTitle.classList.remove('hidden');
+                    screenTitle.classList.add('appearing');
+                    // Также сразу применяем стиль светлой темы
+                    setTimeout(() => {
+                        screenTitle.classList.add('light-theme');
+                    }, 500);
                 }
                 
                 if (tg?.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
+                    tg.HapticFeedback.impactOccurred('light');
                 }
-            }, config.transition.contentAppearDelay);
+            }, config.transition.titleAppearDelay);
 
-            // Фаза 7: Завершение перехода (4.5с)
+            // Фаза 4: Поочередное появление кнопок (1.2с + интервалы)
+            nicotineButtons.forEach((button, index) => {
+                const delay = config.transition.buttonsStartDelay + (index * config.transition.buttonInterval);
+                
+                setTimeout(() => {
+                    console.log(`🔘 Появление кнопки ${index + 1}: ${button.getAttribute('data-type')}`);
+                    button.classList.remove('hidden');
+                    button.classList.add('appearing');
+                    
+                    if (tg?.HapticFeedback && index === 0) {
+                        tg.HapticFeedback.impactOccurred('light');
+                    }
+                }, delay);
+            });
+
+            // Фаза 5: Завершение перехода (3с)
             setTimeout(() => {
-                console.log('✅ Фаза 7: Переход завершен');
+                console.log('✅ Переход завершен - кнопки активны');
                 transitionCompleted = true;
                 
                 // Удаляем звездное небо из DOM после завершения анимации
@@ -184,17 +176,30 @@
                     starrySky.remove();
                 }
                 
-                console.log('🎉 Анимация перехода от космического к светлому дизайну завершена!');
+                if (tg?.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+                
+                console.log('🎉 Плавная анимация перехода завершена! Длительность: 3 секунды');
             }, config.transition.totalDuration);
 
         } catch (error) {
             console.error('❌ Ошибка во время анимации перехода:', error);
             handleError(error, 'CosmicToLightTransition');
-            // В случае ошибки принудительно показываем контент
-            const contentSection = document.getElementById('contentSection');
-            if (contentSection) {
-                contentSection.classList.add('visible');
+            // В случае ошибки принудительно показываем весь контент
+            const screenTitle = document.getElementById('screenTitle');
+            const nicotineButtons = document.querySelectorAll('.nicotine-button');
+            
+            if (screenTitle) {
+                screenTitle.classList.remove('hidden');
+                screenTitle.classList.add('appearing', 'light-theme');
             }
+            
+            nicotineButtons.forEach(button => {
+                button.classList.remove('hidden');
+                button.classList.add('appearing');
+            });
+            
             transitionCompleted = true;
         }
     };

@@ -92,26 +92,28 @@
         <!-- Основной контент -->
         <main class="nicotine-selection-screen">
             <div class="content-section" id="contentSection">
-                <h1 class="screen-title" id="screenTitle">Выберите тип никотина</h1>
+                <!-- Заголовок изначально скрыт -->
+                <h1 class="screen-title hidden" id="screenTitle">Выберите тип никотина</h1>
                 
+                <!-- Кнопки изначально скрыты -->
                 <div class="nicotine-options" id="nicotineOptions">
-                    <button class="nicotine-button" data-type="cigarettes" tabindex="0" aria-label="Сигареты">
+                    <button class="nicotine-button hidden" data-type="cigarettes" data-index="0" tabindex="0" aria-label="Сигареты">
                         <span class="nicotine-text">🚬 Сигареты</span>
                     </button>
                     
-                    <button class="nicotine-button" data-type="vape" tabindex="0" aria-label="Вейп">
+                    <button class="nicotine-button hidden" data-type="vape" data-index="1" tabindex="0" aria-label="Вейп">
                         <span class="nicotine-text">💨 Вейп</span>
                     </button>
                     
-                    <button class="nicotine-button" data-type="iqos" tabindex="0" aria-label="Айкос">
+                    <button class="nicotine-button hidden" data-type="iqos" data-index="2" tabindex="0" aria-label="Айкос">
                         <span class="nicotine-text">📱 Айкос</span>
                     </button>
                     
-                    <button class="nicotine-button" data-type="hookah" tabindex="0" aria-label="Кальян">
+                    <button class="nicotine-button hidden" data-type="hookah" data-index="3" tabindex="0" aria-label="Кальян">
                         <span class="nicotine-text">🪴 Кальян</span>
                     </button>
                     
-                    <button class="nicotine-button" data-type="snus" tabindex="0" aria-label="Снюс">
+                    <button class="nicotine-button hidden" data-type="snus" data-index="4" tabindex="0" aria-label="Снюс">
                         <span class="nicotine-text">🥫 Снюс</span>
                     </button>
                 </div>
