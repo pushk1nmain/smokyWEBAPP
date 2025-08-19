@@ -194,8 +194,8 @@ class RobotAppearanceScreen {
     navigateToNextScreen() {
         console.log('📍 Переход к следующему этапу истории');
         
-        // Пока что переход на welcome экран для тестирования
-        window.location.href = '../welcome/index.html';
+        // Переход на экран сломанного навигатора
+        window.location.href = '../navigator-broken/index.html';
     }
 
     /**

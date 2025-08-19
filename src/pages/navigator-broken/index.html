@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>SmokyApp - Сломанный навигатор</title>
+    
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    
+    <!-- Отключение кэширования для разработки -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Дополнительные мета-теги для борьбы с кэшированием -->
+    <meta name="cache-control" content="no-cache">
+    <meta name="expires" content="0">
+    <meta name="pragma" content="no-cache">
+    
+    <!-- Meta теги для Telegram WebApp -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Звездное небо -->
+        <div class="starry-sky">
+            <div class="star star-1"></div>
+            <div class="star star-2"></div>
+            <div class="star star-3"></div>
+            <div class="star star-4"></div>
+            <div class="star star-5"></div>
+            <div class="star star-6"></div>
+            <div class="star star-7"></div>
+            <div class="star star-8"></div>
+            <div class="star star-9"></div>
+            <div class="star star-10"></div>
+            <div class="star star-11"></div>
+            <div class="star star-12"></div>
+            <div class="star star-13"></div>
+            <div class="star star-14"></div>
+            <div class="star star-15"></div>
+            <div class="star star-16"></div>
+            <div class="star star-17"></div>
+            <div class="star star-18"></div>
+            <div class="star star-19"></div>
+            <div class="star star-20"></div>
+            <div class="star star-21"></div>
+            <div class="star star-22"></div>
+            <div class="star star-23"></div>
+            <div class="star star-24"></div>
+            <div class="star star-25"></div>
+            <div class="star star-26"></div>
+            <div class="star star-27"></div>
+            <div class="star star-28"></div>
+            <div class="star star-29"></div>
+            <div class="star star-30"></div>
+            <!-- Дополнительные звезды для более реалистичного неба -->
+            <div class="star star-31"></div>
+            <div class="star star-32"></div>
+            <div class="star star-33"></div>
+            <div class="star star-34"></div>
+            <div class="star star-35"></div>
+            <div class="star star-36"></div>
+            <div class="star star-37"></div>
+            <div class="star star-38"></div>
+            <div class="star star-39"></div>
+            <div class="star star-40"></div>
+        </div>
+
+        <main class="navigator-broken-screen">
+            <div class="character-section">
+                <div class="navigator-container">
+                    <img src="../../assets/images/navigator.svg" 
+                         alt="Сломанный навигатор" 
+                         class="navigator-character"
+                         loading="eager">
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h1 class="main-title">— Извините за вторжение! Не хотел пугать!</h1>
+                
+                <p class="main-description">
+                    Меня зовут Смоки! В будущем меня отправили на миссию - помочь людям в прошлом бросить курить, но мой навигатор сломался, и я застрял в вашем времени!
+                </p>
+                
+                <div class="action-section">
+                    <button class="common-button" 
+                            id="continueButton"
+                            tabindex="0" 
+                            aria-label="Продолжить историю">
+                        <span class="button-text">Далее</span>
+                        <span class="common-arrow-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Простая загрузка с логотипом Смоки -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-character">
+                <img src="../../assets/icons/smoky_basic.svg" alt="Смоки">
+                <div class="loading-rings">
+                    <div class="loading-ring"></div>
+                    <div class="loading-ring"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="../../config.js"></script>
+    <script src="../../utils/loading-manager.js"></script>
+    <script src="../../utils/error-modal.js"></script>
+    <script src="../../utils/api-client.js"></script>
+    <script src="../../utils/global-console.js"></script>
+    <script src="../../utils/step-router.js"></script>
+    <script src="script.js" defer></script>
+</body>
+</html>
