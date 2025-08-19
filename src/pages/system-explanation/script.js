@@ -1,13 +1,12 @@
 /**
- * SmokyApp - Charger Question Screen JavaScript
- * Скрипт экрана вопроса о зарядке для интеграции с Telegram WebApp API
+ * SmokyApp - System Explanation Screen JavaScript
+ * Скрипт экрана объяснения системы 4 в 1 для интеграции с Telegram WebApp API
  */
 
 (function() {
     // Глобальные переменные и встроенная конфигурация
     let tg = null;
     let isReady = false;
-    let userChoice = null;
 
     // --- Telegram WebApp Keyboard Handling ---
     if (window.Telegram && window.Telegram.WebApp) {
@@ -88,23 +87,23 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 Charger question screen запускается...');
+            console.log('🚀 System explanation screen запускается...');
             
-            // Обновляем шаг в БД при загрузке charger-question экрана
+            // Обновляем шаг в БД при загрузке system-explanation экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 8 (charger-question) через StepRouter');
-                    const success = await window.StepRouter.updateStep(8);
+                    console.log('🔄 Обновляем шаг до 9 (system-explanation) через StepRouter');
+                    const success = await window.StepRouter.updateStep(9);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 8');
+                        console.log('✅ Шаг успешно обновлен до 9');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 8');
+                        console.warn('⚠️ Не удалось обновить шаг до 9');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на charger-question экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на system-explanation экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на charger-question экране:', error);
+                console.error('❌ Ошибка при обновлении шага на system-explanation экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -124,8 +123,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 8) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 8, выполняем переход через StepRouter');
+                        if (currentStep > 9) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 9, выполняем переход через StepRouter');
                             
                             // Принудительно выполняем навигацию к правильному шагу
                             await window.StepRouter.navigateToCurrentStep(true);
@@ -137,7 +136,7 @@
                 }
             }
 
-            // Настройка UI и событий только если остаемся на charger-question screen
+            // Настройка UI и событий только если остаемся на system-explanation screen
             setupUI();
             setupEventListeners();
 
@@ -152,7 +151,7 @@
             }
 
             isReady = true;
-            console.log('✅ Charger question screen успешно инициализирован!');
+            console.log('✅ System explanation screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -193,7 +192,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                console.log(`👤 ID пользователя: ${user.id}. Charger question screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. System explanation screen загружен.`);
 
             } else {
                 // Эта ситуация не должна происходить, но добавим обработку
@@ -220,7 +219,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ Charger question screen загружен в режиме браузера');
+        console.log('✅ System explanation screen загружен в режиме браузера');
     };
 
     /**
@@ -287,97 +286,52 @@
      * Настройка обработчиков событий
      */
     const setupEventListeners = () => {
-        const smokingButton = document.getElementById('smokingButton');
-        const quittingButton = document.getElementById('quittingButton');
-
-        if (smokingButton) {
-            smokingButton.addEventListener('click', () => handleChoiceClick('smoking'));
-            smokingButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleChoiceClick('smoking'));
-            console.log('⚡ Обработчик кнопки "Курю" подключен');
+        const continueButton = document.getElementById('continueButton');
+        if (continueButton) {
+            continueButton.addEventListener('click', handleContinueClick);
+            continueButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleContinueClick());
+            console.log('⚡ Обработчик кнопки Продолжить подключен');
         } else {
-            console.error('❌ Кнопка smokingButton не найдена');
+            console.error('❌ Кнопка continueButton не найдена');
         }
-
-        if (quittingButton) {
-            quittingButton.addEventListener('click', () => handleChoiceClick('quitting'));
-            quittingButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleChoiceClick('quitting'));
-            console.log('⚡ Обработчик кнопки "Хочу бросить" подключен');
-        } else {
-            console.error('❌ Кнопка quittingButton не найдена');
-        }
-
         console.log('⚡ Обработчики событий настроены');
     };
 
     /**
-     * Обработчик нажатия кнопки выбора
+     * Обработчик нажатия кнопки "Продолжить" с бесшовным переходом
      */
-    const handleChoiceClick = (choice) => {
-        console.log(`🚀 handleChoiceClick вызван с выбором: ${choice}`);
-        
-        // Предотвращаем повторные клики
-        if (userChoice) return;
-        
-        userChoice = choice;
-        
+    const handleContinueClick = () => {
+        console.log('🚀 handleContinueClick вызван - Продолжаем после объяснения системы!');
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
         }
         
-        // Визуально выделяем выбранную кнопку
-        highlightSelectedButton(choice);
-        
-        // Бесшовный переход - переходим к следующему экрану сразу после выбора
-        console.log(`🔄 Выполняем бесшовный переход с выбором: ${choice}`);
+        // Бесшовный переход без загрузки для темных экранов истории
+        console.log('🔄 Выполняем бесшовный переход...');
         setTimeout(() => {
-            console.log('⏰ Таймер сработал, вызываем navigateBasedOnChoice...');
-            navigateBasedOnChoice(choice);
-        }, 500); // Небольшая задержка чтобы пользователь увидел выделение кнопки
+            console.log('⏰ Таймер сработал, вызываем navigateToNextScreen...');
+            navigateToNextScreen();
+        }, 300); // Минимальная задержка для haptic feedback
     };
 
     /**
-     * Выделение выбранной кнопки
+     * Навигация к следующему экрану
      */
-    const highlightSelectedButton = (choice) => {
-        const smokingButton = document.getElementById('smokingButton');
-        const quittingButton = document.getElementById('quittingButton');
-        
-        // Убираем выделение с обеих кнопок
-        smokingButton.classList.remove('selected');
-        quittingButton.classList.remove('selected');
-        
-        // Выделяем выбранную кнопку
-        if (choice === 'smoking') {
-            smokingButton.classList.add('selected');
-        } else if (choice === 'quitting') {
-            quittingButton.classList.add('selected');
-        }
-        
-        console.log(`✨ Кнопка "${choice}" выделена`);
-    };
-
-    /**
-     * Навигация в зависимости от выбора пользователя
-     */
-    const navigateBasedOnChoice = async (choice) => {
-        console.log(`🚀 navigateBasedOnChoice вызван с выбором: ${choice}`);
+    const navigateToNextScreen = async () => {
+        console.log('🚀 navigateToNextScreen вызван - переход к следующему экрану');
         
         if (tg?.sendData) {
             try {
-                tg.sendData(JSON.stringify({ 
-                    type: 'charger_question_completed', 
-                    choice: choice,
-                    timestamp: new Date().toISOString() 
-                }));
+                tg.sendData(JSON.stringify({ type: 'system_explanation_completed', timestamp: new Date().toISOString() }));
                 console.log('📤 Данные отправлены в Telegram');
             } catch (error) {
                 console.error('❌ Ошибка отправки данных:', error);
             }
         }
         
-        // Обе кнопки ведут на экран объяснения системы 4 в 1
-        console.log(`🔄 Переходим на экран объяснения системы 4 в 1 (выбор: ${choice})`);
-        window.location.href = '../system-explanation/index.html';
+        // Переход на следующий экран (пока на welcome для тестирования)
+        console.log('🔄 Переходим на следующий экран приложения');
+        window.location.href = '../welcome/index.html';
     };
 
     /**
@@ -448,11 +402,10 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokyChargerQuestion = {
+    window.SmokySystemExplanation = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
-        getUserChoice: () => userChoice,
     };
 
 })();

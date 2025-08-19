@@ -23,6 +23,10 @@ class StepRouter {
         3: '/src/pages/city-input/index.html',        // Ввод города и часового пояса
         4: '/src/pages/how-did-you-know/index.html',  // Источник информации о приложении
         5: '/src/pages/waking-up/index.html',         // Экран пробуждения (начало истории)
+        6: '/src/pages/robot-appearance/index.html',  // Появление робота
+        7: '/src/pages/navigator-broken/index.html',  // Сломанный навигатор
+        8: '/src/pages/charger-question/index.html',  // Вопрос о курении
+        9: '/src/pages/system-explanation/index.html', // Объяснение системы 4 в 1
         // Здесь будут добавляться новые экраны по мере развития приложения
     };
 
@@ -35,6 +39,10 @@ class StepRouter {
         3: 'Ввод города', 
         4: 'Источник информации',
         5: 'Начало истории',
+        6: 'Появление робота',
+        7: 'Сломанный навигатор',
+        8: 'Вопрос о курении',
+        9: 'Система 4 в 1',
     };
 
     /**
