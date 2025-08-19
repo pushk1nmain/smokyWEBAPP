@@ -104,7 +104,6 @@
         try {
             const starrySky = document.getElementById('starrySky');
             const themeRippleOverlay = document.getElementById('themeRippleOverlay');
-            const rippleCircle = document.getElementById('rippleCircle');
             const screenTitle = document.getElementById('screenTitle');
             const nicotineButtons = document.querySelectorAll('.nicotine-button');
 
@@ -123,12 +122,12 @@
                 }
             }, config.transition.starDissolveDelay);
 
-            // Фаза 3: Запуск GPU-оптимизированного Ripple эффекта (0.8с)
+            // Фаза 3: Запуск оптимизированного Ripple эффекта (0.8с)
             setTimeout(() => {
-                console.log('🚀 Фаза 3: Запуск GPU-оптимизированного Ripple эффекта - светлый круг расширяется');
-                if (rippleCircle) {
-                    rippleCircle.classList.add('expanding');
-                    console.log('✅ Ripple circle анимация запущена (GPU-ускорена)');
+                console.log('🚀 Фаза 3: Запуск оптимизированного Ripple эффекта - светлый круг расширяется');
+                if (themeRippleOverlay) {
+                    themeRippleOverlay.classList.add('expanding');
+                    console.log('✅ Theme ripple overlay анимация запущена');
                 }
                 
                 if (tg?.HapticFeedback) {
@@ -190,12 +189,12 @@
             console.error('❌ Ошибка во время Ripple анимации:', error);
             handleError(error, 'RippleTransition');
             // В случае ошибки принудительно показываем весь контент
-            const rippleCircle = document.getElementById('rippleCircle');
+            const themeRippleOverlay = document.getElementById('themeRippleOverlay');
             const screenTitle = document.getElementById('screenTitle');
             const nicotineButtons = document.querySelectorAll('.nicotine-button');
             
-            if (rippleCircle) {
-                rippleCircle.classList.add('expanding');
+            if (themeRippleOverlay) {
+                themeRippleOverlay.classList.add('expanding');
             }
             
             if (screenTitle) {
