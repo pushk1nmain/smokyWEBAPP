@@ -65,9 +65,9 @@
             rippleStartDelay: 800,          // Ripple начинается
             rippleDuration: 2500,           // Длительность Ripple расширения
             titleAppearDelay: 2000,         // Заголовок появляется
-            buttonsStartDelay: 2200,        // Кнопки начинают появляться  
-            buttonInterval: 200,            // Интервал между кнопками 200мс
-            totalDuration: 4000             // Общая длительность перехода (4с)
+            buttonsStartDelay: 2300,        // Кнопки начинают появляться (позже для лучшего эффекта)
+            buttonInterval: 120,            // Быстрый интервал между кнопками 120мс
+            totalDuration: 4200             // Общая длительность перехода (4.2с)
         }
     };
 

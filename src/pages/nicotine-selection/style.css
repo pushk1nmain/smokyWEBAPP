@@ -148,7 +148,6 @@ body {
     font-size: 18px;
     font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-duration) ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -159,16 +158,28 @@ body {
     align-self: center;
     filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.4));
     
-    /* Изначально скрыта */
+    /* Изначально скрыта с красивой предустановкой */
     opacity: 0;
-    transform: translateY(30px) scale(0.8);
-    transition: all 0.5s ease-out;
+    transform: translateY(40px) scale(0.7) rotateX(20deg);
+    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.4)) blur(2px);
+    
+    /* Плавные переходы для всех свойств */
+    transition: 
+        opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+        transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.3s ease,
+        background 0.3s ease;
 }
 
-/* Кнопка появляется */
+/* Кнопка появляется с spring эффектом */
 .nicotine-button.appearing {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotateX(0deg);
+    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.4)) blur(0px);
+    
+    /* Добавляем легкий "отскок" после появления */
+    animation: buttonBounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 .nicotine-button::before {
@@ -617,6 +628,28 @@ body {
     25% { transform: translateX(10px) translateY(-15px); }
     50% { transform: translateX(-5px) translateY(-25px); }
     75% { transform: translateX(15px) translateY(-10px); }
+}
+
+/* Современная spring анимация для кнопок */
+@keyframes buttonBounceIn {
+    0% {
+        transform: translateY(0) scale(1) rotateX(0deg);
+    }
+    20% {
+        transform: translateY(-5px) scale(1.05) rotateX(-2deg);
+    }
+    40% {
+        transform: translateY(2px) scale(0.98) rotateX(1deg);
+    }
+    60% {
+        transform: translateY(-2px) scale(1.02) rotateX(-0.5deg);
+    }
+    80% {
+        transform: translateY(1px) scale(0.99) rotateX(0.2deg);
+    }
+    100% {
+        transform: translateY(0) scale(1) rotateX(0deg);
+    }
 }
 
 /* Адаптивность */
