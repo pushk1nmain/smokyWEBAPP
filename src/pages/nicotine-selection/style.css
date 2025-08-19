@@ -401,7 +401,7 @@ body {
         #ffffff;
 }
 
-/* Смайлики внутри светлой темы */
+/* Смайлики в светлой теме - точно соответствуют main.css */
 .floating-emojis-light {
     position: absolute;
     top: 0;
@@ -410,36 +410,99 @@ body {
     height: 100%;
     pointer-events: none;
     overflow: hidden;
-    opacity: 0;
-    animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards;
-    animation-delay: 0.8s; /* Появляются после начала ripple */
+    opacity: 1;
 }
 
-/* Позиционирование смайликов в светлой теме - копируем из основного паттерна */
-.floating-emojis-light .emoji-1 { top: 10% !important; left: 5% !important; }
-.floating-emojis-light .emoji-2 { top: 20% !important; right: 8% !important; }
-.floating-emojis-light .emoji-3 { top: 35% !important; left: 3% !important; }
-.floating-emojis-light .emoji-4 { top: 50% !important; right: 5% !important; }
-.floating-emojis-light .emoji-5 { top: 65% !important; left: 7% !important; }
-.floating-emojis-light .emoji-6 { top: 80% !important; right: 6% !important; }
-.floating-emojis-light .emoji-7 { top: 15% !important; left: 85% !important; }
-.floating-emojis-light .emoji-8 { top: 30% !important; left: 90% !important; }
-.floating-emojis-light .emoji-9 { top: 45% !important; right: 2% !important; }
-.floating-emojis-light .emoji-10 { top: 75% !important; left: 88% !important; }
-.floating-emojis-light .emoji-11 { top: 90% !important; left: 10% !important; }
+/* Базовые стили смайликов в светлой теме - точно как в main.css */
+.floating-emojis-light .emoji {
+    position: absolute;
+    font-size: 20px; /* Точно как в main.css */
+    opacity: 0.3; /* Точно как в main.css */
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.6, 1.0);
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+    user-select: none;
+    will-change: transform;
+    pointer-events: none;
+}
 
-/* Включаем анимации парения для смайликов в светлой теме */
-.floating-emojis-light .emoji-1 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatSlow 12s ease-in-out infinite !important; animation-delay: 0.8s, 2s !important; }
-.floating-emojis-light .emoji-2 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatMedium 15s ease-in-out infinite !important; animation-delay: 0.9s, 4s !important; }
-.floating-emojis-light .emoji-3 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatGentle 18s ease-in-out infinite !important; animation-delay: 1.0s, 6s !important; }
-.floating-emojis-light .emoji-4 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatSlow 14s ease-in-out infinite !important; animation-delay: 1.1s, 3s !important; }
-.floating-emojis-light .emoji-5 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatMedium 16s ease-in-out infinite !important; animation-delay: 1.2s, 5s !important; }
-.floating-emojis-light .emoji-6 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatGentle 13s ease-in-out infinite !important; animation-delay: 1.3s, 7s !important; }
-.floating-emojis-light .emoji-7 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatSlow 17s ease-in-out infinite !important; animation-delay: 1.4s, 2.5s !important; }
-.floating-emojis-light .emoji-8 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatMedium 11s ease-in-out infinite !important; animation-delay: 1.5s, 4.5s !important; }
-.floating-emojis-light .emoji-9 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatGentle 19s ease-in-out infinite !important; animation-delay: 1.6s, 6.5s !important; }
-.floating-emojis-light .emoji-10 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatSlow 20s ease-in-out infinite !important; animation-delay: 1.7s, 3.5s !important; }
-.floating-emojis-light .emoji-11 { animation: emojiMaterialize var(--emoji-materialize-duration) ease-out forwards, floatMedium 14s ease-in-out infinite !important; animation-delay: 1.8s, 5.5s !important; }
+/* Позиционирование смайликов светлой темы - точно как в main.css */
+.floating-emojis-light .emoji-1 {
+    top: 5%;
+    left: 5%;
+    animation: floatSlow 12s infinite;
+    animation-delay: 0s;
+}
+
+.floating-emojis-light .emoji-2 {
+    top: 8%;
+    right: 5%;
+    animation: floatMedium 10s infinite;
+    animation-delay: 1.5s;
+}
+
+.floating-emojis-light .emoji-3 {
+    top: 92%;
+    left: 8%;
+    animation: floatGentle 8s infinite;
+    animation-delay: 3s;
+}
+
+.floating-emojis-light .emoji-4 {
+    top: 95%;
+    right: 8%;
+    animation: floatSlow 14s infinite;
+    animation-delay: 4.5s;
+}
+
+.floating-emojis-light .emoji-5 {
+    top: 35%;
+    left: 2%;
+    animation: floatMedium 11s infinite;
+    animation-delay: 2s;
+}
+
+.floating-emojis-light .emoji-6 {
+    top: 75%;
+    left: 3%;
+    animation: floatGentle 9s infinite;
+    animation-delay: 3.5s;
+}
+
+.floating-emojis-light .emoji-7 {
+    top: 25%;
+    right: 3%;
+    animation: floatSlow 13s infinite;
+    animation-delay: 1s;
+}
+
+.floating-emojis-light .emoji-8 {
+    top: 65%;
+    right: 2%;
+    animation: floatMedium 10s infinite;
+    animation-delay: 5s;
+}
+
+.floating-emojis-light .emoji-9 {
+    top: 45%;
+    left: 1%;
+    animation: floatGentle 7s infinite;
+    animation-delay: 4s;
+}
+
+.floating-emojis-light .emoji-10 {
+    top: 15%;
+    left: 2%;
+    animation: floatSlow 15s infinite;
+    animation-delay: 2.5s;
+}
+
+.floating-emojis-light .emoji-11 {
+    top: 55%;
+    right: 1%;
+    animation: floatMedium 9s infinite;
+    animation-delay: 5.5s;
+}
 
 /* GPU-оптимизированная Ripple анимация через clip-path */
 .theme-ripple-overlay.expanding {
@@ -585,38 +648,72 @@ body {
 .emoji-10 { top: 75% !important; left: 88% !important; animation: none !important; }
 .emoji-11 { top: 90% !important; left: 10% !important; animation: none !important; }
 
-/* Включаем анимации только после появления смайликов */
+/* Включаем анимации только после появления смайликов - точные тайминги из main.css */
 .floating-emojis.appearing .emoji-1 { animation: floatSlow 12s ease-in-out infinite !important; animation-delay: 0s !important; }
-.floating-emojis.appearing .emoji-2 { animation: floatMedium 15s ease-in-out infinite !important; animation-delay: 2s !important; }
-.floating-emojis.appearing .emoji-3 { animation: floatGentle 18s ease-in-out infinite !important; animation-delay: 4s !important; }
-.floating-emojis.appearing .emoji-4 { animation: floatSlow 14s ease-in-out infinite !important; animation-delay: 1s !important; }
-.floating-emojis.appearing .emoji-5 { animation: floatMedium 16s ease-in-out infinite !important; animation-delay: 3s !important; }
-.floating-emojis.appearing .emoji-6 { animation: floatGentle 13s ease-in-out infinite !important; animation-delay: 5s !important; }
-.floating-emojis.appearing .emoji-7 { animation: floatSlow 17s ease-in-out infinite !important; animation-delay: 0.5s !important; }
-.floating-emojis.appearing .emoji-8 { animation: floatMedium 11s ease-in-out infinite !important; animation-delay: 2.5s !important; }
-.floating-emojis.appearing .emoji-9 { animation: floatGentle 19s ease-in-out infinite !important; animation-delay: 4.5s !important; }
-.floating-emojis.appearing .emoji-10 { animation: floatSlow 20s ease-in-out infinite !important; animation-delay: 1.5s !important; }
-.floating-emojis.appearing .emoji-11 { animation: floatMedium 14s ease-in-out infinite !important; animation-delay: 3.5s !important; }
+.floating-emojis.appearing .emoji-2 { animation: floatMedium 10s ease-in-out infinite !important; animation-delay: 1.5s !important; }
+.floating-emojis.appearing .emoji-3 { animation: floatGentle 8s ease-in-out infinite !important; animation-delay: 3s !important; }
+.floating-emojis.appearing .emoji-4 { animation: floatSlow 14s ease-in-out infinite !important; animation-delay: 4.5s !important; }
+.floating-emojis.appearing .emoji-5 { animation: floatMedium 11s ease-in-out infinite !important; animation-delay: 2s !important; }
+.floating-emojis.appearing .emoji-6 { animation: floatGentle 9s ease-in-out infinite !important; animation-delay: 3.5s !important; }
+.floating-emojis.appearing .emoji-7 { animation: floatSlow 13s ease-in-out infinite !important; animation-delay: 1s !important; }
+.floating-emojis.appearing .emoji-8 { animation: floatMedium 10s ease-in-out infinite !important; animation-delay: 5s !important; }
+.floating-emojis.appearing .emoji-9 { animation: floatGentle 7s ease-in-out infinite !important; animation-delay: 4s !important; }
+.floating-emojis.appearing .emoji-10 { animation: floatSlow 15s ease-in-out infinite !important; animation-delay: 2.5s !important; }
+.floating-emojis.appearing .emoji-11 { animation: floatMedium 9s ease-in-out infinite !important; animation-delay: 5.5s !important; }
 
-/* Анимации парения смайликов */
+/* Анимации парения смайликов - точно из main.css */
 @keyframes floatSlow {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    25% { transform: translateY(-20px) rotate(5deg); }
-    50% { transform: translateY(-10px) rotate(-3deg); }
-    75% { transform: translateY(-30px) rotate(7deg); }
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    16.67% {
+        transform: translateY(-6px) translateX(2px) rotate(0.5deg);
+    }
+    33.33% {
+        transform: translateY(-8px) translateX(3px) rotate(1deg);
+    }
+    50% {
+        transform: translateY(-5px) translateX(-1px) rotate(-0.3deg);
+    }
+    66.67% {
+        transform: translateY(-10px) translateX(4px) rotate(1.2deg);
+    }
+    83.33% {
+        transform: translateY(-3px) translateX(-2px) rotate(-0.7deg);
+    }
 }
 
 @keyframes floatMedium {
-    0%, 100% { transform: translateY(0px) scale(1); }
-    33% { transform: translateY(-25px) scale(1.1); }
-    66% { transform: translateY(-15px) scale(0.9); }
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    20% {
+        transform: translateY(-4px) translateX(-2px) rotate(-0.5deg);
+    }
+    40% {
+        transform: translateY(-7px) translateX(-3px) rotate(-0.8deg);
+    }
+    60% {
+        transform: translateY(-3px) translateX(2px) rotate(0.4deg);
+    }
+    80% {
+        transform: translateY(-6px) translateX(3px) rotate(0.9deg);
+    }
 }
 
 @keyframes floatGentle {
-    0%, 100% { transform: translateX(0px) translateY(0px); }
-    25% { transform: translateX(10px) translateY(-15px); }
-    50% { transform: translateX(-5px) translateY(-25px); }
-    75% { transform: translateX(15px) translateY(-10px); }
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-3px) translateX(1px) rotate(0.2deg);
+    }
+    50% {
+        transform: translateY(-5px) translateX(-1px) rotate(-0.3deg);
+    }
+    75% {
+        transform: translateY(-2px) translateX(2px) rotate(0.4deg);
+    }
 }
 
 /* Organic gentle settle анимация - имитирует физическую инерцию */
@@ -662,8 +759,9 @@ body {
         gap: 12px;
     }
     
-    .emoji {
-        font-size: 28px;
+    .emoji,
+    .floating-emojis-light .emoji {
+        font-size: 18px; /* Пропорционально уменьшаем как в main.css */
     }
 }
 
@@ -692,9 +790,10 @@ body {
         transform: scale(0.8);
     }
     
-    .emoji {
-        font-size: 24px;
-        opacity: 0.4;
+    .emoji,
+    .floating-emojis-light .emoji {
+        font-size: 18px; /* Консистентно уменьшаем */
+        opacity: 0.3; /* Сохраняем стандартную прозрачность */
     }
 }
 
