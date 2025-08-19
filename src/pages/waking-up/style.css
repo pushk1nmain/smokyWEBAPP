@@ -93,6 +93,11 @@ body {
     text-align: center;
     margin-bottom: 10px; /* Меньше отступ снизу */
     margin-top: 20px; /* Меньше отступ сверху */
+    
+    /* Анимация появления */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out 0s forwards;
 }
 
 .sleeping-person-container {
@@ -137,6 +142,11 @@ body {
     /* Космическое свечение белого цвета */
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
     font-weight: 600;
+    
+    /* Анимация появления */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out 0.1s forwards;
 }
 
 .main-description {
@@ -154,6 +164,11 @@ body {
     /* Космическое свечение белого цвета */
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
     font-weight: 600;
+    
+    /* Анимация появления */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out 0.2s forwards;
 }
 
 /* Кнопка действия */
@@ -161,6 +176,11 @@ body {
     margin: 0px 0 20px 0; /* Чуть увеличиваем расстояние от блока до кнопки */
     position: relative;
     z-index: 3; /* Поверх блока */
+    
+    /* Анимация появления */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out 0.3s forwards;
 }
 
 /* Анимации */
@@ -176,6 +196,18 @@ body {
     }
     75% {
         transform: translateY(-2px) scale(1.02);
+    }
+}
+
+/* Анимация появления элементов */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 

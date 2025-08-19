@@ -131,29 +131,11 @@ class RobotAppearanceScreen {
 
     /**
      * Плавное появление контента с задержкой
-     * Создание эффекта материализации робота
+     * Анимация теперь реализована через CSS, этот метод больше не нужен
      */
     showContentWithDelay() {
-        const elements = [
-            document.querySelector('.character-section'),
-            document.querySelector('.main-title'),
-            document.querySelector('.main-description'),
-            document.querySelector('.action-section')
-        ];
-
-        elements.forEach((element, index) => {
-            if (element) {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(20px)';
-                element.style.transition = 'all 0.6s ease-out';
-                
-                // Начинаем анимацию сразу с минимальными задержками
-                setTimeout(() => {
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
-                }, index * 100); // Уменьшили с 200 + (index * 150) до index * 100
-            }
-        });
+        // Анимация теперь управляется через CSS @keyframes
+        // Элементы автоматически появляются при загрузке страницы
     }
 
     /**
