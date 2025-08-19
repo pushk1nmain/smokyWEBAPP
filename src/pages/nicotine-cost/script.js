@@ -1,6 +1,6 @@
 /**
- * SmokyApp - Nicotine Amount Screen JavaScript
- * Скрипт экрана ввода количества потребления никотина с динамической генерацией контента
+ * SmokyApp - Nicotine Cost Screen JavaScript
+ * Скрипт экрана ввода стоимости никотина с динамической генерацией контента
  */
 
 (function() {
@@ -8,7 +8,7 @@
     let tg = null;
     let isReady = false;
     let selectedNicotineType = null;
-    let currentAmount = null;
+    let currentCost = null;
 
     // --- Telegram WebApp Keyboard Handling ---
     if (window.Telegram && window.Telegram.WebApp) {
@@ -32,47 +32,47 @@
         });
     }
 
-    // Конфигурация типов никотина
-    const nicotineConfig = {
+    // Конфигурация стоимости по типам никотина
+    const nicotineCostConfig = {
         cigarettes: {
-            title: 'Сколько сигарет в день вы выкуриваете?',
-            description: 'Это поможет лучше понять ваши привычки',
-            placeholder: 'Количество сигарет',
+            title: 'Сколько стоит пачка сигарет?',
+            description: 'Укажите среднюю стоимость пачки',
+            placeholder: 'Цена пачки',
             icon: '🚬',
-            unit: 'штук',
-            unitShort: 'шт.'
+            unit: 'пачка',
+            currency: 'руб.'
         },
         vape: {
-            title: 'Сколько банок в неделю вы используете?',
-            description: 'Укажите примерное количество банок жидкости',
-            placeholder: 'Количество банок',
+            title: 'Сколько стоит банка жидкости?',
+            description: 'Укажите стоимость банки вейп-жидкости',
+            placeholder: 'Цена банки',
             icon: '💨',
-            unit: 'банок',
-            unitShort: 'бан.'
+            unit: 'банка жидкости',
+            currency: 'руб.'
         },
         iqos: {
-            title: 'Сколько стиков в день вы выкуриваете?',
-            description: 'Укажите среднее количество стиков',
-            placeholder: 'Количество стиков',
+            title: 'Сколько стоит пачка стиков?',
+            description: 'Укажите стоимость пачки стиков для IQOS',
+            placeholder: 'Цена пачки',
             icon: '🔥',
-            unit: 'стиков',
-            unitShort: 'шт.'
+            unit: 'пачка стиков',
+            currency: 'руб.'
         },
         hookah: {
-            title: 'Сколько сеансов кальяна в неделю?',
-            description: 'Укажите количество сеансов',
-            placeholder: 'Количество сеансов',
+            title: 'Сколько стоит банка забивки?',
+            description: 'Укажите стоимость банки табака для кальяна',
+            placeholder: 'Цена банки',
             icon: '🫧',
-            unit: 'сеансов',
-            unitShort: 'сес.'
+            unit: 'банка забивки',
+            currency: 'руб.'
         },
         snus: {
-            title: 'Сколько банок снюса в неделю?',
-            description: 'Укажите примерное количество банок',
-            placeholder: 'Количество банок',
+            title: 'Сколько стоит банка снюса?',
+            description: 'Укажите стоимость банки снюса',
+            placeholder: 'Цена банки',
             icon: '🏒',
-            unit: 'банок',
-            unitShort: 'бан.'
+            unit: 'банка снюса',
+            currency: 'руб.'
         }
     };
 
@@ -131,9 +131,9 @@
      * Динамическое обновление контента в зависимости от типа никотина
      */
     const updateContentByNicotineType = () => {
-        console.log('🔄 Обновляем контент для типа никотина:', selectedNicotineType);
+        console.log('🔄 Обновляем контент для стоимости типа никотина:', selectedNicotineType);
 
-        const config = nicotineConfig[selectedNicotineType];
+        const config = nicotineCostConfig[selectedNicotineType];
         if (!config) {
             console.error('❌ Неизвестный тип никотина:', selectedNicotineType);
             return;
@@ -152,7 +152,7 @@
         }
 
         // Обновляем placeholder инпута
-        const inputElement = document.getElementById('amountInput');
+        const inputElement = document.getElementById('costInput');
         if (inputElement) {
             inputElement.placeholder = config.placeholder;
         }
@@ -163,7 +163,7 @@
             iconElement.textContent = config.icon;
         }
 
-        console.log('✅ Контент успешно обновлен:', {
+        console.log('✅ Контент стоимости успешно обновлен:', {
             title: config.title,
             icon: config.icon,
             placeholder: config.placeholder
@@ -175,7 +175,7 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 Nicotine amount screen запускается...');
+            console.log('🚀 Nicotine cost screen запускается...');
             
             // Получаем выбранный тип никотина из localStorage
             selectedNicotineType = localStorage.getItem('selectedNicotineType');
@@ -188,21 +188,21 @@
 
             console.log('📍 Выбранный тип никотина:', selectedNicotineType);
 
-            // Обновляем шаг в БД при загрузке nicotine-amount экрана
+            // Обновляем шаг в БД при загрузке nicotine-cost экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 12 (nicotine-amount) через StepRouter');
-                    const success = await window.StepRouter.updateStep(12);
+                    console.log('🔄 Обновляем шаг до 13 (nicotine-cost) через StepRouter');
+                    const success = await window.StepRouter.updateStep(13);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 12');
+                        console.log('✅ Шаг успешно обновлен до 13');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 12');
+                        console.warn('⚠️ Не удалось обновить шаг до 13');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на nicotine-amount экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на nicotine-cost экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на nicotine-amount экране:', error);
+                console.error('❌ Ошибка при обновлении шага на nicotine-cost экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -222,8 +222,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 12) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 12, выполняем переход через StepRouter');
+                        if (currentStep > 13) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 13, выполняем переход через StepRouter');
                             await window.StepRouter.navigateToCurrentStep(true);
                             return;
                         }
@@ -233,7 +233,7 @@
                 }
             }
 
-            // Настройка UI и событий только если остаемся на nicotine-amount screen
+            // Настройка UI и событий только если остаемся на nicotine-cost screen
             updateContentByNicotineType();
             setupUI();
             setupEventListeners();
@@ -249,7 +249,7 @@
             }
 
             isReady = true;
-            console.log('✅ Nicotine amount screen успешно инициализирован!');
+            console.log('✅ Nicotine cost screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -285,7 +285,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                console.log(`👤 ID пользователя: ${user.id}. Nicotine amount screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. Nicotine cost screen загружен.`);
 
             } else {
                 console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: `tg.initDataUnsafe.user` имеет неверный формат или отсутствует.');
@@ -309,7 +309,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ Nicotine amount screen загружен в режиме браузера');
+        console.log('✅ Nicotine cost screen загружен в режиме браузера');
     };
 
     /**
@@ -350,7 +350,7 @@
     const setupTelegramButtons = () => {
         if (!tg) return;
         
-        // Показываем кнопку "Назад" на экране количества никотина
+        // Показываем кнопку "Назад" на экране стоимости никотина
         tg.BackButton.show();
         tg.BackButton.onClick(() => {
             goBack();
@@ -377,41 +377,41 @@
      * Настройка обработчиков событий
      */
     const setupEventListeners = () => {
-        const amountInput = document.getElementById('amountInput');
+        const costInput = document.getElementById('costInput');
         const backButton = document.getElementById('backButton');
         const forwardButton = document.getElementById('forwardButton');
         
-        // Обработчик ввода количества
-        if (amountInput) {
-            amountInput.addEventListener('input', (e) => {
+        // Обработчик ввода стоимости
+        if (costInput) {
+            costInput.addEventListener('input', (e) => {
                 let value = e.target.value;
                 
                 // Убираем все нечисловые символы
                 value = value.replace(/[^0-9]/g, '');
                 
-                // Ограничиваем диапазон от 1 до 30
+                // Ограничиваем диапазон от 100 до 5000
                 if (value) {
                     const numValue = parseInt(value);
-                    if (numValue > 30) {
-                        value = '30';
-                    } else if (numValue < 1) {
-                        value = '1';
+                    if (numValue > 5000) {
+                        value = '5000';
+                    } else if (numValue > 0 && numValue < 100) {
+                        value = '100';
                     }
                 }
                 
                 // Обновляем значение в поле ввода
                 e.target.value = value;
                 
-                currentAmount = value ? parseInt(value) : null;
+                currentCost = value ? parseInt(value) : null;
                 
                 // Обновляем состояние кнопки вперед
                 updateForwardButtonState();
                 
-                console.log('📊 Введено количество:', currentAmount);
+                console.log('💰 Введена стоимость:', currentCost);
             });
 
             // Обработчик вставки из буфера обмена
-            amountInput.addEventListener('paste', (e) => {
+            costInput.addEventListener('paste', (e) => {
                 e.preventDefault();
                 let paste = (e.clipboardData || window.clipboardData).getData('text');
                 
@@ -420,20 +420,20 @@
                 
                 if (paste) {
                     let numValue = parseInt(paste);
-                    if (numValue > 30) {
-                        numValue = 30;
-                    } else if (numValue < 1) {
-                        numValue = 1;
+                    if (numValue > 5000) {
+                        numValue = 5000;
+                    } else if (numValue > 0 && numValue < 100) {
+                        numValue = 100;
                     }
-                    amountInput.value = numValue.toString();
+                    costInput.value = numValue.toString();
                     
                     // Имитируем событие input для обновления состояния
-                    amountInput.dispatchEvent(new Event('input'));
+                    costInput.dispatchEvent(new Event('input'));
                 }
             });
 
             // Обработчик нажатия клавиш для блокировки нечисловых символов
-            amountInput.addEventListener('keydown', (e) => {
+            costInput.addEventListener('keydown', (e) => {
                 // Разрешаем: цифры, Backspace, Delete, Tab, Escape, Enter, стрелки
                 if ([46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||
                     // Разрешаем Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
@@ -446,7 +446,7 @@
                     
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        if (currentAmount && currentAmount >= 1 && currentAmount <= 30) {
+                        if (currentCost && currentCost >= 100 && currentCost <= 5000) {
                             goForward();
                         }
                     }
@@ -468,13 +468,13 @@
         // Обработчик кнопки вперед
         if (forwardButton) {
             forwardButton.addEventListener('click', () => {
-                if (currentAmount && currentAmount > 0) {
+                if (currentCost && currentCost >= 100 && currentCost <= 5000) {
                     goForward();
                 }
             });
         }
         
-        console.log('⚡ Обработчики событий настроены');
+        console.log('⚡ Обработчики событий для стоимости настроены');
     };
 
     /**
@@ -484,7 +484,7 @@
         const forwardButton = document.getElementById('forwardButton');
         if (!forwardButton) return;
 
-        const isValid = currentAmount && currentAmount >= 1 && currentAmount <= 30;
+        const isValid = currentCost && currentCost >= 100 && currentCost <= 5000;
         
         if (isValid) {
             forwardButton.classList.add('active');
@@ -499,7 +499,7 @@
      * Переход назад
      */
     const goBack = () => {
-        console.log('⬅️ Переход назад к экрану выбора никотина');
+        console.log('⬅️ Переход назад к экрану количества потребления');
         
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('light');
@@ -507,9 +507,9 @@
         
         // Используем LoadingManager если доступен
         if (window.LoadingManager?.navigateWithTransition) {
-            window.LoadingManager.navigateWithTransition('../nicotine-selection/index.html');
+            window.LoadingManager.navigateWithTransition('../nicotine-amount/index.html');
         } else {
-            window.location.href = '../nicotine-selection/index.html';
+            window.location.href = '../nicotine-amount/index.html';
         }
     };
 
@@ -517,49 +517,44 @@
      * Переход вперед
      */
     const goForward = () => {
-        if (!currentAmount || currentAmount < 1 || currentAmount > 30) {
-            showNotification('Пожалуйста, введите число от 1 до 30');
+        if (!currentCost || currentCost < 100 || currentCost > 5000) {
+            showNotification('Пожалуйста, введите стоимость от 100 до 5000 рублей');
             return;
         }
 
-        console.log('➡️ Переход вперед с количеством:', currentAmount);
+        console.log('➡️ Переход вперед со стоимостью:', currentCost);
         
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
         }
 
-        // Сохраняем количество потребления
+        // Сохраняем стоимость никотина
         if (typeof(Storage) !== "undefined") {
-            localStorage.setItem('nicotineAmount', currentAmount);
-            localStorage.setItem('nicotineUnit', nicotineConfig[selectedNicotineType]?.unit || 'единиц');
-            console.log(`💾 Количество "${currentAmount}" сохранено в localStorage`);
+            localStorage.setItem('nicotineCost', currentCost);
+            localStorage.setItem('nicotineCostUnit', nicotineCostConfig[selectedNicotineType]?.unit || 'единица');
+            console.log(`💾 Стоимость "${currentCost}" сохранена в localStorage`);
         }
 
         // Отправляем данные в Telegram если доступно
         if (tg?.sendData) {
             try {
                 tg.sendData(JSON.stringify({ 
-                    type: 'nicotine_amount_completed', 
+                    type: 'nicotine_cost_completed', 
                     nicotine_type: selectedNicotineType,
-                    amount: currentAmount,
-                    unit: nicotineConfig[selectedNicotineType]?.unit,
+                    cost: currentCost,
+                    unit: nicotineCostConfig[selectedNicotineType]?.unit,
+                    currency: nicotineCostConfig[selectedNicotineType]?.currency,
                     timestamp: new Date().toISOString() 
                 }));
-                console.log('📤 Данные отправлены в Telegram');
+                console.log('📤 Данные стоимости отправлены в Telegram');
             } catch (error) {
-                console.error('❌ Ошибка отправки данных:', error);
+                console.error('❌ Ошибка отправки данных стоимости:', error);
             }
         }
 
-        // Переход на следующий экран - ввод стоимости никотина
-        console.log('🔄 Переходим на экран ввода стоимости никотина');
-        
-        // Используем LoadingManager если доступен для плавного перехода
-        if (window.LoadingManager?.navigateWithTransition) {
-            window.LoadingManager.navigateWithTransition('../nicotine-cost/index.html');
-        } else {
-            window.location.href = '../nicotine-cost/index.html';
-        }
+        // Переход на следующий экран (пока на welcome для тестирования)
+        console.log('🔄 Переходим на следующий экран приложения');
+        window.location.href = '../welcome/index.html';
     };
 
     /**
@@ -622,12 +617,12 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokyNicotineAmount = {
+    window.SmokyNicotineCost = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
         getSelectedNicotineType: () => selectedNicotineType,
-        getCurrentAmount: () => currentAmount,
+        getCurrentCost: () => currentCost,
         goBack: goBack,
         goForward: goForward
     };

@@ -1,0 +1,519 @@
+/**
+ * SmokyApp - Nicotine Cost Screen Styles
+ * Стили экрана ввода стоимости никотина (светлый дизайн со смайликами)
+ */
+
+/* CSS Custom Properties для Telegram Theme */
+:root {
+    /* Базовые цвета (fallback) */
+    --tg-theme-bg-color: #ffffff;
+    --tg-theme-text-color: #000000;
+    --tg-theme-hint-color: #999999;
+    --tg-theme-link-color: #2196F3;
+    --tg-theme-button-color: #2196F3;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-secondary-bg-color: #f1f1f1;
+    
+    /* Кастомные цвета приложения */
+    --smoky-primary: #2196F3;
+    --smoky-secondary: #FFF3E0;
+    --smoky-accent: #FF9800;
+    --smoky-success: #4CAF50;
+    --smoky-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Размеры и отступы */
+    --container-padding: 20px;
+    --border-radius: 16px;
+    --transition-duration: 0.3s;
+
+    /* Цвета для экрана ввода стоимости */
+    --color-blue: #5A9BF7;
+    --color-light-pink: #FEB8B1;
+    --color-green: #74E976;
+    --color-title: #235BDF;
+    --color-text: #1C3D8C;
+    --color-placeholder: #B0A5A5;
+}
+
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Основной контейнер */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: var(--tg-theme-text-color);
+    line-height: 1.6;
+    overflow: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100dvh;
+}
+
+.app-container {
+    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Парящие смайлики */
+.floating-emojis {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.emoji {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0.3;
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.6, 1.0);
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+    user-select: none;
+    will-change: transform;
+}
+
+/* Основной экран */
+.nicotine-cost-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--container-padding);
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* Секция с персонажем/иконкой */
+.character-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-shrink: 0;
+}
+
+.character-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, var(--color-blue), var(--color-light-pink));
+    border-radius: 50%;
+    box-shadow: 0 8px 24px rgba(90, 155, 247, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.nicotine-icon {
+    font-size: 48px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+/* Контентная секция */
+.content-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+    max-width: 320px;
+    width: 100%;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+/* Заголовок экрана */
+.screen-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-title);
+    margin: 0;
+    line-height: 1.3;
+    text-align: center;
+}
+
+/* Описание экрана */
+.screen-description {
+    font-size: 16px;
+    color: var(--color-text);
+    margin: 0;
+    line-height: 1.5;
+    text-align: center;
+    opacity: 0.8;
+}
+
+/* Секция ввода */
+.input-section {
+    width: 100%;
+    margin: 16px 0;
+}
+
+.input-field-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid #E5E5E5;
+    border-radius: var(--border-radius);
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-duration) ease;
+}
+
+.input-field-container:focus-within {
+    border-color: var(--color-blue);
+    box-shadow: 0 4px 20px rgba(90, 155, 247, 0.2);
+}
+
+.cost-input {
+    flex: 1;
+    padding: 18px 20px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: var(--color-text);
+    background: transparent;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    text-align: center;
+}
+
+.cost-input::placeholder {
+    color: var(--color-placeholder);
+    font-weight: 400;
+}
+
+.cost-input::-webkit-outer-spin-button,
+.cost-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cost-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Секция действий */
+.action-section {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Базовые стили навигационных кнопок */
+.nav-button {
+    width: 64px;
+    height: 64px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.nav-button:active {
+    transform: translateY(0);
+}
+
+.nav-button:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* Кнопка "Назад" */
+.back-button {
+    background: linear-gradient(135deg, #ff6b6b, #e55353);
+    color: white;
+}
+
+.back-button:hover {
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+}
+
+/* Кнопка "Вперед" */
+.forward-button {
+    background: linear-gradient(135deg, #cccccc, #aaaaaa);
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.forward-button.active {
+    background: linear-gradient(135deg, var(--color-green), #66d969);
+    cursor: pointer;
+    opacity: 1;
+}
+
+.forward-button.active:hover {
+    box-shadow: 0 6px 20px rgba(116, 233, 118, 0.3);
+}
+
+.forward-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Иконки стрелок */
+.back-arrow-icon {
+    width: 0;
+    height: 0;
+    border-right: 8px solid white;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+}
+
+.forward-arrow-icon {
+    width: 0;
+    height: 0;
+    border-left: 8px solid white;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+}
+
+/* Загрузочный оверлей */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-character {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.loading-character img {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.loading-rings {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+
+.loading-ring {
+    position: absolute;
+    border: 3px solid transparent;
+    border-top: 3px solid var(--color-blue);
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+}
+
+.loading-ring:nth-child(1) {
+    width: 100%;
+    height: 100%;
+    animation-duration: 1.5s;
+}
+
+.loading-ring:nth-child(2) {
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    animation-duration: 2s;
+    animation-direction: reverse;
+    border-top-color: var(--color-green);
+    opacity: 0.7;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 380px) {
+    :root {
+        --container-padding: 16px;
+    }
+    
+    .screen-title {
+        font-size: 20px;
+    }
+    
+    .screen-description {
+        font-size: 14px;
+    }
+    
+    .character-container {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .nicotine-icon {
+        font-size: 40px;
+    }
+    
+    .content-section {
+        gap: 20px;
+        max-width: 280px;
+    }
+    
+    .cost-input {
+        padding: 16px 18px;
+        font-size: 15px;
+    }
+    
+    .nav-button {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .navigation-buttons {
+        gap: 16px;
+    }
+    
+    .emoji {
+        font-size: 18px;
+    }
+}
+
+@media (max-height: 600px) {
+    .character-section {
+        margin-bottom: 20px;
+    }
+    
+    .character-container {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .nicotine-icon {
+        font-size: 32px;
+    }
+    
+    .content-section {
+        gap: 16px;
+    }
+    
+    .screen-title {
+        font-size: 20px;
+    }
+    
+    .screen-description {
+        font-size: 14px;
+    }
+    
+    .cost-input {
+        padding: 14px 16px;
+    }
+    
+    .nav-button {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .emoji {
+        font-size: 18px;
+        opacity: 0.2;
+    }
+}
+
+/* Поддержка темной темы */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --tg-theme-bg-color: #1a1a1a;
+        --tg-theme-text-color: #ffffff;
+        --tg-theme-hint-color: #aaaaaa;
+        --tg-theme-secondary-bg-color: #2a2a2a;
+        --smoky-shadow: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce) {
+    .nav-button,
+    .loading-ring,
+    .emoji,
+    .input-field-container {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .emoji {
+        transform: none;
+    }
+}
+
+/* Фокус для клавиатурной навигации */
+*:focus {
+    outline: 2px solid var(--tg-theme-button-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Вспомогательные классы */
+.hidden {
+    display: none !important;
+}
+
+.invisible {
+    visibility: hidden !important;
+    opacity: 0 !important;
+}

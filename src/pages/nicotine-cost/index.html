@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>SmokyApp - Количество потребления</title>
+    <title>SmokyApp - Стоимость никотина</title>
     
     <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -45,29 +45,29 @@
             <span class="emoji emoji-11">🏆</span>
         </div>
         
-        <main class="nicotine-amount-screen">
+        <main class="nicotine-cost-screen">
             <div class="character-section">
                 <div class="character-container">
                     <!-- Динамическая иконка в зависимости от типа никотина -->
-                    <div class="nicotine-icon" id="nicotineIcon">📊</div>
+                    <div class="nicotine-icon" id="nicotineIcon">💰</div>
                 </div>
             </div>
 
             <div class="content-section">
-                <h1 class="screen-title" id="dynamicTitle">Сколько в день?</h1>
+                <h1 class="screen-title" id="dynamicTitle">Сколько стоит?</h1>
                 
                 <p class="screen-description" id="dynamicDescription">
-                    Это поможет лучше понять ваши привычки
+                    Это поможет рассчитать ваши затраты
                 </p>
                 
                 <div class="input-section">
                     <div class="input-field-container">
                         <input type="number" 
-                               placeholder="Количество" 
-                               class="amount-input" 
-                               id="amountInput"
-                               min="1" 
-                               max="30" 
+                               placeholder="Цена" 
+                               class="cost-input" 
+                               id="costInput"
+                               min="100" 
+                               max="5000" 
                                step="1"
                                inputmode="numeric">
                     </div>
