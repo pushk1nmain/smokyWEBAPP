@@ -129,10 +129,6 @@
                     themeRippleOverlay.classList.add('expanding');
                 }
                 
-                // Одновременно переводим body в светлую тему
-                document.body.classList.add('light-theme');
-                console.log('🌞 Body переведен в светлую тему');
-                
                 if (tg?.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
                 }
@@ -199,9 +195,6 @@
             if (themeRippleOverlay) {
                 themeRippleOverlay.classList.add('expanding');
             }
-            
-            // В случае ошибки тоже переводим body в светлую тему
-            document.body.classList.add('light-theme');
             
             if (screenTitle) {
                 screenTitle.classList.remove('hidden');
