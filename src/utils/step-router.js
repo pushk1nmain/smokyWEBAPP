@@ -28,6 +28,8 @@ class StepRouter {
         8: '/src/pages/charger-question/index.html',  // Вопрос о курении
         9: '/src/pages/system-explanation/index.html', // Объяснение системы 4 в 1
         10: '/src/pages/price-question/index.html',   // Вопрос о цене жизни
+        11: '/src/pages/nicotine-selection/index.html', // Выбор типа никотина
+        12: '/src/pages/nicotine-amount/index.html',  // Ввод количества потребления никотина
         // Здесь будут добавляться новые экраны по мере развития приложения
     };
 
@@ -45,6 +47,8 @@ class StepRouter {
         8: 'Вопрос о курении',
         9: 'Система 4 в 1',
         10: 'Цена жизни',
+        11: 'Выбор типа никотина',
+        12: 'Количество потребления',
     };
 
     /**
