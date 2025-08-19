@@ -1,13 +1,13 @@
 /**
- * SmokyApp - Price Question Screen JavaScript
- * Скрипт экрана вопроса о цене жизни для интеграции с Telegram WebApp API
+ * SmokyApp - Health Realization Screen JavaScript
+ * Скрипт экрана осознания ценности здоровья для интеграции с Telegram WebApp API
  */
 
 (function() {
     // Глобальные переменные и встроенная конфигурация
     let tg = null;
     let isReady = false;
-    let userChoice = null;
+    let userName = null;
 
     // --- Telegram WebApp Keyboard Handling ---
     if (window.Telegram && window.Telegram.WebApp) {
@@ -84,16 +84,71 @@
     };
 
     /**
+     * Загрузка имени пользователя по API
+     */
+    const loadUserName = async () => {
+        try {
+            console.log('🔍 Загружаем имя пользователя...');
+
+            // Пытаемся получить имя через API client
+            if (window.apiClient && typeof window.apiClient.getUserInfo === 'function') {
+                const userInfo = await window.apiClient.getUserInfo();
+                if (userInfo && userInfo.name) {
+                    userName = userInfo.name;
+                    console.log(`✅ Имя пользователя получено через API: ${userName}`);
+                    return userName;
+                }
+            }
+
+            // Fallback: получаем имя из Telegram
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const telegramUser = tg.initDataUnsafe.user;
+                userName = telegramUser.first_name || telegramUser.username || 'Друг';
+                console.log(`✅ Имя пользователя получено из Telegram: ${userName}`);
+                return userName;
+            }
+
+            // Второй fallback: тестовый пользователь в режиме разработки
+            if (config.development.enableBrowserTestMode) {
+                userName = config.development.testUser.first_name;
+                console.log(`✅ Имя тестового пользователя: ${userName}`);
+                return userName;
+            }
+
+            // Если ничего не сработало
+            userName = 'Друг';
+            console.warn('⚠️ Не удалось получить имя пользователя, используем fallback');
+            return userName;
+
+        } catch (error) {
+            console.error('❌ Ошибка при загрузке имени пользователя:', error);
+            userName = 'Друг';
+            return userName;
+        }
+    };
+
+    /**
+     * Обновление заголовка с именем пользователя
+     */
+    const updateTitleWithUserName = (name) => {
+        const userNameElement = document.getElementById('userName');
+        if (userNameElement && name) {
+            userNameElement.textContent = name;
+            console.log(`✨ Заголовок обновлен с именем: ${name}`);
+        }
+    };
+
+    /**
      * Основная функция инициализации приложения
      */
     const main = async () => {
         try {
-            console.log('🚀 Price question screen запускается...');
+            console.log('🚀 Health realization screen запускается...');
             
-            // Обновляем шаг в БД при загрузке price-question экрана
+            // Обновляем шаг в БД при загрузке health-realization экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 10 (price-question) через StepRouter');
+                    console.log('🔄 Обновляем шаг до 10 (health-realization) через StepRouter');
                     const success = await window.StepRouter.updateStep(10);
                     if (success) {
                         console.log('✅ Шаг успешно обновлен до 10');
@@ -101,10 +156,10 @@
                         console.warn('⚠️ Не удалось обновить шаг до 10');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на price-question экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на health-realization экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на price-question экране:', error);
+                console.error('❌ Ошибка при обновлении шага на health-realization экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -137,7 +192,7 @@
                 }
             }
 
-            // Настройка UI и событий только если остаемся на price-question screen
+            // Настройка UI и событий только если остаемся на health-realization screen
             setupUI();
             setupEventListeners();
 
@@ -151,8 +206,12 @@
                 await setupBrowserMode();
             }
 
+            // Загружаем имя пользователя и обновляем заголовок
+            const name = await loadUserName();
+            updateTitleWithUserName(name);
+
             isReady = true;
-            console.log('✅ Price question screen успешно инициализирован!');
+            console.log('✅ Health realization screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -193,7 +252,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                console.log(`👤 ID пользователя: ${user.id}. Price question screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. Health realization screen загружен.`);
 
             } else {
                 // Эта ситуация не должна происходить, но добавим обработку
@@ -220,7 +279,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ Price question screen загружен в режиме браузера');
+        console.log('✅ Health realization screen загружен в режиме браузера');
     };
 
     /**
@@ -287,81 +346,48 @@
      * Настройка обработчиков событий
      */
     const setupEventListeners = () => {
-        const priceButtons = document.querySelectorAll('.price-button');
-        
-        priceButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const price = button.getAttribute('data-price');
-                handlePriceChoice(price, button);
-            });
-            
-            button.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    const price = button.getAttribute('data-price');
-                    handlePriceChoice(price, button);
-                }
-            });
-        });
-        
-        console.log('⚡ Обработчики событий для кнопок цен настроены');
+        const continueButton = document.getElementById('continueButton');
+
+        if (continueButton) {
+            continueButton.addEventListener('click', () => handleContinueClick());
+            continueButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleContinueClick());
+            console.log('⚡ Обработчик кнопки "Продолжить" подключен');
+        } else {
+            console.error('❌ Кнопка continueButton не найдена');
+        }
+
+        console.log('⚡ Обработчики событий настроены');
     };
 
     /**
-     * Обработчик выбора цены
+     * Обработчик нажатия кнопки "Продолжить"
      */
-    const handlePriceChoice = (price, buttonElement) => {
-        console.log(`🚀 handlePriceChoice вызван с выбором: ${price}`);
-        
-        // Предотвращаем повторные клики
-        if (userChoice) return;
-        
-        userChoice = price;
+    const handleContinueClick = () => {
+        console.log(`🚀 handleContinueClick вызван`);
         
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
         }
         
-        // Визуально выделяем выбранную кнопку
-        highlightSelectedButton(buttonElement);
-        
-        // Бесшовный переход - переходим к следующему экрану после выбора
-        console.log(`🔄 Выполняем бесшовный переход с выбором цены: ${price}`);
+        // Бесшовный переход - переходим к следующему экрану
+        console.log(`🔄 Выполняем переход к следующему экрану`);
         setTimeout(() => {
             console.log('⏰ Таймер сработал, вызываем navigateToNextScreen...');
-            navigateToNextScreen(price);
-        }, 800); // Немного больше задержки чтобы пользователь увидел выделение
-    };
-
-    /**
-     * Выделение выбранной кнопки
-     */
-    const highlightSelectedButton = (selectedButton) => {
-        const allButtons = document.querySelectorAll('.price-button');
-        
-        // Убираем выделение с всех кнопок
-        allButtons.forEach(button => {
-            button.classList.remove('selected');
-        });
-        
-        // Выделяем выбранную кнопку
-        selectedButton.classList.add('selected');
-        
-        const price = selectedButton.getAttribute('data-price');
-        console.log(`✨ Кнопка с ценой "${price}" выделена`);
+            navigateToNextScreen();
+        }, 300); // Небольшая задержка для визуального фидбека
     };
 
     /**
      * Навигация к следующему экрану
      */
-    const navigateToNextScreen = async (priceChoice) => {
-        console.log(`🚀 navigateToNextScreen вызван с выбором цены: ${priceChoice}`);
+    const navigateToNextScreen = async () => {
+        console.log(`🚀 navigateToNextScreen вызван`);
         
         if (tg?.sendData) {
             try {
                 tg.sendData(JSON.stringify({ 
-                    type: 'price_question_completed', 
-                    price_choice: priceChoice,
+                    type: 'health_realization_completed',
+                    user_name: userName,
                     timestamp: new Date().toISOString() 
                 }));
                 console.log('📤 Данные отправлены в Telegram');
@@ -370,9 +396,9 @@
             }
         }
         
-        // Переход на экран осознания ценности здоровья
-        console.log('🔄 Переходим на экран осознания ценности здоровья');
-        window.location.href = '../health-realization/index.html';
+        // Переход на следующий экран (пока на welcome для тестирования)
+        console.log('🔄 Переходим на следующий экран приложения');
+        window.location.href = '../welcome/index.html';
     };
 
     /**
@@ -443,11 +469,11 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokyPriceQuestion = {
+    window.SmokyHealthRealization = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
-        getUserChoice: () => userChoice,
+        getUserName: () => userName,
     };
 
 })();
