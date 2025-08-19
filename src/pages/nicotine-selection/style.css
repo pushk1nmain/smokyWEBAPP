@@ -48,7 +48,7 @@ html {
     background-repeat: no-repeat !important;
     background-size: cover !important;
     min-height: 100vh;
-    transition: all var(--brightness-transition-duration) ease-in-out;
+    transition: all 1.0s ease-in-out;
 }
 
 /* HTML финальное состояние - светлый фон */
@@ -73,7 +73,7 @@ body {
     height: 100dvh;
     margin: 0;
     padding: 0;
-    transition: color var(--cosmic-duration) ease-in-out;
+    transition: color 0.5s ease-in-out;
 }
 
 /* Изменение цвета текста при переходе */
@@ -114,7 +114,7 @@ body.light-theme {
     align-self: center;
     margin: 20px 16px;
     position: relative;
-    z-index: 3;
+    z-index: 20; /* Поверх всех фоновых элементов */
 }
 
 /* Заголовок экрана - изначально скрыт */
@@ -128,7 +128,7 @@ body.light-theme {
         0 2px 4px rgba(0, 0, 0, 0.8),
         0 0 8px rgba(0, 0, 0, 0.6);
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-    transition: all var(--cosmic-duration) ease-in-out;
+    transition: all 0.5s ease-in-out;
     
     /* Изначально скрыт */
     opacity: 0;
@@ -392,7 +392,7 @@ body.light-theme {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10; /* Поверх всех элементов кроме контента */
+    z-index: 2; /* Под контентом - только фон */
     pointer-events: none;
     
     /* Изначально скрыт - маленький круг в центре */
@@ -563,7 +563,7 @@ body.light-theme {
     z-index: 1 !important;
     overflow: hidden !important;
     opacity: 0 !important; /* Принудительно скрываем изначально, переопределяя main.css */
-    transition: opacity var(--brightness-transition-duration) ease-in-out !important;
+    transition: opacity 0.8s ease-in-out !important;
 }
 
 /* Плавное появление смайликов одновременно с исчезновением звезд */
