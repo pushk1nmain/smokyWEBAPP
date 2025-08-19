@@ -1,12 +1,13 @@
 /**
- * SmokyApp - Navigator Broken Screen JavaScript
- * Скрипт экрана сломанного навигатора для интеграции с Telegram WebApp API
+ * SmokyApp - Charger Question Screen JavaScript
+ * Скрипт экрана вопроса о зарядке для интеграции с Telegram WebApp API
  */
 
 (function() {
     // Глобальные переменные и встроенная конфигурация
     let tg = null;
     let isReady = false;
+    let userChoice = null;
 
     // --- Telegram WebApp Keyboard Handling ---
     if (window.Telegram && window.Telegram.WebApp) {
@@ -87,23 +88,23 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 Navigator broken screen запускается...');
+            console.log('🚀 Charger question screen запускается...');
             
-            // Обновляем шаг в БД при загрузке navigator-broken экрана
+            // Обновляем шаг в БД при загрузке charger-question экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 7 (navigator-broken) через StepRouter');
-                    const success = await window.StepRouter.updateStep(7);
+                    console.log('🔄 Обновляем шаг до 8 (charger-question) через StepRouter');
+                    const success = await window.StepRouter.updateStep(8);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 7');
+                        console.log('✅ Шаг успешно обновлен до 8');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 7');
+                        console.warn('⚠️ Не удалось обновить шаг до 8');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на navigator-broken экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на charger-question экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на navigator-broken экране:', error);
+                console.error('❌ Ошибка при обновлении шага на charger-question экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -123,8 +124,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 7) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 7, выполняем переход через StepRouter');
+                        if (currentStep > 8) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 8, выполняем переход через StepRouter');
                             
                             // Принудительно выполняем навигацию к правильному шагу
                             await window.StepRouter.navigateToCurrentStep(true);
@@ -136,14 +137,9 @@
                 }
             }
 
-            // Настройка UI и событий только если остаемся на navigator-broken screen
+            // Настройка UI и событий только если остаемся на charger-question screen
             setupUI();
             setupEventListeners();
-            
-            // Предзагружаем следующую страницу для быстрого перехода
-            if (window.LoadingManager) {
-                LoadingManager.preloadPage('../city-input/index.html');
-            }
 
             // Инициализация Telegram или режима браузера
             if (window.Telegram && window.Telegram.WebApp) {
@@ -156,7 +152,7 @@
             }
 
             isReady = true;
-            console.log('✅ Navigator broken screen успешно инициализирован!');
+            console.log('✅ Charger question screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -197,7 +193,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                console.log(`👤 ID пользователя: ${user.id}. Navigator broken screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. Charger question screen загружен.`);
 
             } else {
                 // Эта ситуация не должна происходить, но добавим обработку
@@ -224,7 +220,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ Navigator broken screen загружен в режиме браузера');
+        console.log('✅ Charger question screen загружен в режиме браузера');
     };
 
     /**
@@ -291,55 +287,107 @@
      * Настройка обработчиков событий
      */
     const setupEventListeners = () => {
-        const continueButton = document.getElementById('continueButton');
-        if (continueButton) {
-            continueButton.addEventListener('click', handleContinueClick);
-            continueButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleContinueClick());
-            console.log('⚡ Обработчик кнопки Далее подключен');
+        const smokingButton = document.getElementById('smokingButton');
+        const quittingButton = document.getElementById('quittingButton');
+
+        if (smokingButton) {
+            smokingButton.addEventListener('click', () => handleChoiceClick('smoking'));
+            smokingButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleChoiceClick('smoking'));
+            console.log('⚡ Обработчик кнопки "Курю" подключен');
         } else {
-            console.error('❌ Кнопка continueButton не найдена');
+            console.error('❌ Кнопка smokingButton не найдена');
         }
+
+        if (quittingButton) {
+            quittingButton.addEventListener('click', () => handleChoiceClick('quitting'));
+            quittingButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleChoiceClick('quitting'));
+            console.log('⚡ Обработчик кнопки "Хочу бросить" подключен');
+        } else {
+            console.error('❌ Кнопка quittingButton не найдена');
+        }
+
         console.log('⚡ Обработчики событий настроены');
     };
 
     /**
-     * Обработчик нажатия кнопки "Далее" с плавной загрузкой
+     * Обработчик нажатия кнопки выбора
      */
-    const handleContinueClick = () => {
-        console.log('🚀 handleContinueClick вызван - Продолжаем историю!');
+    const handleChoiceClick = (choice) => {
+        console.log(`🚀 handleChoiceClick вызван с выбором: ${choice}`);
+        
+        // Предотвращаем повторные клики
+        if (userChoice) return;
+        
+        userChoice = choice;
+        
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
         }
+        
+        // Визуально выделяем выбранную кнопку
+        highlightSelectedButton(choice);
         
         // Показываем загрузку и плавно переходим
         console.log('📱 Показываем загрузку...');
         showLoading();
         
-        console.log('⏰ Запускаем таймер на 1200мс для перехода...');
+        console.log(`⏰ Запускаем таймер на 1200мс для перехода с выбором: ${choice}`);
         setTimeout(() => {
-            console.log('⏰ Таймер сработал, вызываем navigateToNextScreen...');
-            navigateToNextScreen();
-        }, 1200); // Увеличили для плавности
+            console.log('⏰ Таймер сработал, вызываем navigateBasedOnChoice...');
+            navigateBasedOnChoice(choice);
+        }, 1200);
     };
 
     /**
-     * Навигация к следующему экрану
+     * Выделение выбранной кнопки
      */
-    const navigateToNextScreen = async () => {
-        console.log('🚀 navigateToNextScreen вызван - переход к следующему экрану истории');
+    const highlightSelectedButton = (choice) => {
+        const smokingButton = document.getElementById('smokingButton');
+        const quittingButton = document.getElementById('quittingButton');
+        
+        // Убираем выделение с обеих кнопок
+        smokingButton.classList.remove('selected');
+        quittingButton.classList.remove('selected');
+        
+        // Выделяем выбранную кнопку
+        if (choice === 'smoking') {
+            smokingButton.classList.add('selected');
+        } else if (choice === 'quitting') {
+            quittingButton.classList.add('selected');
+        }
+        
+        console.log(`✨ Кнопка "${choice}" выделена`);
+    };
+
+    /**
+     * Навигация в зависимости от выбора пользователя
+     */
+    const navigateBasedOnChoice = async (choice) => {
+        console.log(`🚀 navigateBasedOnChoice вызван с выбором: ${choice}`);
         
         if (tg?.sendData) {
             try {
-                tg.sendData(JSON.stringify({ type: 'navigator_broken_completed', timestamp: new Date().toISOString() }));
+                tg.sendData(JSON.stringify({ 
+                    type: 'charger_question_completed', 
+                    choice: choice,
+                    timestamp: new Date().toISOString() 
+                }));
                 console.log('📤 Данные отправлены в Telegram');
             } catch (error) {
                 console.error('❌ Ошибка отправки данных:', error);
             }
         }
         
-        // Переход на следующий экран истории
-        console.log('🔄 Переходим на экран вопроса о зарядке');
-        window.location.href = '../charger-question/index.html';
+        // В зависимости от выбора переходим на разные экраны
+        if (choice === 'smoking') {
+            console.log('🔄 Пользователь курит - переходим на экран для курящих');
+            // Пока что переходим на welcome для тестирования
+            window.location.href = '../welcome/index.html';
+        } else if (choice === 'quitting') {
+            console.log('🔄 Пользователь хочет бросить - переходим на экран для желающих бросить');
+            // Пока что переходим на name-input для тестирования
+            window.location.href = '../name-input/index.html';
+        }
     };
 
     /**
@@ -410,10 +458,11 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokyNavigatorBroken = {
+    window.SmokyChargerQuestion = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
+        getUserChoice: () => userChoice,
     };
 
 })();
