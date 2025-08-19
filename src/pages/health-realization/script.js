@@ -84,44 +84,118 @@
     };
 
     /**
-     * Загрузка имени пользователя по API
+     * Получение telegram_id пользователя
+     */
+    const getUserTelegramId = () => {
+        // Пытаемся получить ID из Telegram
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+            return tg.initDataUnsafe.user.id;
+        }
+        
+        // Fallback для режима разработки
+        if (config.development.enableBrowserTestMode) {
+            return config.development.testUser.id;
+        }
+        
+        return null;
+    };
+
+    /**
+     * Загрузка имени пользователя по API из БД
      */
     const loadUserName = async () => {
         try {
-            console.log('🔍 Загружаем имя пользователя...');
+            console.log('🔍 Загружаем имя пользователя из БД...');
 
-            // Пытаемся получить имя через API client
-            if (window.apiClient && typeof window.apiClient.getUserInfo === 'function') {
-                const userInfo = await window.apiClient.getUserInfo();
-                if (userInfo && userInfo.name) {
-                    userName = userInfo.name;
-                    console.log(`✅ Имя пользователя получено через API: ${userName}`);
-                    return userName;
+            // Получаем telegram_id пользователя
+            const telegramId = getUserTelegramId();
+            if (!telegramId) {
+                console.warn('⚠️ Не удалось получить telegram_id, используем fallback');
+                userName = 'Друг';
+                return userName;
+            }
+
+            console.log(`👤 Используем telegram_id: ${telegramId}`);
+
+            // Основной запрос к API для получения имени из БД
+            if (window.apiClient && typeof window.apiClient.get === 'function') {
+                try {
+                    const endpoint = `/user/${telegramId}`;
+                    console.log(`🔗 API Client запрос: ${endpoint}`);
+                    const response = await window.apiClient.get(endpoint);
+                    
+                    if (response && response.name) {
+                        userName = response.name;
+                        console.log(`✅ Имя пользователя получено из БД через API Client: ${userName}`);
+                        return userName;
+                    }
+                } catch (apiError) {
+                    console.error('❌ Ошибка API Client запроса к БД:', apiError);
                 }
             }
 
-            // Fallback: получаем имя из Telegram
+            // Fallback: прямой fetch запрос к API
+            try {
+                const apiUrl = `${config.api.baseUrl}/user/${telegramId}`;
+                console.log(`🌐 Выполняем прямой fetch запрос: ${apiUrl}`);
+                
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                // Добавляем заголовок авторизации согласно документации
+                if (tg && tg.initData) {
+                    headers['X-Telegram-WebApp-Data'] = tg.initData;
+                    console.log('🔐 Добавлен заголовок X-Telegram-WebApp-Data для авторизации');
+                }
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    console.log('📊 Полученные данные пользователя:', userData);
+                    
+                    if (userData && userData.name) {
+                        userName = userData.name;
+                        console.log(`✅ Имя пользователя получено через fetch из БД: ${userName}`);
+                        return userName;
+                    } else {
+                        console.warn('⚠️ В ответе API отсутствует поле name');
+                    }
+                } else {
+                    console.error(`❌ API вернул ошибку: ${response.status} ${response.statusText}`);
+                    const errorText = await response.text();
+                    console.error('❌ Текст ошибки:', errorText);
+                }
+            } catch (fetchError) {
+                console.error('❌ Ошибка fetch запроса:', fetchError);
+            }
+
+            // Второй fallback: получаем имя из Telegram (если API недоступно)
             if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const telegramUser = tg.initDataUnsafe.user;
                 userName = telegramUser.first_name || telegramUser.username || 'Друг';
-                console.log(`✅ Имя пользователя получено из Telegram: ${userName}`);
+                console.log(`⚠️ Fallback: Имя получено из Telegram: ${userName}`);
                 return userName;
             }
 
-            // Второй fallback: тестовый пользователь в режиме разработки
+            // Третий fallback: тестовый пользователь в режиме разработки
             if (config.development.enableBrowserTestMode) {
                 userName = config.development.testUser.first_name;
-                console.log(`✅ Имя тестового пользователя: ${userName}`);
+                console.log(`⚠️ Fallback: Имя тестового пользователя: ${userName}`);
                 return userName;
             }
 
-            // Если ничего не сработало
+            // Последний fallback
             userName = 'Друг';
-            console.warn('⚠️ Не удалось получить имя пользователя, используем fallback');
+            console.warn('⚠️ Все способы получения имени не сработали, используем финальный fallback');
             return userName;
 
         } catch (error) {
-            console.error('❌ Ошибка при загрузке имени пользователя:', error);
+            console.error('❌ Критическая ошибка при загрузке имени пользователя:', error);
             userName = 'Друг';
             return userName;
         }
