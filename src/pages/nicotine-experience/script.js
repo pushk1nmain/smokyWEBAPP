@@ -495,7 +495,7 @@
     /**
      * Переход вперед
      */
-    const goForward = () => {
+    const goForward = async () => {
         if (!currentExperience || currentExperience < 1 || currentExperience > 80) {
             return;
         }
@@ -529,9 +529,142 @@
             }
         }
 
-        // Переход на следующий экран (пока на welcome для тестирования)
-        console.log('🔄 Переходим на следующий экран приложения');
-        window.location.href = '../welcome/index.html';
+        // Отправляем все собранные данные на API для расчета
+        await calculateAndSendNicotineImpact();
+    };
+
+    /**
+     * Сбор всех данных из localStorage и отправка на API для расчета влияния никотина
+     */
+    const calculateAndSendNicotineImpact = async () => {
+        try {
+            console.log('🧮 Начинаем расчет влияния никотина...');
+            
+            showLoading();
+
+            // Собираем все необходимые данные из localStorage
+            const nicotineType = localStorage.getItem('selectedNicotineType');
+            const nicotineAmount = localStorage.getItem('nicotineAmount');
+            const nicotineCost = localStorage.getItem('nicotineCost');
+            const nicotineExperience = localStorage.getItem('nicotineExperience');
+
+            console.log('📊 Собранные данные из localStorage:', {
+                nicotineType,
+                nicotineAmount,
+                nicotineCost,
+                nicotineExperience
+            });
+
+            // Проверяем что все данные собраны
+            if (!nicotineType || !nicotineAmount || !nicotineCost || !nicotineExperience) {
+                throw new Error('Не все данные собраны для расчета. Отсутствуют данные в localStorage.');
+            }
+
+            // Получаем telegram_id
+            let telegramId = null;
+            if (window.APIClient?.getTelegramUserId) {
+                telegramId = window.APIClient.getTelegramUserId();
+            }
+            
+            if (!telegramId && tg?.initDataUnsafe?.user?.id) {
+                telegramId = tg.initDataUnsafe.user.id;
+            }
+
+            if (!telegramId) {
+                throw new Error('Не удалось получить Telegram ID пользователя');
+            }
+
+            console.log('👤 Telegram ID пользователя:', telegramId);
+
+            // Преобразуем строки в числа согласно API документации
+            const requestData = {
+                telegram_id: parseInt(telegramId),
+                nicotine_type: nicotineType,
+                daily_amount: parseFloat(nicotineAmount),
+                unit_cost: parseFloat(nicotineCost),
+                experience_years: parseFloat(nicotineExperience)
+            };
+
+            console.log('📤 Отправляем запрос на расчет:', requestData);
+
+            // Получаем Telegram WebApp Data для заголовка
+            let telegramWebAppData = '';
+            if (tg?.initData) {
+                telegramWebAppData = tg.initData;
+            }
+
+            // Отправляем запрос на API
+            const response = await fetch('/api/v1/calculate-nicotine-impact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Telegram-WebApp-Data': telegramWebAppData
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`Ошибка API: ${response.status} - ${errorData.message || 'Неизвестная ошибка'}`);
+            }
+
+            const resultData = await response.json();
+            console.log('📥 Получен ответ от API:', resultData);
+
+            if (!resultData.success) {
+                throw new Error(resultData.message || 'API вернул неуспешный результат');
+            }
+
+            // Сохраняем результаты расчета в localStorage
+            localStorage.setItem('nicotineCalculationResult', JSON.stringify(resultData.data));
+            console.log('💾 Результаты расчета сохранены в localStorage');
+
+            // Отправляем результат в Telegram если доступно
+            if (tg?.sendData) {
+                try {
+                    tg.sendData(JSON.stringify({ 
+                        type: 'nicotine_calculation_completed', 
+                        telegram_id: telegramId,
+                        calculation_result: resultData.data,
+                        timestamp: new Date().toISOString() 
+                    }));
+                    console.log('📤 Результаты расчета отправлены в Telegram');
+                } catch (error) {
+                    console.error('❌ Ошибка отправки результатов в Telegram:', error);
+                }
+            }
+
+            hideLoading();
+
+            // Переходим на экран с результатами (пока на welcome для тестирования)
+            console.log('🔄 Переходим на экран с результатами расчета');
+            
+            if (window.LoadingManager?.navigateWithTransition) {
+                window.LoadingManager.navigateWithTransition('../welcome/index.html');
+            } else {
+                window.location.href = '../welcome/index.html';
+            }
+
+        } catch (error) {
+            console.error('❌ Ошибка при расчете влияния никотина:', error);
+            
+            hideLoading();
+            
+            // Показываем уведомление об ошибке
+            const errorMessage = `Произошла ошибка при расчете: ${error.message}`;
+            showNotification(errorMessage);
+            
+            // Отправляем ошибку в Telegram если доступно
+            if (tg?.sendData) {
+                try {
+                    tg.sendData(JSON.stringify({ 
+                        type: 'calculation_error', 
+                        error: error.message,
+                        timestamp: new Date().toISOString() 
+                    }));
+                } catch (e) { /* ignore */ }
+            }
+        }
     };
 
     /**
