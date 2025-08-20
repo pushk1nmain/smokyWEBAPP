@@ -1,11 +1,11 @@
 /**
- * SmokyApp - Transformation Lessons Screen Script
- * Скрипт экрана уроков трансформации
+ * SmokyApp - Levels Explanation Screen Script
+ * Скрипт экрана объяснения 4 уровней зависимости
  */
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎓 Загружается экран уроков трансформации...');
+    console.log('🎯 Загружается экран объяснения уровней зависимости...');
     
     // Инициализируем Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
         tg.expand();
         
         // Настройка цветов темы
-        tg.setHeaderColor('#E6F0FF');
-        tg.setBackgroundColor('#E6F0FF');
+        tg.setHeaderColor('#E8F4FD');
+        tg.setBackgroundColor('#E8F4FD');
         
-        console.log('✅ Telegram WebApp настроен для экрана уроков');
+        console.log('✅ Telegram WebApp настроен для экрана уровней');
     }
     
     // Инициализируем экран
@@ -28,55 +28,44 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Инициализация экрана уроков трансформации
+ * Инициализация экрана объяснения уровней
  */
 function initializeScreen() {
-    console.log('🎯 Инициализация экрана поддержки');
+    console.log('🔧 Инициализация экрана объяснения 4 уровней зависимости');
     
     try {
         // Получаем элементы
         const forwardButton = document.getElementById('forwardButton');
+        const levelCards = document.querySelectorAll('.level-card');
         
         if (!forwardButton) {
-            console.error('❌ Не найдены обязательные элементы интерфейса');
+            console.error('❌ Не найдена кнопка forwardButton');
             return;
         }
         
-        // Устанавливаем имя пользователя в заголовок из кэша
+        console.log(`📋 Найдено ${levelCards.length} карточек уровней`);
+        
+        // Устанавливаем имя пользователя в заголовок из кэша (если есть)
         const cachedUserName = localStorage.getItem('userName');
-        const userName = cachedUserName || 'Друг';
-        const userNameElement = document.getElementById('userName');
-        if (userNameElement) {
-            userNameElement.textContent = userName;
-            console.log(`👤 Установлено имя пользователя из кэша: ${userName}`);
-        }
-
-        // Устанавливаем количество выбранных пунктов из предыдущего экрана
-        const selectedCount = parseInt(localStorage.getItem('selectedItemsCount') || '0');
-        const selectedCountElement = document.getElementById('selectedCount');
-        if (selectedCountElement) {
-            selectedCountElement.textContent = selectedCount;
-            console.log(`📊 Установлено количество выбранных пунктов: ${selectedCount}`);
-        }
-
-        // Генерируем правильный текст с склонениями
-        const selectedItemsTextElement = document.querySelector('.selected-items-text');
-        if (selectedItemsTextElement && selectedCount) {
-            const correctText = generateSelectedItemsText(selectedCount);
-            selectedItemsTextElement.innerHTML = correctText;
-            console.log(`📝 Текст с правильными склонениями: ${correctText}`);
+        if (cachedUserName) {
+            console.log(`👤 Имя пользователя из кэша: ${cachedUserName}`);
         }
         
         // Добавляем обработчики событий
         forwardButton.addEventListener('click', handleContinueClick);
         
+        // Добавляем интерактивность карточкам
+        levelCards.forEach((card, index) => {
+            card.addEventListener('click', () => handleCardClick(index + 1));
+        });
+        
         // Логируем информацию о пользователе
         logUserProgress();
         
-        console.log('✅ Экран уроков трансформации инициализирован успешно');
+        console.log('✅ Экран объяснения уровней инициализирован успешно');
         
     } catch (error) {
-        console.error('❌ Ошибка при инициализации экрана уроков:', error);
+        console.error('❌ Ошибка при инициализации экрана уровней:', error);
         
         // Показываем пользователю ошибку
         if (window.showErrorModal) {
@@ -93,10 +82,31 @@ function initializeScreen() {
 }
 
 /**
- * Обработчик клика по кнопке "Далее"
+ * Обработчик клика по карточке уровня
+ */
+function handleCardClick(levelNumber) {
+    console.log(`🎯 Клик по карточке уровня ${levelNumber}`);
+    
+    // Haptic feedback для Telegram
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }
+    
+    // Можно добавить дополнительную анимацию или логику
+    const card = document.querySelector(`.level-card[data-level="${levelNumber}"]`);
+    if (card) {
+        card.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+            card.style.transform = '';
+        }, 150);
+    }
+}
+
+/**
+ * Обработчик клика по кнопке "А как работает Смоки?"
  */
 async function handleContinueClick() {
-    console.log('▶️ Пользователь нажал "Далее"');
+    console.log('▶️ Пользователь нажал "А как работает Смоки?"');
     
     try {
         // Показываем загрузку
@@ -136,24 +146,24 @@ async function handleContinueClick() {
  * Обновление прогресса пользователя
  */
 async function updateUserProgress() {
-    console.log('📊 Обновляем прогресс пользователя после просмотра уроков');
+    console.log('📊 Обновляем прогресс пользователя после просмотра уровней зависимости');
     
     try {
         // Обновляем шаг в БД через StepRouter
         if (window.StepRouter) {
-            console.log('🔄 Обновляем шаг до 19 после просмотра уроков');
-            const success = await window.StepRouter.updateStep(19);
+            console.log('🔄 Обновляем шаг до 20 после просмотра уровней');
+            const success = await window.StepRouter.updateStep(20);
             
             if (success) {
-                console.log('✅ Шаг успешно обновлен до 19');
+                console.log('✅ Шаг успешно обновлен до 20');
             } else {
                 console.warn('⚠️ Не удалось обновить шаг пользователя');
             }
         }
         
         // Сохраняем локально информацию о просмотре
-        localStorage.setItem('transformationLessonsViewed', 'true');
-        localStorage.setItem('transformationLessonsTimestamp', new Date().toISOString());
+        localStorage.setItem('levelsExplanationViewed', 'true');
+        localStorage.setItem('levelsExplanationTimestamp', new Date().toISOString());
         
         console.log('✅ Прогресс пользователя обновлен');
         
@@ -170,8 +180,9 @@ async function navigateToNextScreen() {
     console.log('🚀 Переходим к следующему экрану');
     
     try {
-        // Переходим на экран объяснения уровней зависимости
-        const nextScreen = '../levels-explanation/index.html';
+        // Здесь нужно будет определить следующий экран
+        // Пока перенаправляем на главную страницу или экран завершения
+        const nextScreen = '../welcome/index.html'; // Временно
         
         console.log(`🔄 Переходим на экран: ${nextScreen}`);
         
@@ -188,24 +199,6 @@ async function navigateToNextScreen() {
 }
 
 /**
- * Генерация текста с правильными склонениями
- */
-function generateSelectedItemsText(count) {
-    let pointWord;
-    
-    // Правила склонения для слова "пункт"
-    if (count === 1) {
-        pointWord = 'пункт';
-    } else if (count >= 2 && count <= 4) {
-        pointWord = 'пункта';
-    } else {
-        pointWord = 'пунктов';
-    }
-    
-    return `✅ Вы выбрали <span id="selectedCount">${count}</span> ${pointWord} из списка`;
-}
-
-/**
  * Логирование прогресса пользователя
  */
 function logUserProgress() {
@@ -214,7 +207,8 @@ function logUserProgress() {
     try {
         const userProgress = {
             currentStep: localStorage.getItem('currentStep') || 'unknown',
-            transformationLessonsViewed: localStorage.getItem('transformationLessonsViewed') === 'true',
+            levelsExplanationViewed: localStorage.getItem('levelsExplanationViewed') === 'true',
+            selectedItemsCount: localStorage.getItem('selectedItemsCount') || '0',
             timestamp: new Date().toISOString()
         };
         
@@ -223,8 +217,9 @@ function logUserProgress() {
         // Отправляем аналитику, если доступно
         if (window.gtag) {
             window.gtag('event', 'screen_view', {
-                screen_name: 'transformation_lessons',
-                user_progress: userProgress.currentStep
+                screen_name: 'levels_explanation',
+                user_progress: userProgress.currentStep,
+                selected_items_count: userProgress.selectedItemsCount
             });
         }
         
@@ -237,21 +232,22 @@ function logUserProgress() {
  * Обработка ошибок
  */
 window.addEventListener('error', function(event) {
-    console.error('❌ Глобальная ошибка на экране уроков трансформации:', event.error);
+    console.error('❌ Глобальная ошибка на экране объяснения уровней:', event.error);
     
     // Можно добавить отправку ошибки на сервер аналитики
     if (window.gtag) {
         window.gtag('event', 'exception', {
             description: event.error?.message || 'Unknown error',
             fatal: false,
-            screen_name: 'transformation_lessons'
+            screen_name: 'levels_explanation'
         });
     }
 });
 
 // Экспорт функций для внешнего использования
-window.TransformationLessonsScreen = {
+window.LevelsExplanationScreen = {
     handleContinueClick,
+    handleCardClick,
     updateUserProgress,
     navigateToNextScreen
 };
