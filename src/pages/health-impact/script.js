@@ -1,6 +1,6 @@
 /**
- * SmokyApp - Money Equivalents Screen JavaScript
- * Скрипт экрана эквивалентов трат на никотин
+ * SmokyApp - Health Impact Screen JavaScript
+ * Скрипт экрана влияния на здоровье (потерянные дни жизни)
  */
 
 (function() {
@@ -83,10 +83,10 @@
     };
 
     /**
-     * Загрузка и отображение эквивалентов
+     * Загрузка и отображение данных о влиянии на здоровье
      */
-    const loadAndDisplayEquivalents = () => {
-        console.log('💰 Загружаем эквиваленты трат...');
+    const loadAndDisplayHealthImpact = () => {
+        console.log('💔 Загружаем данные о влиянии на здоровье...');
 
         try {
             // Получаем результаты из localStorage
@@ -99,50 +99,45 @@
             calculationResults = JSON.parse(resultsData);
             console.log('✅ Результаты расчета загружены:', calculationResults);
 
-            // Отображаем эквиваленты
-            displayEquivalents();
+            // Отображаем данные о здоровье
+            displayHealthImpact();
 
         } catch (error) {
-            console.error('❌ Ошибка при загрузке эквивалентов:', error);
+            console.error('❌ Ошибка при загрузке данных о здоровье:', error);
             showCriticalError('Ошибка загрузки данных', error.message);
         }
     };
 
     /**
-     * Отображение эквивалентов с анимацией
+     * Отображение данных о влиянии на здоровье
      */
-    const displayEquivalents = () => {
-        const familyDinnersElement = document.getElementById('familyDinners');
-        const gymMembershipsElement = document.getElementById('gymMemberships');
-        const seaTripsElement = document.getElementById('seaTrips');
+    const displayHealthImpact = () => {
+        const daysLostElement = document.getElementById('daysLost');
+        const yearsLostElement = document.getElementById('yearsLost');
         
-        if (!calculationResults?.equivalents) {
-            console.error('❌ Данные эквивалентов отсутствуют');
+        if (!calculationResults?.health_impact) {
+            console.error('❌ Данные о влиянии на здоровье отсутствуют');
             return;
         }
 
-        const equivalents = calculationResults.equivalents;
-        console.log('📊 Отображаем эквиваленты:', equivalents);
+        const healthImpact = calculationResults.health_impact;
+        console.log('💔 Отображаем влияние на здоровье:', healthImpact);
 
-        // Отображаем семейные ужины
-        if (familyDinnersElement && equivalents.family_dinners) {
-            familyDinnersElement.textContent = equivalents.family_dinners;
-            console.log('🍽️ Семейные ужины:', equivalents.family_dinners);
+        // Отображаем потерянные дни
+        if (daysLostElement && healthImpact.total_days_lost) {
+            const daysLost = healthImpact.total_days_lost;
+            daysLostElement.textContent = daysLost;
+            console.log('📅 Потерянные дни:', daysLost);
         }
 
-        // Отображаем абонементы в спортзал
-        if (gymMembershipsElement && equivalents.gym_memberships) {
-            gymMembershipsElement.textContent = equivalents.gym_memberships;
-            console.log('💪 Абонементы в спортзал:', equivalents.gym_memberships);
+        // Рассчитываем и отображаем годы
+        if (yearsLostElement && healthImpact.total_days_lost) {
+            const yearsLost = Math.round(healthImpact.total_days_lost / 365);
+            yearsLostElement.textContent = yearsLost;
+            console.log('📆 Потерянные годы:', yearsLost);
         }
 
-        // Отображаем поездки на море
-        if (seaTripsElement && equivalents.sea_trips) {
-            seaTripsElement.textContent = equivalents.sea_trips;
-            console.log('🌊 Поездки на море:', equivalents.sea_trips);
-        }
-
-        console.log('✅ Эквиваленты отображены');
+        console.log('✅ Данные о влиянии на здоровье отображены');
     };
 
     /**
@@ -150,23 +145,23 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 Money equivalents screen запускается...');
+            console.log('🚀 Health impact screen запускается...');
 
-            // Обновляем шаг в БД при загрузке equivalents экрана
+            // Обновляем шаг в БД при загрузке health-impact экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 16 (money-equivalents) через StepRouter');
-                    const success = await window.StepRouter.updateStep(16);
+                    console.log('🔄 Обновляем шаг до 17 (health-impact) через StepRouter');
+                    const success = await window.StepRouter.updateStep(17);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 16');
+                        console.log('✅ Шаг успешно обновлен до 17');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 16');
+                        console.warn('⚠️ Не удалось обновить шаг до 17');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на equivalents экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на health-impact экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на equivalents экране:', error);
+                console.error('❌ Ошибка при обновлении шага на health-impact экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -186,8 +181,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 16) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 16, выполняем переход через StepRouter');
+                        if (currentStep > 17) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 17, выполняем переход через StepRouter');
                             await window.StepRouter.navigateToCurrentStep(true);
                             return;
                         }
@@ -197,8 +192,8 @@
                 }
             }
 
-            // Загружаем и отображаем эквиваленты
-            loadAndDisplayEquivalents();
+            // Загружаем и отображаем данные о здоровье
+            loadAndDisplayHealthImpact();
             
             // Настройка UI и событий
             setupUI();
@@ -215,7 +210,7 @@
             }
 
             isReady = true;
-            console.log('✅ Money equivalents screen успешно инициализирован!');
+            console.log('✅ Health impact screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -251,7 +246,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                console.log(`👤 ID пользователя: ${user.id}. Money equivalents screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. Health impact screen загружен.`);
 
             } else {
                 console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: `tg.initDataUnsafe.user` имеет неверный формат или отсутствует.');
@@ -275,7 +270,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ Money equivalents screen загружен в режиме браузера');
+        console.log('✅ Health impact screen загружен в режиме браузера');
     };
 
     /**
@@ -316,7 +311,7 @@
     const setupTelegramButtons = () => {
         if (!tg) return;
         
-        // Скрываем кнопку "Назад" на экране эквивалентов
+        // Скрываем кнопку "Назад" на экране здоровья
         tg.BackButton.hide();
         
         // Настраиваем главную кнопку (пока скрываем)
@@ -345,7 +340,7 @@
         // Обработчик кнопки вперед
         if (forwardButton) {
             forwardButton.addEventListener('click', goForward);
-            console.log('🔘 Кнопка "Далее" найдена с классами:', forwardButton.className);
+            console.log('🔘 Кнопка "Продолжить" найдена с классами:', forwardButton.className);
         } else {
             console.error('❌ Кнопка forwardButton не найдена!');
         }
@@ -367,23 +362,23 @@
         if (tg?.sendData) {
             try {
                 tg.sendData(JSON.stringify({ 
-                    type: 'equivalents_viewed', 
-                    equivalents: calculationResults?.equivalents,
+                    type: 'health_impact_viewed', 
+                    health_impact: calculationResults?.health_impact,
                     timestamp: new Date().toISOString() 
                 }));
-                console.log('📤 Событие просмотра эквивалентов отправлено в Telegram');
+                console.log('📤 Событие просмотра влияния на здоровье отправлено в Telegram');
             } catch (error) {
                 console.error('❌ Ошибка отправки события:', error);
             }
         }
 
-        // Переход на экран влияния на здоровье
-        console.log('🔄 Переходим на экран влияния на здоровье');
+        // Переход на следующий экран (пока на welcome для тестирования)
+        console.log('🔄 Переходим на следующий экран приложения');
         
         if (window.LoadingManager?.navigateWithTransition) {
-            window.LoadingManager.navigateWithTransition('../health-impact/index.html');
+            window.LoadingManager.navigateWithTransition('../welcome/index.html');
         } else {
-            window.location.href = '../health-impact/index.html';
+            window.location.href = '../welcome/index.html';
         }
     };
 
@@ -447,7 +442,7 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokyMoneyEquivalents = {
+    window.SmokyHealthImpact = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
