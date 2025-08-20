@@ -184,6 +184,14 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
+                // Устанавливаем имя пользователя в заголовок
+                const userName = user.first_name || 'Друг';
+                const userNameElement = document.getElementById('userName');
+                if (userNameElement) {
+                    userNameElement.textContent = userName;
+                    console.log(`👤 Установлено имя пользователя: ${userName}`);
+                }
+                
                 console.log(`👤 ID пользователя: ${user.id}. System explanation screen загружен.`);
 
             } else {
@@ -205,6 +213,14 @@
         const testUser = config?.development?.testUser;
         if (!testUser) {
             throw new Error('Тестовый пользователь не найден в конфигурации (`development.testUser`).');
+        }
+        
+        // Устанавливаем имя тестового пользователя в заголовок
+        const userName = testUser.first_name || 'Друг';
+        const userNameElement = document.getElementById('userName');
+        if (userNameElement) {
+            userNameElement.textContent = userName;
+            console.log(`👤 Установлено имя тестового пользователя: ${userName}`);
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);

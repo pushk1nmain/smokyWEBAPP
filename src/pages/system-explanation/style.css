@@ -47,7 +47,7 @@
 /* Основной контейнер */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #E6F0FF;
+    background: #E8F4FD;
     color: var(--tg-theme-text-color);
     line-height: 1.6;
     overflow: auto;
@@ -62,7 +62,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: #E6F0FF;
+    background: #E8F4FD;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -148,79 +148,56 @@ body {
     margin: 0;
 }
 
-/* Контейнер методов */
-.methods-container {
+/* Центральная иллюстрация */
+.illustration-section {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
     justify-content: center;
-    min-height: 0;
-}
-
-/* Карточка метода */
-.method-card {
-    display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 20px 16px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 14px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-    border: 2px solid rgba(90, 155, 247, 0.1);
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: left;
-    min-height: 56px;
+    flex: 1;
+    margin: 20px 0;
     
-    /* Анимация - начальное состояние невидимый и смещенный вниз */
+    /* Анимация появления */
     opacity: 0;
-    transform: translateY(30px);
-    animation: slideInUpFade 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    transform: scale(0.8) translateY(20px);
+    animation: fadeInScale 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.5s;
 }
 
-.method-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+.main-illustration {
+    max-width: 200px;
+    width: 80%;
+    height: auto;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
 }
 
-/* Номер метода */
-.method-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: var(--color-number-bg);
-    color: var(--color-number);
-    border-radius: 50%;
+.main-illustration:hover {
+    transform: scale(1.05);
+}
+
+/* Секция описания */
+.description-section {
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+    
+    /* Анимация появления */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.8s;
+}
+
+.description-text {
     font-size: 16px;
-    font-weight: 700;
-    flex-shrink: 0;
-}
-
-/* Контент метода */
-.method-content {
-    flex: 1;
-}
-
-.method-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--color-title);
-    margin: 0 0 2px 0;
-    line-height: 1.2;
-}
-
-.method-description {
-    font-size: 13px;
     font-weight: 500;
     color: var(--color-text);
-    opacity: 0.8;
+    line-height: 1.5;
     margin: 0;
-    line-height: 1.2;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Секция действий */
@@ -232,21 +209,16 @@ body {
     flex-shrink: 0;
 }
 
-/* Анимация появления карточек с задержками */
-.method-card:nth-child(1) {
-    animation-delay: 0.5s;
-}
-
-.method-card:nth-child(2) {
-    animation-delay: 1s;
-}
-
-.method-card:nth-child(3) {
-    animation-delay: 1.5s;
-}
-
-.method-card:nth-child(4) {
-    animation-delay: 2s;
+/* Анимация появления с масштабированием */
+@keyframes fadeInScale {
+    0% {
+        transform: scale(0.8) translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
 }
 
 /* Анимация появления элементов */
@@ -365,27 +337,13 @@ body {
         font-size: 14px;
     }
     
-    .methods-container {
-        gap: 12px;
+    .main-illustration {
+        max-width: 160px;
     }
     
-    .method-card {
-        padding: 12px;
-        gap: 12px;
-    }
-    
-    .method-number {
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-    }
-    
-    .method-title {
-        font-size: 14px;
-    }
-    
-    .method-description {
-        font-size: 12px;
+    .description-text {
+        font-size: 15px;
+        max-width: 280px;
     }
     
     .emoji {
@@ -411,27 +369,13 @@ body {
         font-size: 14px;
     }
     
-    .methods-container {
-        gap: 10px;
+    .main-illustration {
+        max-width: 140px;
     }
     
-    .method-card {
-        padding: 10px;
-        gap: 10px;
-    }
-    
-    .method-number {
-        width: 28px;
-        height: 28px;
+    .description-text {
         font-size: 14px;
-    }
-    
-    .method-title {
-        font-size: 13px;
-    }
-    
-    .method-description {
-        font-size: 11px;
+        line-height: 1.4;
     }
     
     .action-section {
@@ -458,7 +402,9 @@ body {
 /* Доступность */
 @media (prefers-reduced-motion: reduce) {
     .header-section,
-    .method-card,
+    .illustration-section,
+    .description-section,
+    .main-illustration,
     .loading-ring,
     .emoji {
         animation: none !important;
@@ -466,7 +412,8 @@ body {
     }
     
     .header-section,
-    .method-card {
+    .illustration-section,
+    .description-section {
         opacity: 1 !important;
         transform: none !important;
     }
