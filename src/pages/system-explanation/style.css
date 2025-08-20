@@ -120,7 +120,7 @@ body {
 .header-section {
     width: 100%;
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     
     /* Анимация заголовка */
     opacity: 0;
@@ -224,7 +224,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 24px;
+    margin-top: 28px;
 }
 
 /* Анимация появления карточек с задержками */
