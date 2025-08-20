@@ -105,7 +105,7 @@ async function handleContinueClick() {
         }
         
         // Переходим к следующему экрану сразу
-        await navigateToNextScreen();
+        navigateToNextScreen();
         
     } catch (error) {
         console.error('❌ Ошибка при переходе к следующему экрану:', error);
@@ -163,7 +163,7 @@ async function updateUserProgress() {
 /**
  * Переход к следующему экрану
  */
-async function navigateToNextScreen() {
+function navigateToNextScreen() {
     console.log('🚀 Переходим к следующему экрану');
     
     try {
@@ -172,15 +172,8 @@ async function navigateToNextScreen() {
         
         console.log(`🔄 Переходим на экран: ${nextScreen}`);
         
-        // Небольшая задержка для плавности
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Переход с использованием LoadingManager или прямой переход
-        if (window.LoadingManager && window.LoadingManager.navigateWithTransition) {
-            window.LoadingManager.navigateWithTransition(nextScreen);
-        } else {
-            window.location.href = nextScreen;
-        }
+        // Прямой переход без задержки
+        window.location.href = nextScreen;
         
     } catch (error) {
         console.error('❌ Ошибка при навигации:', error);
