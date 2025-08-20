@@ -35,15 +35,15 @@ function initializeScreen() {
     
     try {
         // Получаем элементы
-        const continueButton = document.getElementById('continueButton');
+        const forwardButton = document.getElementById('forwardButton');
         
-        if (!continueButton) {
+        if (!forwardButton) {
             console.error('❌ Не найдены обязательные элементы интерфейса');
             return;
         }
         
         // Добавляем обработчики событий
-        continueButton.addEventListener('click', handleContinueClick);
+        forwardButton.addEventListener('click', handleContinueClick);
         
         // Логируем информацию о пользователе
         logUserProgress();
