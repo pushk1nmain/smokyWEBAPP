@@ -167,36 +167,61 @@ async function updateUserProgress() {
  * Переход к следующему экрану через StepRouter
  */
 async function navigateToNextScreen() {
-    console.log('🚀 Переходим к следующему экрану через StepRouter');
+    console.log('🚀🚀🚀 НАЧИНАЕМ navigateToNextScreen()');
+    console.log('🔍 Детальная диагностика окружения:');
+    console.log('  - window.StepRouter существует:', !!window.StepRouter);
+    console.log('  - window.StepRouter.goToNextStep существует:', !!window.StepRouter?.goToNextStep);
+    console.log('  - window.StepRouter.currentStep:', window.StepRouter?.currentStep);
+    console.log('  - window.StepRouter.isInitialized:', window.StepRouter?.isInitialized);
+    console.log('  - window.APIClient существует:', !!window.APIClient);
+    console.log('  - localStorage.currentStep:', localStorage.getItem('currentStep'));
     
     try {
-        // Сохраняем локально информацию о просмотре (без обновления шага на сервере)
+        console.log('💾 Сохраняем локальную информацию о просмотре...');
         localStorage.setItem('transformationLessonsViewed', 'true');
         localStorage.setItem('transformationLessonsTimestamp', new Date().toISOString());
-        console.log('💾 Локальная информация о просмотре сохранена');
+        console.log('✅ Локальная информация сохранена');
         
-        // Используем StepRouter для корректного перехода к следующему шагу
         if (window.StepRouter) {
-            console.log('🔄 Используем StepRouter для перехода к следующему шагу');
-            const success = await window.StepRouter.goToNextStep();
+            console.log('🔄 StepRouter НАЙДЕН - начинаем процесс перехода');
+            console.log('🔍 Состояние StepRouter перед переходом:', window.StepRouter.getState());
             
-            if (!success) {
-                console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
+            console.log('📞 ВЫЗЫВАЕМ window.StepRouter.goToNextStep()...');
+            const success = await window.StepRouter.goToNextStep();
+            console.log('📥 РЕЗУЛЬТАТ goToNextStep():', success);
+            
+            if (success === true) {
+                console.log('✅ StepRouter УСПЕШНО выполнил переход');
+                return; // Выходим, переход выполнен
+            } else {
+                console.error('❌ StepRouter.goToNextStep() вернул FALSE');
+                console.log('🔍 Состояние StepRouter после неудачного перехода:', window.StepRouter.getState());
+                
                 // Fallback на прямой переход
                 const nextScreen = '../levels-explanation/index.html';
-                console.log(`🔄 Fallback переход на: ${nextScreen}`);
+                console.log(`🔄 FALLBACK: прямой переход на ${nextScreen}`);
                 window.location.href = nextScreen;
             }
         } else {
-            console.warn('⚠️ StepRouter недоступен, используем прямой переход');
+            console.error('❌ window.StepRouter НЕ НАЙДЕН');
             // Fallback если StepRouter недоступен
             const nextScreen = '../levels-explanation/index.html';
-            console.log(`🔄 Прямой переход на: ${nextScreen}`);
+            console.log(`🔄 FALLBACK: прямой переход на ${nextScreen} (нет StepRouter)`);
             window.location.href = nextScreen;
         }
         
     } catch (error) {
-        console.error('❌ Ошибка при навигации:', error);
+        console.error('❌❌❌ КРИТИЧЕСКАЯ ОШИБКА в navigateToNextScreen():');
+        console.error('  - Имя ошибки:', error.name);
+        console.error('  - Сообщение:', error.message);
+        console.error('  - Стек:', error.stack);
+        console.error('  - Полный объект ошибки:', error);
+        
+        // Дополнительная диагностика при ошибке
+        console.log('🔍 Диагностика при ошибке:');
+        console.log('  - Текущий URL:', window.location.href);
+        console.log('  - StepRouter после ошибки:', window.StepRouter?.getState());
+        
         throw error;
     }
 }

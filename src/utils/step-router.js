@@ -337,54 +337,78 @@ class StepRouter {
      * @returns {Promise<boolean>} Успешность перехода
      */
     async goToNextStep() {
+        console.log('🔥🔥🔥 StepRouter.goToNextStep() ЗАПУЩЕН');
+        
         try {
+            console.log('🔍 Диагностика StepRouter:');
+            console.log('  - this.currentStep:', this.currentStep);
+            console.log('  - this.telegramId:', this.telegramId);
+            console.log('  - this.isInitialized:', this.isInitialized);
+            
             // Получаем текущий шаг, с защитой от сброса к 1
             let currentStep = this.currentStep;
             if (!currentStep) {
+                console.log('📱 currentStep не установлен, ищем в localStorage...');
                 // Сначала пытаемся из localStorage
                 const localStep = parseInt(localStorage.getItem('currentStep'));
                 if (localStep && localStep > 0) {
                     currentStep = localStep;
                     this.currentStep = localStep;
-                    console.log(`📱 Используем шаг из localStorage: ${localStep}`);
+                    console.log(`📱 НАЙДЕН шаг в localStorage: ${localStep}`);
                 } else {
+                    console.log('📡 localStorage пуст, обращаемся к API...');
                     // Только если ничего нет - обращаемся к API
                     currentStep = await this.getCurrentStep();
+                    console.log(`📡 ПОЛУЧЕН шаг из API: ${currentStep}`);
                 }
             }
             
             const nextStep = currentStep + 1;
             const maxStep = this.getMaxStep();
             
-            console.log(`📈 Переход с шага ${currentStep} на шаг ${nextStep} (максимальный определенный: ${maxStep})`);
+            console.log(`📈 ПЕРЕХОД: ${currentStep} → ${nextStep} (максимальный: ${maxStep})`);
             
             // Проверяем существование следующего экрана
+            console.log(`🔍 Ищем экран для шага ${nextStep}...`);
             const nextScreenUrl = this.getScreenForStep(nextStep);
+            console.log(`🎯 Найден экран: ${nextScreenUrl}`);
+            
             if (!nextScreenUrl) {
-                console.warn(`⚠️ Следующий шаг ${nextStep} не определен`);
+                console.error(`❌ КРИТИЧНО: Следующий шаг ${nextStep} НЕ ОПРЕДЕЛЕН`);
+                console.log('🔍 Доступные шаги:', Object.keys(StepRouter.STEP_TO_SCREEN));
                 return false;
             }
 
             // Обновляем шаг на сервере
+            console.log(`📤 ОБНОВЛЯЕМ шаг до ${nextStep} на сервере...`);
             const updateSuccess = await this.updateStep(nextStep);
+            console.log(`📥 РЕЗУЛЬТАТ обновления шага: ${updateSuccess}`);
+            
             if (!updateSuccess) {
-                console.error('❌ Не удалось обновить шаг на сервере');
+                console.error(`❌ НЕ УДАЛОСЬ обновить шаг ${nextStep} на сервере`);
                 return false;
             }
 
             // Переходим на следующий экран
-            console.log(`➡️ Переход к шагу ${nextStep}: ${nextScreenUrl}`);
+            console.log(`🚀 ВЫПОЛНЯЕМ ПЕРЕХОД к шагу ${nextStep}: ${nextScreenUrl}`);
             
             if (window.LoadingManager?.navigateWithTransition) {
+                console.log('🔄 Используем LoadingManager.navigateWithTransition');
                 window.LoadingManager.navigateWithTransition(nextScreenUrl);
             } else {
+                console.log('🔄 Используем прямой window.location.href');
                 window.location.href = nextScreenUrl;
             }
             
+            console.log('✅ goToNextStep() ЗАВЕРШЕН УСПЕШНО');
             return true;
             
         } catch (error) {
-            console.error('❌ Ошибка при переходе к следующему шагу:', error);
+            console.error('❌❌❌ КРИТИЧЕСКАЯ ОШИБКА в goToNextStep():');
+            console.error('  - Имя ошибки:', error.name);
+            console.error('  - Сообщение:', error.message);
+            console.error('  - Стек:', error.stack);
+            console.error('  - Полный объект:', error);
             return false;
         }
     }
