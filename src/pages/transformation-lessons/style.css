@@ -173,19 +173,19 @@ body {
 }
 
 .lesson-card:nth-child(1) {
-    animation-delay: 0.4s;
+    animation-delay: 0.5s;
 }
 
 .lesson-card:nth-child(2) {
-    animation-delay: 0.6s;
+    animation-delay: 1s;
 }
 
 .lesson-card:nth-child(3) {
-    animation-delay: 0.8s;
+    animation-delay: 1.5s;
 }
 
 .lesson-card:nth-child(4) {
-    animation-delay: 1.0s;
+    animation-delay: 2s;
 }
 
 /* Номер урока */
@@ -230,7 +230,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
     animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    animation-delay: 1.2s;
+    animation-delay: 2.5s;
 }
 
 /* Кнопка "Далее" */
