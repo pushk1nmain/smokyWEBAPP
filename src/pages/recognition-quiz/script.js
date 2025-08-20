@@ -89,22 +89,9 @@
         try {
             console.log('🚀 Recognition quiz screen запускается...');
 
-            // Обновляем шаг в БД при загрузке recognition-quiz экрана
-            try {
-                if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 19 (recognition-quiz) через StepRouter');
-                    const success = await window.StepRouter.updateStep(19);
-                    if (success) {
-                        console.log('✅ Шаг успешно обновлен до 19');
-                    } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 19');
-                    }
-                } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на recognition-quiz экране');
-                }
-            } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на recognition-quiz экране:', error);
-            }
+            // УБРАЛИ ОБНОВЛЕНИЕ НА 19 - оно ЗАТИРАЛО ПРОГРЕСС
+            // recognition-quiz экран уже открывается на 19-м шаге, обновлять не нужно
+            console.log('📍 recognition-quiz экран загружен (шаг 19), прогресс сохранен');
 
             // Дожидаемся инициализации SmokyApp если он доступен
             if (window.SmokyApp) {
@@ -387,9 +374,23 @@
             }
         }
 
-        // Переход на следующий экран (transformation-lessons)
-        console.log('🔄 Переходим на экран уроков трансформации');
+        // Обновляем шаг до 20 и переходим на transformation-lessons
+        console.log('🔄 Обновляем шаг до 20 и переходим к transformation-lessons');
         
+        try {
+            if (window.StepRouter) {
+                const success = await window.StepRouter.updateStep(20);
+                if (success) {
+                    console.log('✅ Шаг обновлен до 20, выполняем переход');
+                } else {
+                    console.warn('⚠️ Не удалось обновить шаг до 20, но продолжаем');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Ошибка при обновлении шага:', error);
+        }
+        
+        // Переход на экран transformation-lessons (20-й шаг)
         if (window.LoadingManager?.navigateWithTransition) {
             window.LoadingManager.navigateWithTransition('../transformation-lessons/index.html');
         } else {
