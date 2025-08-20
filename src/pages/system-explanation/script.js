@@ -309,13 +309,13 @@
             }
         }
 
-        // Переход на следующий экран (пока на welcome для тестирования)
-        console.log('🔄 Переходим на следующий экран приложения');
+        // Переход на экран уроков трансформации
+        console.log('🔄 Переходим на экран уроков трансформации');
         
         if (window.LoadingManager?.navigateWithTransition) {
-            window.LoadingManager.navigateWithTransition('../welcome/index.html');
+            window.LoadingManager.navigateWithTransition('../transformation-lessons/index.html');
         } else {
-            window.location.href = '../welcome/index.html';
+            window.location.href = '../transformation-lessons/index.html';
         }
     };
 
