@@ -104,10 +104,7 @@ async function handleContinueClick() {
             window.LoadingManager.show();
         }
         
-        // Обновляем прогресс пользователя
-        await updateUserProgress();
-        
-        // Переходим к следующему экрану
+        // Переходим к следующему экрану сразу
         await navigateToNextScreen();
         
     } catch (error) {
