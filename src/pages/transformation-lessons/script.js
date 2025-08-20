@@ -101,7 +101,7 @@ async function handleContinueClick() {
     try {
         // Показываем загрузку
         if (window.LoadingManager) {
-            window.LoadingManager.show();
+            window.LoadingManager.showConditional('Переходим к следующему экрану...');
         }
         
         // Переходим к следующему экрану через StepRouter
