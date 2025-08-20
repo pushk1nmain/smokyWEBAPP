@@ -272,23 +272,26 @@
             console.error('❌ Кнопка continueButton не найдена!');
         }
 
-        // Обработчики чекбоксов
+        // Обработчики чекбоксов - слушаем изменения чекбоксов напрямую
         checkboxItems.forEach(item => {
-            item.addEventListener('click', handleCheckboxClick);
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            if (checkbox) {
+                checkbox.addEventListener('change', handleCheckboxChange);
+                console.log(`⚙️ Обработчик установлен для: ${checkbox.id}`);
+            }
         });
         
         console.log('⚡ Обработчики событий настроены');
     };
 
     /**
-     * Обработка клика по чекбоксу
+     * Обработка изменения чекбокса
      */
-    const handleCheckboxClick = (event) => {
-        const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
+    const handleCheckboxChange = (event) => {
+        const checkbox = event.target;
         const checkboxId = checkbox.id;
         
-        // Переключаем состояние
-        checkbox.checked = !checkbox.checked;
+        console.log(`🔄 Изменение чекбокса ${checkboxId}: ${checkbox.checked}`);
         
         // Обновляем набор выбранных элементов
         if (checkbox.checked) {
