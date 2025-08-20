@@ -225,7 +225,23 @@ class SmokyApp {
             '/src/pages/name-input/',
             '/src/pages/city-input/',
             '/src/pages/how-did-you-know/',
-            '/src/pages/waking-up/'
+            '/src/pages/waking-up/',
+            '/src/pages/robot-appearance/',
+            '/src/pages/navigator-broken/',
+            '/src/pages/charger-question/',
+            '/src/pages/price-question/',
+            '/src/pages/health-realization/',
+            '/src/pages/nicotine-selection/',
+            '/src/pages/nicotine-amount/',
+            '/src/pages/nicotine-cost/',
+            '/src/pages/nicotine-experience/',
+            '/src/pages/calculation-results/',
+            '/src/pages/money-equivalents/',
+            '/src/pages/health-impact/',
+            '/src/pages/system-explanation/',
+            '/src/pages/recognition-quiz/',
+            '/src/pages/transformation-lessons/',
+            '/src/pages/levels-explanation/'
         ];
         
         return screenPaths.some(screenPath => path.includes(screenPath));
@@ -282,7 +298,23 @@ class SmokyApp {
             '/src/pages/name-input/': 2,
             '/src/pages/city-input/': 3,
             '/src/pages/how-did-you-know/': 4,
-            '/src/pages/waking-up/': 5
+            '/src/pages/waking-up/': 5,
+            '/src/pages/robot-appearance/': 6,
+            '/src/pages/navigator-broken/': 7,
+            '/src/pages/charger-question/': 8,
+            '/src/pages/price-question/': 9,
+            '/src/pages/health-realization/': 10,
+            '/src/pages/nicotine-selection/': 11,
+            '/src/pages/nicotine-amount/': 12,
+            '/src/pages/nicotine-cost/': 13,
+            '/src/pages/nicotine-experience/': 14,
+            '/src/pages/calculation-results/': 15,
+            '/src/pages/money-equivalents/': 16,
+            '/src/pages/health-impact/': 17,
+            '/src/pages/system-explanation/': 18,
+            '/src/pages/recognition-quiz/': 19,
+            '/src/pages/transformation-lessons/': 20,
+            '/src/pages/levels-explanation/': 21
         };
         
         for (const [screenPath, step] of Object.entries(stepMappings)) {

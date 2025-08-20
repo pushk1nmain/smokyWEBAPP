@@ -23,17 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Telegram WebApp настроен для экрана уроков');
     }
     
-    // Принудительно обновляем шаг до 20 при загрузке transformation-lessons
-    console.log('🔄 ПРИНУДИТЕЛЬНОЕ обновление шага до 20 при загрузке transformation-lessons');
-    if (window.StepRouter) {
-        try {
-            await window.StepRouter.updateStep(20);
-            console.log('✅ Шаг 20 установлен принудительно');
-        } catch (error) {
-            console.error('❌ Ошибка при принудительном обновлении шага 20:', error);
-        }
-    }
-    
     // Инициализируем экран
     initializeScreen();
 });
@@ -129,9 +118,17 @@ async function handleContinueClick() {
             window.LoadingManager.hide();
         }
         
-        // НЕ показываем ошибку пользователю, а принудительно переходим
-        console.log('🔄 ПРИНУДИТЕЛЬНЫЙ переход на levels-explanation несмотря на ошибку');
-        window.location.href = '../levels-explanation/index.html';
+        // Показываем ошибку
+        if (window.showErrorModal) {
+            window.showErrorModal(
+                'Ошибка перехода',
+                'Не удалось перейти к следующему экрану. Попробуйте еще раз.',
+                [{
+                    text: 'Повторить',
+                    action: () => handleContinueClick()
+                }]
+            );
+        }
     }
 }
 
@@ -178,24 +175,23 @@ async function navigateToNextScreen() {
         localStorage.setItem('transformationLessonsTimestamp', new Date().toISOString());
         console.log('💾 Локальная информация о просмотре сохранена');
         
-        // Обновляем шаг до 21 СНАЧАЛА
+        // Используем StepRouter для корректного перехода к следующему шагу
         if (window.StepRouter) {
-            console.log('🔄 Обновляем шаг до 21 после просмотра уроков трансформации');
-            const stepUpdateSuccess = await window.StepRouter.updateStep(21);
+            console.log('🔄 Используем StepRouter для перехода к следующему шагу');
+            const success = await window.StepRouter.goToNextStep();
             
-            if (stepUpdateSuccess) {
-                console.log('✅ Шаг обновлен до 21, выполняем переход');
-            } else {
-                console.warn('⚠️ Не удалось обновить шаг, но продолжаем переход');
+            if (!success) {
+                console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
+                // Fallback на прямой переход
+                const nextScreen = '../levels-explanation/index.html';
+                console.log(`🔄 Fallback переход на: ${nextScreen}`);
+                window.location.href = nextScreen;
             }
-        }
-        
-        // Переходим на levels-explanation
-        const nextScreen = '../levels-explanation/index.html';
-        console.log(`🔄 Переход на: ${nextScreen}`);
-        if (window.LoadingManager?.navigateWithTransition) {
-            window.LoadingManager.navigateWithTransition(nextScreen);
         } else {
+            console.warn('⚠️ StepRouter недоступен, используем прямой переход');
+            // Fallback если StepRouter недоступен
+            const nextScreen = '../levels-explanation/index.html';
+            console.log(`🔄 Прямой переход на: ${nextScreen}`);
             window.location.href = nextScreen;
         }
         

@@ -23,17 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Telegram WebApp настроен для экрана уровней');
     }
     
-    // Принудительно обновляем шаг до 21 при загрузке levels-explanation
-    console.log('🔄 ПРИНУДИТЕЛЬНОЕ обновление шага до 21 при загрузке levels-explanation');
-    if (window.StepRouter) {
-        try {
-            await window.StepRouter.updateStep(21);
-            console.log('✅ Шаг 21 установлен принудительно');
-        } catch (error) {
-            console.error('❌ Ошибка при принудительном обновлении шага 21:', error);
-        }
-    }
-    
     // Инициализируем экран
     initializeScreen();
 });
