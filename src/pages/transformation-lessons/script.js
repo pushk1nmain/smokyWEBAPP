@@ -104,8 +104,8 @@ async function handleContinueClick() {
             window.LoadingManager.show();
         }
         
-        // Переходим к следующему экрану сразу
-        navigateToNextScreen();
+        // Переходим к следующему экрану через StepRouter
+        await navigateToNextScreen();
         
     } catch (error) {
         console.error('❌ Ошибка при переходе к следующему экрану:', error);
@@ -138,11 +138,11 @@ async function updateUserProgress() {
     try {
         // Обновляем шаг в БД через StepRouter
         if (window.StepRouter) {
-            console.log('🔄 Обновляем шаг до 19 после просмотра уроков');
-            const success = await window.StepRouter.updateStep(19);
+            console.log('🔄 Обновляем шаг до 20 после просмотра уроков');
+            const success = await window.StepRouter.updateStep(20);
             
             if (success) {
-                console.log('✅ Шаг успешно обновлен до 19');
+                console.log('✅ Шаг успешно обновлен до 20');
             } else {
                 console.warn('⚠️ Не удалось обновить шаг пользователя');
             }
@@ -161,19 +161,34 @@ async function updateUserProgress() {
 }
 
 /**
- * Переход к следующему экрану
+ * Переход к следующему экрану через StepRouter
  */
-function navigateToNextScreen() {
-    console.log('🚀 Переходим к следующему экрану');
+async function navigateToNextScreen() {
+    console.log('🚀 Переходим к следующему экрану через StepRouter');
     
     try {
-        // Переходим на экран объяснения уровней зависимости
-        const nextScreen = '../levels-explanation/index.html';
+        // Обновляем прогресс пользователя
+        await updateUserProgress();
         
-        console.log(`🔄 Переходим на экран: ${nextScreen}`);
-        
-        // Прямой переход без задержки
-        window.location.href = nextScreen;
+        // Используем StepRouter для корректного перехода
+        if (window.StepRouter) {
+            console.log('🔄 Используем StepRouter для перехода к следующему шагу');
+            const success = await window.StepRouter.goToNextStep();
+            
+            if (!success) {
+                console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
+                // Fallback на прямой переход
+                const nextScreen = '../levels-explanation/index.html';
+                console.log(`🔄 Fallback переход на: ${nextScreen}`);
+                window.location.href = nextScreen;
+            }
+        } else {
+            console.warn('⚠️ StepRouter недоступен, используем прямой переход');
+            // Fallback если StepRouter недоступен
+            const nextScreen = '../levels-explanation/index.html';
+            console.log(`🔄 Прямой переход на: ${nextScreen}`);
+            window.location.href = nextScreen;
+        }
         
     } catch (error) {
         console.error('❌ Ошибка при навигации:', error);

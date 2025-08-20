@@ -36,6 +36,8 @@ class StepRouter {
         16: '/src/pages/money-equivalents/index.html',   // Денежные эквиваленты
         17: '/src/pages/health-impact/index.html',       // Влияние на здоровье
         18: '/src/pages/system-explanation/index.html',  // Объяснение системы трансформации
+        19: '/src/pages/transformation-lessons/index.html', // Уроки трансформации (поддержка)
+        20: '/src/pages/levels-explanation/index.html',   // Объяснение уровней зависимости
         // Здесь будут добавляться новые экраны по мере развития приложения
     };
 
@@ -61,6 +63,8 @@ class StepRouter {
         16: 'Денежные эквиваленты',
         17: 'Влияние на здоровье',
         18: 'Объяснение системы',
+        19: 'Уроки трансформации',
+        20: 'Объяснение уровней зависимости',
     };
 
     /**
