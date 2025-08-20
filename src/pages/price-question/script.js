@@ -93,12 +93,12 @@
             // Обновляем шаг в БД при загрузке price-question экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 10 (price-question) через StepRouter');
-                    const success = await window.StepRouter.updateStep(10);
+                    console.log('🔄 Обновляем шаг до 9 (price-question) через StepRouter');
+                    const success = await window.StepRouter.updateStep(9);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 10');
+                        console.log('✅ Шаг успешно обновлен до 9');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 10');
+                        console.warn('⚠️ Не удалось обновить шаг до 9');
                     }
                 } else {
                     console.warn('⚠️ StepRouter недоступен для обновления шага на price-question экране');
