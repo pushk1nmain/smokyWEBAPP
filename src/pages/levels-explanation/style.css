@@ -50,7 +50,7 @@ body {
     background: #E8F4FD;
     color: var(--tg-theme-text-color);
     line-height: 1.6;
-    overflow: auto;
+    overflow: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100dvh;
@@ -62,8 +62,7 @@ body {
     flex-direction: column;
     position: relative;
     background: #E8F4FD;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     max-height: 100vh;
 }
 
