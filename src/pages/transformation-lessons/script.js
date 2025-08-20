@@ -167,10 +167,12 @@ async function navigateToNextScreen() {
     console.log('🚀 Переходим к следующему экрану через StepRouter');
     
     try {
-        // Обновляем прогресс пользователя
-        await updateUserProgress();
+        // Сохраняем локально информацию о просмотре (без обновления шага на сервере)
+        localStorage.setItem('transformationLessonsViewed', 'true');
+        localStorage.setItem('transformationLessonsTimestamp', new Date().toISOString());
+        console.log('💾 Локальная информация о просмотре сохранена');
         
-        // Используем StepRouter для корректного перехода
+        // Используем StepRouter для корректного перехода (он сам обновит шаг)
         if (window.StepRouter) {
             console.log('🔄 Используем StepRouter для перехода к следующему шагу');
             const success = await window.StepRouter.goToNextStep();
