@@ -377,23 +377,27 @@
             }
         }
 
-        // Обновляем шаг до 20 и переходим на transformation-lessons
-        console.log('🔄 Обновляем шаг до 20 и переходим к transformation-lessons');
+        // Используем StepRouter для корректного перехода к следующему шагу
+        console.log('🔄 Переходим к следующему экрану через StepRouter');
         
         try {
             if (window.StepRouter) {
-                const success = await window.StepRouter.updateStep(20);
+                const success = await window.StepRouter.goToNextStep();
                 if (success) {
-                    console.log('✅ Шаг обновлен до 20, выполняем переход');
+                    console.log('✅ Переход выполнен через StepRouter');
+                    return; // Выходим, StepRouter сам выполнил переход
                 } else {
-                    console.warn('⚠️ Не удалось обновить шаг до 20, но продолжаем');
+                    console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
                 }
+            } else {
+                console.warn('⚠️ StepRouter недоступен');
             }
         } catch (error) {
-            console.error('❌ Ошибка при обновлении шага:', error);
+            console.error('❌ Ошибка при переходе через StepRouter:', error);
         }
         
-        // Переход на экран transformation-lessons (20-й шаг)
+        // Fallback: прямой переход на transformation-lessons (20-й шаг)
+        console.log('🔄 Fallback: прямой переход на transformation-lessons');
         if (window.LoadingManager?.navigateWithTransition) {
             window.LoadingManager.navigateWithTransition('../transformation-lessons/index.html');
         } else {
