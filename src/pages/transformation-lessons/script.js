@@ -108,24 +108,19 @@ async function handleContinueClick() {
         await navigateToNextScreen();
         
     } catch (error) {
-        console.error('❌ Ошибка при переходе к следующему экрану:', error);
+        console.error('❌ ПОДРОБНАЯ ОШИБКА при переходе к следующему экрану:', error);
+        console.error('❌ Стек ошибки:', error.stack);
+        console.error('❌ Название ошибки:', error.name);
+        console.error('❌ Сообщение ошибки:', error.message);
         
         // Скрываем загрузку
         if (window.LoadingManager) {
             window.LoadingManager.hide();
         }
         
-        // Показываем ошибку
-        if (window.showErrorModal) {
-            window.showErrorModal(
-                'Ошибка перехода',
-                'Не удалось перейти к следующему экрану. Попробуйте еще раз.',
-                [{
-                    text: 'Повторить',
-                    action: () => handleContinueClick()
-                }]
-            );
-        }
+        // НЕ показываем ошибку пользователю, а принудительно переходим
+        console.log('🔄 ПРИНУДИТЕЛЬНЫЙ переход на levels-explanation несмотря на ошибку');
+        window.location.href = '../levels-explanation/index.html';
     }
 }
 
