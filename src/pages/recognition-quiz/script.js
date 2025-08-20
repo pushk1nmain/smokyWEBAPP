@@ -365,10 +365,12 @@
         // Сохраняем выбранные пункты
         const recognitionData = {
             selectedItems: Array.from(selectedItems),
+            selectedCount: selectedItems.size,
             timestamp: new Date().toISOString()
         };
 
         localStorage.setItem('recognitionQuizResult', JSON.stringify(recognitionData));
+        localStorage.setItem('selectedItemsCount', selectedItems.size.toString());
         console.log('💾 Результаты опроса сохранены:', recognitionData);
 
         // Отправляем данные в Telegram если доступно

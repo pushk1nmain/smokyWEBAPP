@@ -50,6 +50,14 @@ function initializeScreen() {
             userNameElement.textContent = userName;
             console.log(`👤 Установлено имя пользователя из кэша: ${userName}`);
         }
+
+        // Устанавливаем количество выбранных пунктов из предыдущего экрана
+        const selectedCount = localStorage.getItem('selectedItemsCount') || '0';
+        const selectedCountElement = document.getElementById('selectedCount');
+        if (selectedCountElement) {
+            selectedCountElement.textContent = selectedCount;
+            console.log(`📊 Установлено количество выбранных пунктов: ${selectedCount}`);
+        }
         
         // Добавляем обработчики событий
         forwardButton.addEventListener('click', handleContinueClick);
