@@ -23,6 +23,17 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Telegram WebApp настроен для экрана уроков');
     }
     
+    // Принудительно обновляем шаг до 20 при загрузке transformation-lessons
+    console.log('🔄 ПРИНУДИТЕЛЬНОЕ обновление шага до 20 при загрузке transformation-lessons');
+    if (window.StepRouter) {
+        try {
+            await window.StepRouter.updateStep(20);
+            console.log('✅ Шаг 20 установлен принудительно');
+        } catch (error) {
+            console.error('❌ Ошибка при принудительном обновлении шага 20:', error);
+        }
+    }
+    
     // Инициализируем экран
     initializeScreen();
 });
