@@ -336,7 +336,7 @@
     /**
      * Переход вперед
      */
-    const goForward = () => {
+    const goForward = async () => {
         // Проверяем, что выбран минимум 1 пункт
         if (selectedItems.size === 0) {
             console.warn('⚠️ Попытка перехода без выбора пунктов');
