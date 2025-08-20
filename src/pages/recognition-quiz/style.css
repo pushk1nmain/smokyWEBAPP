@@ -94,9 +94,9 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    padding: 20px var(--container-padding) 15px;
+    padding: 40px var(--container-padding) 15px;
     position: relative;
     z-index: 1;
     min-height: 100vh;
@@ -113,7 +113,7 @@ body {
     max-width: 360px;
     width: 100%;
     flex-grow: 1;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 100%;
 }
 
@@ -134,7 +134,7 @@ body {
 .main-title {
     font-size: 24px;
     font-weight: 700;
-    color: var(--color-title);
+    color: #235BDF;
     line-height: 1.2;
     margin-bottom: 8px;
 }
@@ -152,10 +152,11 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     flex-grow: 1;
     overflow-y: auto;
-    padding: 5px 0;
+    padding: 20px 0;
+    margin-bottom: 40px;
     
     /* Анимация появления */
     opacity: 0;
@@ -256,8 +257,11 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 15px;
+    margin-top: auto;
+    margin-bottom: 15px;
     flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
     
     /* Анимация кнопки */
     opacity: 0;
