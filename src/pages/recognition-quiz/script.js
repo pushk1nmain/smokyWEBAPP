@@ -317,13 +317,45 @@
             tg.HapticFeedback.impactOccurred('light');
         }
 
+        // Обновляем состояние кнопки
+        updateButtonState();
+
         console.log('📊 Выбранные пункты:', Array.from(selectedItems));
+    };
+
+    /**
+     * Обновление состояния кнопки в зависимости от выбранных элементов
+     */
+    const updateButtonState = () => {
+        const continueButton = document.getElementById('continueButton');
+        if (!continueButton) return;
+
+        if (selectedItems.size > 0) {
+            // Активируем кнопку
+            continueButton.classList.remove('disabled');
+            continueButton.disabled = false;
+            console.log('🟢 Кнопка активирована');
+        } else {
+            // Деактивируем кнопку
+            continueButton.classList.add('disabled');
+            continueButton.disabled = true;
+            console.log('🔘 Кнопка деактивирована');
+        }
     };
 
     /**
      * Переход вперед
      */
     const goForward = () => {
+        // Проверяем, что выбран минимум 1 пункт
+        if (selectedItems.size === 0) {
+            console.warn('⚠️ Попытка перехода без выбора пунктов');
+            if (tg?.showAlert) {
+                tg.showAlert('Пожалуйста, выберите хотя бы один пункт');
+            }
+            return;
+        }
+
         console.log('➡️ Переход к следующему экрану');
         
         if (tg?.HapticFeedback) {
