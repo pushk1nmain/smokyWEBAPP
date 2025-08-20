@@ -137,6 +137,11 @@ body {
     position: relative;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    /* Анимация - начальное состояние невидимый и смещенный вниз */
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideInUpFade 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .equivalent-item:hover {
@@ -246,10 +251,10 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Анимация появления элементов */
-@keyframes slideInUp {
+/* Анимация появления элементов - Slide In Up + Fade */
+@keyframes slideInUpFade {
     0% {
-        transform: translateY(20px);
+        transform: translateY(30px);
         opacity: 0;
     }
     100% {
@@ -258,20 +263,17 @@ body {
     }
 }
 
-.equivalent-item {
-    animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
 .equivalent-item:nth-child(1) {
-    animation-delay: 0.1s;
+    animation-delay: 0s;
 }
 
 .equivalent-item:nth-child(2) {
-    animation-delay: 0.2s;
+    animation-delay: 0.5s;
 }
 
 .equivalent-item:nth-child(3) {
-    animation-delay: 0.3s;
+    animation-delay: 1s;
 }
 
 /* Адаптивность для мобильных устройств */
@@ -362,6 +364,11 @@ body {
     .emoji {
         animation: none !important;
         transition: none !important;
+    }
+    
+    .equivalent-item {
+        opacity: 1 !important;
+        transform: none !important;
     }
     
     .emoji {
