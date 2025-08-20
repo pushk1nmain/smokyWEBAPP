@@ -1,12 +1,13 @@
 /**
- * SmokyApp - System Explanation Screen JavaScript
- * Скрипт экрана объяснения системы трансформации
+ * SmokyApp - Recognition Quiz Screen Script
+ * Скрипт экрана "Узнали себя?" с чекбоксами
  */
 
 (function() {
     // Глобальные переменные
     let tg = null;
     let isReady = false;
+    let selectedItems = new Set();
 
     // --- Telegram WebApp Keyboard Handling ---
     if (window.Telegram && window.Telegram.WebApp) {
@@ -86,23 +87,23 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 System explanation screen запускается...');
+            console.log('🚀 Recognition quiz screen запускается...');
 
-            // Обновляем шаг в БД при загрузке system-explanation экрана
+            // Обновляем шаг в БД при загрузке recognition-quiz экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 18 (system-explanation) через StepRouter');
-                    const success = await window.StepRouter.updateStep(18);
+                    console.log('🔄 Обновляем шаг до 19 (recognition-quiz) через StepRouter');
+                    const success = await window.StepRouter.updateStep(19);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 18');
+                        console.log('✅ Шаг успешно обновлен до 19');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 18');
+                        console.warn('⚠️ Не удалось обновить шаг до 19');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на system-explanation экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на recognition-quiz экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на system-explanation экране:', error);
+                console.error('❌ Ошибка при обновлении шага на recognition-quiz экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -122,8 +123,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 18) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 18, выполняем переход через StepRouter');
+                        if (currentStep > 19) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 19, выполняем переход через StepRouter');
                             await window.StepRouter.navigateToCurrentStep(true);
                             return;
                         }
@@ -148,7 +149,7 @@
             }
 
             isReady = true;
-            console.log('✅ System explanation screen успешно инициализирован!');
+            console.log('✅ Recognition quiz screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -184,16 +185,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                // Устанавливаем имя пользователя в заголовок из кэша
-                const cachedUserName = localStorage.getItem('userName');
-                const userName = cachedUserName || user.first_name || 'Друг';
-                const userNameElement = document.getElementById('userName');
-                if (userNameElement) {
-                    userNameElement.textContent = userName;
-                    console.log(`👤 Установлено имя пользователя из ${cachedUserName ? 'кэша' : 'Telegram'}: ${userName}`);
-                }
-                
-                console.log(`👤 ID пользователя: ${user.id}. System explanation screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. Recognition quiz screen загружен.`);
 
             } else {
                 console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: `tg.initDataUnsafe.user` имеет неверный формат или отсутствует.');
@@ -216,17 +208,8 @@
             throw new Error('Тестовый пользователь не найден в конфигурации (`development.testUser`).');
         }
         
-        // Устанавливаем имя пользователя в заголовок из кэша или тестового пользователя
-        const cachedUserName = localStorage.getItem('userName');
-        const userName = cachedUserName || testUser.first_name || 'Друг';
-        const userNameElement = document.getElementById('userName');
-        if (userNameElement) {
-            userNameElement.textContent = userName;
-            console.log(`👤 Установлено имя пользователя из ${cachedUserName ? 'кэша' : 'тестового пользователя'}: ${userName}`);
-        }
-        
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ System explanation screen загружен в режиме браузера');
+        console.log('✅ Recognition quiz screen загружен в режиме браузера');
     };
 
     /**
@@ -267,7 +250,7 @@
     const setupTelegramButtons = () => {
         if (!tg) return;
         
-        // Скрываем кнопку "Назад" на экране системы
+        // Скрываем кнопку "Назад" на экране
         tg.BackButton.hide();
         
         // Настраиваем главную кнопку (пока скрываем)
@@ -291,17 +274,50 @@
      * Настройка обработчиков событий
      */
     const setupEventListeners = () => {
-        const forwardButton = document.getElementById('forwardButton');
+        const continueButton = document.getElementById('continueButton');
+        const checkboxItems = document.querySelectorAll('.checkbox-item');
         
-        // Обработчик кнопки вперед
-        if (forwardButton) {
-            forwardButton.addEventListener('click', goForward);
-            console.log('🔘 Кнопка "Продолжить" найдена с классами:', forwardButton.className);
+        // Обработчик кнопки продолжить
+        if (continueButton) {
+            continueButton.addEventListener('click', goForward);
+            console.log('🔘 Кнопка "Да, это про меня" найдена');
         } else {
-            console.error('❌ Кнопка forwardButton не найдена!');
+            console.error('❌ Кнопка continueButton не найдена!');
         }
+
+        // Обработчики чекбоксов
+        checkboxItems.forEach(item => {
+            item.addEventListener('click', handleCheckboxClick);
+        });
         
         console.log('⚡ Обработчики событий настроены');
+    };
+
+    /**
+     * Обработка клика по чекбоксу
+     */
+    const handleCheckboxClick = (event) => {
+        const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
+        const checkboxId = checkbox.id;
+        
+        // Переключаем состояние
+        checkbox.checked = !checkbox.checked;
+        
+        // Обновляем набор выбранных элементов
+        if (checkbox.checked) {
+            selectedItems.add(checkboxId);
+            console.log(`✅ Выбран пункт: ${checkboxId}`);
+        } else {
+            selectedItems.delete(checkboxId);
+            console.log(`❌ Снят выбор с пункта: ${checkboxId}`);
+        }
+
+        // Haptic feedback
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        console.log('📊 Выбранные пункты:', Array.from(selectedItems));
     };
 
     /**
@@ -314,26 +330,36 @@
             tg.HapticFeedback.impactOccurred('medium');
         }
 
+        // Сохраняем выбранные пункты
+        const recognitionData = {
+            selectedItems: Array.from(selectedItems),
+            timestamp: new Date().toISOString()
+        };
+
+        localStorage.setItem('recognitionQuizResult', JSON.stringify(recognitionData));
+        console.log('💾 Результаты опроса сохранены:', recognitionData);
+
         // Отправляем данные в Telegram если доступно
         if (tg?.sendData) {
             try {
                 tg.sendData(JSON.stringify({ 
-                    type: 'system_explanation_viewed', 
+                    type: 'recognition_quiz_completed', 
+                    data: recognitionData,
                     timestamp: new Date().toISOString() 
                 }));
-                console.log('📤 Событие просмотра системы отправлено в Telegram');
+                console.log('📤 Результаты опроса отправлены в Telegram');
             } catch (error) {
-                console.error('❌ Ошибка отправки события:', error);
+                console.error('❌ Ошибка отправки результатов:', error);
             }
         }
 
-        // Переход на экран распознавания себя
-        console.log('🔄 Переходим на экран "Узнали себя?"');
+        // Переход на следующий экран (transformation-lessons)
+        console.log('🔄 Переходим на экран уроков трансформации');
         
         if (window.LoadingManager?.navigateWithTransition) {
-            window.LoadingManager.navigateWithTransition('../recognition-quiz/index.html');
+            window.LoadingManager.navigateWithTransition('../transformation-lessons/index.html');
         } else {
-            window.location.href = '../recognition-quiz/index.html';
+            window.location.href = '../transformation-lessons/index.html';
         }
     };
 
@@ -397,11 +423,12 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokySystemExplanation = {
+    window.SmokyRecognitionQuiz = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
-        goForward: goForward
+        goForward: goForward,
+        getSelectedItems: () => Array.from(selectedItems)
     };
 
 })();
