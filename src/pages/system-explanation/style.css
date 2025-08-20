@@ -121,8 +121,8 @@ body {
 .header-section {
     width: 100%;
     text-align: center;
-    margin-top: 50px;
-    margin-bottom: 16px;
+    margin-top: 30px;
+    margin-bottom: 20px;
     flex-shrink: 0;
     
     /* Анимация заголовка */
@@ -133,11 +133,11 @@ body {
 }
 
 .main-title {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--color-title);
-    line-height: 1.2;
-    margin-bottom: 8px;
+    line-height: 1.3;
+    margin-bottom: 4px;
 }
 
 .subtitle {
@@ -154,8 +154,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1;
-    margin: 20px 0;
+    margin: 15px 0;
+    flex-shrink: 0;
     
     /* Анимация появления */
     opacity: 0;
@@ -165,10 +165,10 @@ body {
 }
 
 .main-illustration {
-    max-width: 200px;
-    width: 80%;
+    max-width: 120px;
+    width: 60%;
     height: auto;
-    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
     transition: transform 0.3s ease;
 }
 
@@ -180,7 +180,11 @@ body {
 .description-section {
     width: 100%;
     text-align: center;
-    margin: 20px 0;
+    margin: 20px 0 25px 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     
     /* Анимация появления */
     opacity: 0;
@@ -190,12 +194,12 @@ body {
 }
 
 .description-text {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 500;
     color: var(--color-text);
-    line-height: 1.5;
+    line-height: 1.4;
     margin: 0;
-    max-width: 300px;
+    max-width: 320px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -205,7 +209,8 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 32px;
+    margin-top: 0;
+    margin-bottom: 20px;
     flex-shrink: 0;
 }
 
@@ -338,12 +343,25 @@ body {
     }
     
     .main-illustration {
-        max-width: 160px;
+        max-width: 100px;
+    }
+    
+    .main-title {
+        font-size: 20px;
     }
     
     .description-text {
-        font-size: 15px;
+        font-size: 16px;
         max-width: 280px;
+    }
+    
+    .header-section {
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .illustration-section {
+        margin: 10px 0;
     }
     
     .emoji {
@@ -370,12 +388,30 @@ body {
     }
     
     .main-illustration {
-        max-width: 140px;
+        max-width: 90px;
+    }
+    
+    .main-title {
+        font-size: 18px;
+        margin-bottom: 2px;
     }
     
     .description-text {
-        font-size: 14px;
-        line-height: 1.4;
+        font-size: 15px;
+        line-height: 1.3;
+    }
+    
+    .header-section {
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .illustration-section {
+        margin: 8px 0;
+    }
+    
+    .description-section {
+        margin: 15px 0 20px 0;
     }
     
     .action-section {
