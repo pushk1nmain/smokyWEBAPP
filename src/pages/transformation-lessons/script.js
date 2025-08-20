@@ -172,23 +172,24 @@ async function navigateToNextScreen() {
         localStorage.setItem('transformationLessonsTimestamp', new Date().toISOString());
         console.log('💾 Локальная информация о просмотре сохранена');
         
-        // Используем StepRouter для корректного перехода (он сам обновит шаг)
+        // Обновляем шаг до 21 СНАЧАЛА
         if (window.StepRouter) {
-            console.log('🔄 Используем StepRouter для перехода к следующему шагу');
-            const success = await window.StepRouter.goToNextStep();
+            console.log('🔄 Обновляем шаг до 21 после просмотра уроков трансформации');
+            const stepUpdateSuccess = await window.StepRouter.updateStep(21);
             
-            if (!success) {
-                console.warn('⚠️ StepRouter не смог выполнить переход, используем fallback');
-                // Fallback на прямой переход
-                const nextScreen = '../levels-explanation/index.html';
-                console.log(`🔄 Fallback переход на: ${nextScreen}`);
-                window.location.href = nextScreen;
+            if (stepUpdateSuccess) {
+                console.log('✅ Шаг обновлен до 21, выполняем переход');
+            } else {
+                console.warn('⚠️ Не удалось обновить шаг, но продолжаем переход');
             }
+        }
+        
+        // Переходим на levels-explanation
+        const nextScreen = '../levels-explanation/index.html';
+        console.log(`🔄 Переход на: ${nextScreen}`);
+        if (window.LoadingManager?.navigateWithTransition) {
+            window.LoadingManager.navigateWithTransition(nextScreen);
         } else {
-            console.warn('⚠️ StepRouter недоступен, используем прямой переход');
-            // Fallback если StepRouter недоступен
-            const nextScreen = '../levels-explanation/index.html';
-            console.log(`🔄 Прямой переход на: ${nextScreen}`);
             window.location.href = nextScreen;
         }
         
