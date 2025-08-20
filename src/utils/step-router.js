@@ -25,14 +25,17 @@ class StepRouter {
         5: '/src/pages/waking-up/index.html',         // Экран пробуждения (начало истории)
         6: '/src/pages/robot-appearance/index.html',  // Появление робота
         7: '/src/pages/navigator-broken/index.html',  // Сломанный навигатор
-        8: '/src/pages/charger-question/index.html',  // Вопрос о курении
-        9: '/src/pages/system-explanation/index.html', // Объяснение системы 4 в 1
-        10: '/src/pages/price-question/index.html',   // Вопрос о цене жизни
+        8: '/src/pages/charger-question/index.html',  // Вопрос о курении  
+        9: '/src/pages/price-question/index.html',   // Вопрос о цене жизни
+        10: '/src/pages/health-realization/index.html', // Осознание влияния на здоровье
         11: '/src/pages/nicotine-selection/index.html', // Выбор типа никотина
         12: '/src/pages/nicotine-amount/index.html',  // Ввод количества потребления никотина
         13: '/src/pages/nicotine-cost/index.html',   // Ввод стоимости никотина
         14: '/src/pages/nicotine-experience/index.html', // Ввод стажа потребления никотина
         15: '/src/pages/calculation-results/index.html', // Результаты расчета никотинового воздействия
+        16: '/src/pages/money-equivalents/index.html',   // Денежные эквиваленты
+        17: '/src/pages/health-impact/index.html',       // Влияние на здоровье
+        18: '/src/pages/system-explanation/index.html',  // Объяснение системы трансформации
         // Здесь будут добавляться новые экраны по мере развития приложения
     };
 
@@ -48,13 +51,16 @@ class StepRouter {
         6: 'Появление робота',
         7: 'Сломанный навигатор',
         8: 'Вопрос о курении',
-        9: 'Система 4 в 1',
-        10: 'Цена жизни',
+        9: 'Цена жизни',
+        10: 'Осознание влияния на здоровье',
         11: 'Выбор типа никотина',
         12: 'Количество потребления',
         13: 'Стоимость никотина',
         14: 'Стаж потребления',
         15: 'Результаты расчета',
+        16: 'Денежные эквиваленты',
+        17: 'Влияние на здоровье',
+        18: 'Объяснение системы',
     };
 
     /**
