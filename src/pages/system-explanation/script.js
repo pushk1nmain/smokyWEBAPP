@@ -1,10 +1,10 @@
 /**
  * SmokyApp - System Explanation Screen JavaScript
- * Скрипт экрана объяснения системы 4 в 1 для интеграции с Telegram WebApp API
+ * Скрипт экрана объяснения системы трансформации
  */
 
 (function() {
-    // Глобальные переменные и встроенная конфигурация
+    // Глобальные переменные
     let tg = null;
     let isReady = false;
 
@@ -15,7 +15,7 @@
 
         // Initial setup for viewport
         WebApp.ready();
-        WebApp.expand(); // Ensure the app expands to full height
+        WebApp.expand();
 
         // Listen for viewport changes (including keyboard appearance/disappearance)
         WebApp.onEvent('viewportChanged', () => {
@@ -25,7 +25,6 @@
             const keyboardHeight = stableViewportHeight - currentViewportHeight;
 
             if (appContainer) {
-                // Apply padding to the bottom of the app container
                 appContainer.style.paddingBottom = `${Math.max(0, keyboardHeight)}px`;
             }
         });
@@ -88,16 +87,16 @@
     const main = async () => {
         try {
             console.log('🚀 System explanation screen запускается...');
-            
+
             // Обновляем шаг в БД при загрузке system-explanation экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 9 (system-explanation) через StepRouter');
-                    const success = await window.StepRouter.updateStep(9);
+                    console.log('🔄 Обновляем шаг до 18 (system-explanation) через StepRouter');
+                    const success = await window.StepRouter.updateStep(18);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 9');
+                        console.log('✅ Шаг успешно обновлен до 18');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 9');
+                        console.warn('⚠️ Не удалось обновить шаг до 18');
                     }
                 } else {
                     console.warn('⚠️ StepRouter недоступен для обновления шага на system-explanation экране');
@@ -123,10 +122,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 9) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 9, выполняем переход через StepRouter');
-                            
-                            // Принудительно выполняем навигацию к правильному шагу
+                        if (currentStep > 18) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 18, выполняем переход через StepRouter');
                             await window.StepRouter.navigateToCurrentStep(true);
                             return;
                         }
@@ -135,8 +132,8 @@
                     console.warn('⚠️ SmokyApp не инициализировался за 5 секунд');
                 }
             }
-
-            // Настройка UI и событий только если остаемся на system-explanation screen
+            
+            // Настройка UI и событий
             setupUI();
             setupEventListeners();
 
@@ -178,16 +175,11 @@
 
             console.log('👤 Обработка данных пользователя Telegram...');
             
-            // Добавляем детальное логирование всего объекта initDataUnsafe
-            console.log('🔍 Полные данные от Telegram (initDataUnsafe):', tg.initDataUnsafe);
-
-            const user = tg.initDataUnsafe.user;
+            const user = tg.initDataUnsafe?.user;
 
             if (user && typeof user === 'object') {
-                // Логируем полученный объект пользователя
                 console.log('✅ Объект пользователя получен:', user);
 
-                // Проверяем наличие ID
                 if (!user.id) {
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
@@ -195,15 +187,12 @@
                 console.log(`👤 ID пользователя: ${user.id}. System explanation screen загружен.`);
 
             } else {
-                // Эта ситуация не должна происходить, но добавим обработку
                 console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: `tg.initDataUnsafe.user` имеет неверный формат или отсутствует.');
                 throw new Error('Не удалось получить корректные данные пользователя от Telegram.');
             }
         } catch (error) {
             console.error('❌ Ошибка на этапе обработки данных пользователя:', error);
-            // Показываем ошибку на экране, чтобы пользователь мог ее сообщить
-            showCriticalError('Ошибка обработки данных', `Произошла ошибка при обработке вашего профиля Telegram. Пожалуйста, сообщите об этом разработчику. Детали: ${error.message}`);
-            // Также отправляем ошибку в глобальный обработчик
+            showCriticalError('Ошибка обработки данных', `Произошла ошибка при обработке вашего профиля Telegram. Детали: ${error.message}`);
             handleError(error, 'setupTelegramWebApp');
         }
     };
@@ -224,7 +213,6 @@
 
     /**
      * Применение темы Telegram
-     * Синхронизирует цвета приложения с темой Telegram
      */
     const applyTelegramTheme = () => {
         if (!tg?.themeParams) return;
@@ -257,12 +245,11 @@
 
     /**
      * Настройка кнопок Telegram
-     * Конфигурирует основные кнопки Telegram WebApp
      */
     const setupTelegramButtons = () => {
         if (!tg) return;
         
-        // Скрываем кнопку "Назад" на экране истории
+        // Скрываем кнопку "Назад" на экране системы
         tg.BackButton.hide();
         
         // Настраиваем главную кнопку (пока скрываем)
@@ -286,52 +273,50 @@
      * Настройка обработчиков событий
      */
     const setupEventListeners = () => {
-        const continueButton = document.getElementById('continueButton');
-        if (continueButton) {
-            continueButton.addEventListener('click', handleContinueClick);
-            continueButton.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && handleContinueClick());
-            console.log('⚡ Обработчик кнопки Продолжить подключен');
+        const forwardButton = document.getElementById('forwardButton');
+        
+        // Обработчик кнопки вперед
+        if (forwardButton) {
+            forwardButton.addEventListener('click', goForward);
+            console.log('🔘 Кнопка "Продолжить" найдена с классами:', forwardButton.className);
         } else {
-            console.error('❌ Кнопка continueButton не найдена');
+            console.error('❌ Кнопка forwardButton не найдена!');
         }
+        
         console.log('⚡ Обработчики событий настроены');
     };
 
     /**
-     * Обработчик нажатия кнопки "Продолжить" с бесшовным переходом
+     * Переход вперед
      */
-    const handleContinueClick = () => {
-        console.log('🚀 handleContinueClick вызван - Продолжаем после объяснения системы!');
+    const goForward = () => {
+        console.log('➡️ Переход к следующему экрану');
+        
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred('medium');
         }
-        
-        // Бесшовный переход без загрузки для темных экранов истории
-        console.log('🔄 Выполняем бесшовный переход...');
-        setTimeout(() => {
-            console.log('⏰ Таймер сработал, вызываем navigateToNextScreen...');
-            navigateToNextScreen();
-        }, 300); // Минимальная задержка для haptic feedback
-    };
 
-    /**
-     * Навигация к следующему экрану
-     */
-    const navigateToNextScreen = async () => {
-        console.log('🚀 navigateToNextScreen вызван - переход к следующему экрану');
-        
+        // Отправляем данные в Telegram если доступно
         if (tg?.sendData) {
             try {
-                tg.sendData(JSON.stringify({ type: 'system_explanation_completed', timestamp: new Date().toISOString() }));
-                console.log('📤 Данные отправлены в Telegram');
+                tg.sendData(JSON.stringify({ 
+                    type: 'system_explanation_viewed', 
+                    timestamp: new Date().toISOString() 
+                }));
+                console.log('📤 Событие просмотра системы отправлено в Telegram');
             } catch (error) {
-                console.error('❌ Ошибка отправки данных:', error);
+                console.error('❌ Ошибка отправки события:', error);
             }
         }
+
+        // Переход на следующий экран (пока на welcome для тестирования)
+        console.log('🔄 Переходим на следующий экран приложения');
         
-        // Переход на экран вопроса о цене жизни
-        console.log('🔄 Переходим на экран вопроса о цене жизни');
-        window.location.href = '../price-question/index.html';
+        if (window.LoadingManager?.navigateWithTransition) {
+            window.LoadingManager.navigateWithTransition('../welcome/index.html');
+        } else {
+            window.location.href = '../welcome/index.html';
+        }
     };
 
     /**
@@ -347,7 +332,7 @@
     };
 
     /**
-     * Простые утилиты загрузки без текста
+     * Простые утилиты загрузки
      */
     const showLoading = () => {
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -355,7 +340,6 @@
         if (loadingOverlay) {
             loadingOverlay.classList.remove('hidden');
             
-            // Добавляем haptic feedback если доступен
             if (tg?.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
@@ -365,21 +349,14 @@
     const hideLoading = () => {
         const loadingOverlay = document.getElementById('loadingOverlay');
         if (loadingOverlay) {
-            // Плавное скрытие
             setTimeout(() => {
                 loadingOverlay.classList.add('hidden');
                 
-                // Haptic feedback при завершении загрузки
                 if (tg?.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('success');
                 }
             }, 600);
         }
-    };
-
-    // Для совместимости со старым кодом
-    const showLoadingWithText = (text) => {
-        showLoading();
     };
 
     /**
@@ -406,6 +383,7 @@
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,
+        goForward: goForward
     };
 
 })();

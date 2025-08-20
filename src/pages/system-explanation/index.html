@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>SmokyApp - Система 4 в 1</title>
+    <title>SmokyApp - Система трансформации</title>
     
     <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Стили -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../styles/main.css?v=20250819">
+    <link rel="stylesheet" href="style.css?v=20250819">
     
     <!-- Отключение кэширования для разработки -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -30,71 +30,75 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Звездное небо -->
-        <div class="starry-sky">
-            <div class="star star-1"></div>
-            <div class="star star-2"></div>
-            <div class="star star-3"></div>
-            <div class="star star-4"></div>
-            <div class="star star-5"></div>
-            <div class="star star-6"></div>
-            <div class="star star-7"></div>
-            <div class="star star-8"></div>
-            <div class="star star-9"></div>
-            <div class="star star-10"></div>
-            <div class="star star-11"></div>
-            <div class="star star-12"></div>
-            <div class="star star-13"></div>
-            <div class="star star-14"></div>
-            <div class="star star-15"></div>
-            <div class="star star-16"></div>
-            <div class="star star-17"></div>
-            <div class="star star-18"></div>
-            <div class="star star-19"></div>
-            <div class="star star-20"></div>
-            <div class="star star-21"></div>
-            <div class="star star-22"></div>
-            <div class="star star-23"></div>
-            <div class="star star-24"></div>
-            <div class="star star-25"></div>
-            <div class="star star-26"></div>
-            <div class="star star-27"></div>
-            <div class="star star-28"></div>
-            <div class="star star-29"></div>
-            <div class="star star-30"></div>
-            <div class="star star-31"></div>
-            <div class="star star-32"></div>
-            <div class="star star-33"></div>
-            <div class="star star-34"></div>
-            <div class="star star-35"></div>
-            <div class="star star-36"></div>
-            <div class="star star-37"></div>
-            <div class="star star-38"></div>
-            <div class="star star-39"></div>
-            <div class="star star-40"></div>
+        <!-- Парящие смайлики на фоне -->
+        <div class="floating-emojis">
+            <span class="emoji emoji-1">🔥</span>
+            <span class="emoji emoji-2">🚀</span>
+            <span class="emoji emoji-3">🚭</span>
+            <span class="emoji emoji-4">💨</span>
+            <span class="emoji emoji-5">🌿</span>
+            <span class="emoji emoji-6">💚</span>
+            <span class="emoji emoji-7">🤝</span>
+            <span class="emoji emoji-8">📈</span>
+            <span class="emoji emoji-9">🪴</span>
+            <span class="emoji emoji-10">⏳</span>
+            <span class="emoji emoji-11">🏆</span>
         </div>
-
-        <!-- Основной контент -->
+        
         <main class="system-explanation-screen">
             <div class="content-section">
-                <h1 class="main-title">🥸 За время изучения вашего времени я создал идеальную систему помощи людям.</h1>
-                
-                <div class="system-explanation">
-                    <p class="main-description">
-                        Никотин захватывает 4 системы мозга сразу. Бить по одной бесполезно. 
-                        Моя система «4 в 1» работает с организмом, психикой, эмоциями и поведением. 
-                        <span class="highlight">Эффективность 84%!</span>
-                    </p>
+                <div class="header-section">
+                    <h1 class="main-title">Я изучил 200+ исследований и создал систему разрыва этого круга</h1>
+                    
+                    <p class="subtitle">Собрал все рабочие методы в 22 урока трансформации:</p>
+                </div>
+
+                <div class="methods-container">
+                    <div class="method-card">
+                        <div class="method-number">1</div>
+                        <div class="method-content">
+                            <h3 class="method-title">Научная база</h3>
+                            <p class="method-description">исследования с ссылками</p>
+                        </div>
+                    </div>
+                    
+                    <div class="method-card">
+                        <div class="method-number">2</div>
+                        <div class="method-content">
+                            <h3 class="method-title">Когнитивные техники</h3>
+                            <p class="method-description">перепрограммирование привычек</p>
+                        </div>
+                    </div>
+                    
+                    <div class="method-card">
+                        <div class="method-number">3</div>
+                        <div class="method-content">
+                            <h3 class="method-title">Секретное средство</h3>
+                            <p class="method-description">из любой аптеки</p>
+                        </div>
+                    </div>
+                    
+                    <div class="method-card">
+                        <div class="method-number">4</div>
+                        <div class="method-content">
+                            <h3 class="method-title">Экстренные методы</h3>
+                            <p class="method-description">при сильной тяге</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="action-section">
-                    <button class="common-button" id="continueButton" tabindex="0" aria-label="Продолжить">
+                    <button class="common-button" 
+                            id="forwardButton"
+                            tabindex="0" 
+                            aria-label="Продолжить">
                         <span class="button-text">Продолжить</span>
+                        <span class="common-arrow-icon"></span>
                     </button>
                 </div>
             </div>
         </main>
-
+        
         <!-- Простая загрузка с логотипом Смоки -->
         <div class="loading-overlay hidden" id="loadingOverlay">
             <div class="loading-character">
@@ -105,6 +109,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     
     <!-- JavaScript -->
