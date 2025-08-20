@@ -131,6 +131,28 @@
     };
 
     /**
+     * Функция склонения слова "день/дня/дней"
+     */
+    const getDaysText = (days) => {
+        const lastDigit = days % 10;
+        const lastTwoDigits = days % 100;
+        
+        // Исключения для 11-14
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return `${days} дней`;
+        }
+        
+        // Обычные правила
+        if (lastDigit === 1) {
+            return `${days} день`;
+        } else if (lastDigit >= 2 && lastDigit <= 4) {
+            return `${days} дня`;
+        } else {
+            return `${days} дней`;
+        }
+    };
+
+    /**
      * Отображение данных о влиянии на здоровье
      */
     const displayHealthImpact = () => {
@@ -145,11 +167,12 @@
         const healthImpact = calculationResults.health_impact;
         console.log('💔 Отображаем влияние на здоровье:', healthImpact);
 
-        // Отображаем потерянные дни
+        // Отображаем потерянные дни с правильным склонением
         if (daysLostElement && healthImpact.total_days_lost) {
             const daysLost = healthImpact.total_days_lost;
-            daysLostElement.textContent = daysLost;
-            console.log('📅 Потерянные дни:', daysLost);
+            const daysText = getDaysText(daysLost);
+            daysLostElement.textContent = daysText;
+            console.log('📅 Потерянные дни:', daysText);
         }
 
         // Рассчитываем и отображаем годы с правильным склонением
