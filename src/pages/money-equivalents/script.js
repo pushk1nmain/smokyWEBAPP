@@ -1,6 +1,6 @@
 /**
- * SmokyApp - Calculation Results Screen JavaScript
- * Скрипт экрана результатов расчета никотинового воздействия
+ * SmokyApp - Money Equivalents Screen JavaScript
+ * Скрипт экрана эквивалентов трат на никотин
  */
 
 (function() {
@@ -83,10 +83,10 @@
     };
 
     /**
-     * Загрузка и отображение результатов расчета
+     * Загрузка и отображение эквивалентов
      */
-    const loadAndDisplayResults = () => {
-        console.log('📊 Загружаем результаты расчета...');
+    const loadAndDisplayEquivalents = () => {
+        console.log('💰 Загружаем эквиваленты трат...');
 
         try {
             // Получаем результаты из localStorage
@@ -99,76 +99,50 @@
             calculationResults = JSON.parse(resultsData);
             console.log('✅ Результаты расчета загружены:', calculationResults);
 
-            // Отображаем сумму трат
-            displayTotalSpent();
+            // Отображаем эквиваленты
+            displayEquivalents();
 
         } catch (error) {
-            console.error('❌ Ошибка при загрузке результатов:', error);
+            console.error('❌ Ошибка при загрузке эквивалентов:', error);
             showCriticalError('Ошибка загрузки данных', error.message);
         }
     };
 
-    // Конфигурация отображения типов никотина
-    const nicotineDisplayConfig = {
-        cigarettes: {
-            text: 'сигареты',
-            name: 'на сигареты'
-        },
-        vape: {
-            text: 'вейп',
-            name: 'на вейп'
-        },
-        iqos: {
-            text: 'IQOS',
-            name: 'на IQOS'
-        },
-        hookah: {
-            text: 'кальян',
-            name: 'на кальян'
-        },
-        snus: {
-            text: 'снюс',
-            name: 'на снюс'
-        }
-    };
-
     /**
-     * Отображение суммы трат с анимацией и типом никотина
+     * Отображение эквивалентов с анимацией
      */
-    const displayTotalSpent = () => {
-        const amountElement = document.getElementById('totalAmountSpent');
-        const descriptionElement = document.getElementById('nicotineTypeDescription');
+    const displayEquivalents = () => {
+        const familyDinnersElement = document.getElementById('familyDinners');
+        const gymMembershipsElement = document.getElementById('gymMemberships');
+        const seaTripsElement = document.getElementById('seaTrips');
         
-        if (!amountElement || !calculationResults?.calculations?.total_spent_rubles) {
-            console.error('❌ Не удалось найти элемент суммы или данные отсутствуют');
+        if (!calculationResults?.equivalents) {
+            console.error('❌ Данные эквивалентов отсутствуют');
             return;
         }
 
-        const totalAmount = calculationResults.calculations.total_spent_rubles;
-        console.log('💰 Отображаем сумму трат:', totalAmount);
+        const equivalents = calculationResults.equivalents;
+        console.log('📊 Отображаем эквиваленты:', equivalents);
 
-        // Получаем тип никотина из localStorage
-        const nicotineType = localStorage.getItem('selectedNicotineType');
-        const nicotineConfig = nicotineDisplayConfig[nicotineType];
-        
-        if (nicotineConfig && descriptionElement) {
-            descriptionElement.innerHTML = `на <strong>${nicotineConfig.text}</strong>`;
-            console.log('📝 Обновлен тип никотина в описании:', nicotineConfig.text);
+        // Отображаем семейные ужины
+        if (familyDinnersElement && equivalents.family_dinners) {
+            familyDinnersElement.textContent = equivalents.family_dinners;
+            console.log('🍽️ Семейные ужины:', equivalents.family_dinners);
         }
 
-        // Форматируем число с разделителями тысяч
-        const formattedAmount = new Intl.NumberFormat('ru-RU').format(totalAmount);
-        
-        // Анимированное появление суммы
-        amountElement.style.opacity = '0';
-        
-        setTimeout(() => {
-            amountElement.textContent = formattedAmount;
-            amountElement.style.opacity = '1';
-            amountElement.classList.add('animate');
-        }, 300);
+        // Отображаем абонементы в спортзал
+        if (gymMembershipsElement && equivalents.gym_memberships) {
+            gymMembershipsElement.textContent = equivalents.gym_memberships;
+            console.log('💪 Абонементы в спортзал:', equivalents.gym_memberships);
+        }
 
-        console.log('✅ Сумма трат отображена:', formattedAmount);
+        // Отображаем поездки на море
+        if (seaTripsElement && equivalents.sea_trips) {
+            seaTripsElement.textContent = equivalents.sea_trips;
+            console.log('🌊 Поездки на море:', equivalents.sea_trips);
+        }
+
+        console.log('✅ Эквиваленты отображены');
     };
 
     /**
@@ -176,23 +150,23 @@
      */
     const main = async () => {
         try {
-            console.log('🚀 Calculation results screen запускается...');
+            console.log('🚀 Money equivalents screen запускается...');
 
-            // Обновляем шаг в БД при загрузке results экрана
+            // Обновляем шаг в БД при загрузке equivalents экрана
             try {
                 if (window.StepRouter) {
-                    console.log('🔄 Обновляем шаг до 15 (calculation-results) через StepRouter');
-                    const success = await window.StepRouter.updateStep(15);
+                    console.log('🔄 Обновляем шаг до 16 (money-equivalents) через StepRouter');
+                    const success = await window.StepRouter.updateStep(16);
                     if (success) {
-                        console.log('✅ Шаг успешно обновлен до 15');
+                        console.log('✅ Шаг успешно обновлен до 16');
                     } else {
-                        console.warn('⚠️ Не удалось обновить шаг до 15');
+                        console.warn('⚠️ Не удалось обновить шаг до 16');
                     }
                 } else {
-                    console.warn('⚠️ StepRouter недоступен для обновления шага на results экране');
+                    console.warn('⚠️ StepRouter недоступен для обновления шага на equivalents экране');
                 }
             } catch (error) {
-                console.error('❌ Ошибка при обновлении шага на results экране:', error);
+                console.error('❌ Ошибка при обновлении шага на equivalents экране:', error);
             }
 
             // Дожидаемся инициализации SmokyApp если он доступен
@@ -212,8 +186,8 @@
                         const currentStep = await window.StepRouter.getCurrentStep();
                         console.log(`📍 Текущий шаг пользователя: ${currentStep}`);
                         
-                        if (currentStep > 15) {
-                            console.log('🔄 Пользователь должен быть на шаге больше 15, выполняем переход через StepRouter');
+                        if (currentStep > 16) {
+                            console.log('🔄 Пользователь должен быть на шаге больше 16, выполняем переход через StepRouter');
                             await window.StepRouter.navigateToCurrentStep(true);
                             return;
                         }
@@ -223,8 +197,8 @@
                 }
             }
 
-            // Загружаем и отображаем результаты
-            loadAndDisplayResults();
+            // Загружаем и отображаем эквиваленты
+            loadAndDisplayEquivalents();
             
             // Настройка UI и событий
             setupUI();
@@ -241,7 +215,7 @@
             }
 
             isReady = true;
-            console.log('✅ Calculation results screen успешно инициализирован!');
+            console.log('✅ Money equivalents screen успешно инициализирован!');
             hideLoading();
 
         } catch (error) {
@@ -277,7 +251,7 @@
                     throw new Error('В данных от Telegram отсутствует обязательное поле `user.id`.');
                 }
                 
-                console.log(`👤 ID пользователя: ${user.id}. Calculation results screen загружен.`);
+                console.log(`👤 ID пользователя: ${user.id}. Money equivalents screen загружен.`);
 
             } else {
                 console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: `tg.initDataUnsafe.user` имеет неверный формат или отсутствует.');
@@ -301,7 +275,7 @@
         }
         
         console.log(`🧪 Используется тестовый пользователь: ${testUser.first_name}`);
-        console.log('✅ Calculation results screen загружен в режиме браузера');
+        console.log('✅ Money equivalents screen загружен в режиме браузера');
     };
 
     /**
@@ -342,7 +316,7 @@
     const setupTelegramButtons = () => {
         if (!tg) return;
         
-        // Скрываем кнопку "Назад" на экране результатов
+        // Скрываем кнопку "Назад" на экране эквивалентов
         tg.BackButton.hide();
         
         // Настраиваем главную кнопку (пока скрываем)
@@ -371,7 +345,7 @@
         // Обработчик кнопки вперед
         if (forwardButton) {
             forwardButton.addEventListener('click', goForward);
-            console.log('🔘 Кнопка "Продолжить" найдена с классами:', forwardButton.className);
+            console.log('🔘 Кнопка "Далее" найдена с классами:', forwardButton.className);
         } else {
             console.error('❌ Кнопка forwardButton не найдена!');
         }
@@ -393,23 +367,23 @@
         if (tg?.sendData) {
             try {
                 tg.sendData(JSON.stringify({ 
-                    type: 'results_viewed', 
-                    total_spent: calculationResults?.calculations?.total_spent_rubles,
+                    type: 'equivalents_viewed', 
+                    equivalents: calculationResults?.equivalents,
                     timestamp: new Date().toISOString() 
                 }));
-                console.log('📤 Событие просмотра результатов отправлено в Telegram');
+                console.log('📤 Событие просмотра эквивалентов отправлено в Telegram');
             } catch (error) {
                 console.error('❌ Ошибка отправки события:', error);
             }
         }
 
-        // Переход на экран эквивалентов трат
-        console.log('🔄 Переходим на экран эквивалентов трат');
+        // Переход на следующий экран (пока на welcome для тестирования)
+        console.log('🔄 Переходим на следующий экран приложения');
         
         if (window.LoadingManager?.navigateWithTransition) {
-            window.LoadingManager.navigateWithTransition('../money-equivalents/index.html');
+            window.LoadingManager.navigateWithTransition('../welcome/index.html');
         } else {
-            window.location.href = '../money-equivalents/index.html';
+            window.location.href = '../welcome/index.html';
         }
     };
 
@@ -473,7 +447,7 @@
     document.addEventListener('DOMContentLoaded', main);
 
     // Экспорт для использования в других модулях
-    window.SmokyCalculationResults = {
+    window.SmokyMoneyEquivalents = {
         isReady: () => isReady,
         getTelegram: () => tg,
         showNotification: showNotification,

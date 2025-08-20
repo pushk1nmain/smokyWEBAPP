@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>SmokyApp - Эквиваленты трат</title>
+    
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="../../styles/main.css?v=20250819">
+    <link rel="stylesheet" href="style.css?v=20250819">
+    
+    <!-- Отключение кэширования для разработки -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Дополнительные мета-теги для борьбы с кэшированием -->
+    <meta name="cache-control" content="no-cache">
+    <meta name="expires" content="0">
+    <meta name="pragma" content="no-cache">
+    
+    <!-- Meta теги для Telegram WebApp -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Парящие смайлики на фоне -->
+        <div class="floating-emojis">
+            <span class="emoji emoji-1">🔥</span>
+            <span class="emoji emoji-2">🚀</span>
+            <span class="emoji emoji-3">🚭</span>
+            <span class="emoji emoji-4">💨</span>
+            <span class="emoji emoji-5">🌿</span>
+            <span class="emoji emoji-6">💚</span>
+            <span class="emoji emoji-7">🤝</span>
+            <span class="emoji emoji-8">📈</span>
+            <span class="emoji emoji-9">🪴</span>
+            <span class="emoji emoji-10">⏳</span>
+            <span class="emoji emoji-11">🏆</span>
+        </div>
+        
+        <main class="money-equivalents-screen">
+            <div class="content-section">
+                <div class="equivalents-container">
+                    <div class="equivalent-item">
+                        <div class="equivalent-icon">👨‍👩‍👧‍👦</div>
+                        <span class="equivalent-count" id="familyDinners">30</span>
+                        <span class="equivalent-text">семейных ужинов</span>
+                    </div>
+                    
+                    <div class="equivalent-item">
+                        <div class="equivalent-icon">💪</div>
+                        <span class="equivalent-count" id="gymMemberships">32</span>
+                        <span class="equivalent-text">годовых абонемента<br>в спортзал</span>
+                    </div>
+                    
+                    <div class="equivalent-item">
+                        <div class="equivalent-icon">🌊</div>
+                        <span class="equivalent-count" id="seaTrips">20</span>
+                        <span class="equivalent-text">поездок на море</span>
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <button class="common-button" 
+                            id="forwardButton"
+                            tabindex="0" 
+                            aria-label="Далее">
+                        <span class="common-arrow-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Простая загрузка с логотипом Смоки -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-character">
+                <img src="../../assets/icons/smoky_basic.svg" alt="Смоки">
+                <div class="loading-rings">
+                    <div class="loading-ring"></div>
+                    <div class="loading-ring"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="../../config.js"></script>
+    <script src="../../utils/loading-manager.js"></script>
+    <script src="../../utils/error-modal.js"></script>
+    <script src="../../utils/api-client.js"></script>
+    <script src="../../utils/global-console.js"></script>
+    <script src="../../utils/step-router.js"></script>
+    <script src="script.js" defer></script>
+</body>
+</html>
