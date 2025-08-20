@@ -336,11 +336,24 @@ class StepRouter {
      */
     async goToNextStep() {
         try {
-            const currentStep = this.currentStep || await this.getCurrentStep();
+            // Получаем текущий шаг, с защитой от сброса к 1
+            let currentStep = this.currentStep;
+            if (!currentStep) {
+                // Сначала пытаемся из localStorage
+                const localStep = parseInt(localStorage.getItem('currentStep'));
+                if (localStep && localStep > 0) {
+                    currentStep = localStep;
+                    this.currentStep = localStep;
+                    console.log(`📱 Используем шаг из localStorage: ${localStep}`);
+                } else {
+                    // Только если ничего нет - обращаемся к API
+                    currentStep = await this.getCurrentStep();
+                }
+            }
+            
             const nextStep = currentStep + 1;
             const maxStep = this.getMaxStep();
             
-            // Убрали ограничение по максимальному шагу - разрешаем переход на любой шаг
             console.log(`📈 Переход с шага ${currentStep} на шаг ${nextStep} (максимальный определенный: ${maxStep})`);
             
             // Проверяем существование следующего экрана
