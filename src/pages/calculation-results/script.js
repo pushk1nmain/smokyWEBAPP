@@ -133,7 +133,7 @@
     };
 
     /**
-     * Отображение суммы трат с анимацией и типом никотина
+     * Отображение суммы трат сразу без анимированной подгрузки
      */
     const displayTotalSpent = () => {
         const amountElement = document.getElementById('totalAmountSpent');
@@ -159,14 +159,8 @@
         // Форматируем число с разделителями тысяч
         const formattedAmount = new Intl.NumberFormat('ru-RU').format(totalAmount);
         
-        // Анимированное появление суммы
-        amountElement.style.opacity = '0';
-        
-        setTimeout(() => {
-            amountElement.textContent = formattedAmount;
-            amountElement.style.opacity = '1';
-            amountElement.classList.add('animate');
-        }, 300);
+        // Сразу подставляем число без анимации подгрузки
+        amountElement.textContent = formattedAmount;
 
         console.log('✅ Сумма трат отображена:', formattedAmount);
     };

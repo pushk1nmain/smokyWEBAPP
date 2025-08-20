@@ -167,6 +167,12 @@ body {
     padding: 32px 24px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     border: 2px solid rgba(90, 155, 247, 0.1);
+    
+    /* Анимация - начальное состояние невидимый и смещенный вниз */
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideInUpFade 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.5s;
 }
 
 .total-spent-section {
@@ -297,6 +303,18 @@ body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Анимация появления карточки - Slide In Up + Fade */
+@keyframes slideInUpFade {
+    0% {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 /* Анимация появления суммы */
@@ -437,9 +455,15 @@ body {
     .nav-button,
     .loading-ring,
     .emoji,
-    .amount-value {
+    .amount-value,
+    .results-container {
         animation: none !important;
         transition: none !important;
+    }
+    
+    .results-container {
+        opacity: 1 !important;
+        transform: none !important;
     }
     
     .emoji {
