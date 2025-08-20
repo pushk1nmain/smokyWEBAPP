@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * Инициализация экрана уроков трансформации
  */
 function initializeScreen() {
-    console.log('🎯 Инициализация экрана уроков трансформации');
+    console.log('🎯 Инициализация экрана поддержки');
     
     try {
         // Получаем элементы
@@ -40,6 +40,15 @@ function initializeScreen() {
         if (!forwardButton) {
             console.error('❌ Не найдены обязательные элементы интерфейса');
             return;
+        }
+        
+        // Устанавливаем имя пользователя в заголовок из кэша
+        const cachedUserName = localStorage.getItem('userName');
+        const userName = cachedUserName || 'Друг';
+        const userNameElement = document.getElementById('userName');
+        if (userNameElement) {
+            userNameElement.textContent = userName;
+            console.log(`👤 Установлено имя пользователя из кэша: ${userName}`);
         }
         
         // Добавляем обработчики событий
