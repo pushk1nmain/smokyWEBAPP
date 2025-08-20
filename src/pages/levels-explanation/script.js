@@ -151,11 +151,11 @@ async function updateUserProgress() {
     try {
         // Обновляем шаг в БД через StepRouter
         if (window.StepRouter) {
-            console.log('🔄 Обновляем шаг до 21 после просмотра уровней');
-            const success = await window.StepRouter.updateStep(21);
+            console.log('🔄 Обновляем шаг до 22 после просмотра уровней (levels-explanation = шаг 21)');
+            const success = await window.StepRouter.updateStep(22);
             
             if (success) {
-                console.log('✅ Шаг успешно обновлен до 21');
+                console.log('✅ Шаг успешно обновлен до 22');
             } else {
                 console.warn('⚠️ Не удалось обновить шаг пользователя');
             }

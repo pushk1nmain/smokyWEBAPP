@@ -138,11 +138,11 @@ async function updateUserProgress() {
     try {
         // Обновляем шаг в БД через StepRouter
         if (window.StepRouter) {
-            console.log('🔄 Обновляем шаг до 20 после просмотра уроков');
-            const success = await window.StepRouter.updateStep(20);
+            console.log('🔄 Обновляем шаг до 21 после просмотра уроков (transformation-lessons = шаг 20)');
+            const success = await window.StepRouter.updateStep(21);
             
             if (success) {
-                console.log('✅ Шаг успешно обновлен до 20');
+                console.log('✅ Шаг успешно обновлен до 21');
             } else {
                 console.warn('⚠️ Не удалось обновить шаг пользователя');
             }
