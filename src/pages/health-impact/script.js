@@ -109,6 +109,28 @@
     };
 
     /**
+     * Функция склонения слова "год/года/лет"
+     */
+    const getYearsText = (years) => {
+        const lastDigit = years % 10;
+        const lastTwoDigits = years % 100;
+        
+        // Исключения для 11-14
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return `${years} лет`;
+        }
+        
+        // Обычные правила
+        if (lastDigit === 1) {
+            return `${years} год`;
+        } else if (lastDigit >= 2 && lastDigit <= 4) {
+            return `${years} года`;
+        } else {
+            return `${years} лет`;
+        }
+    };
+
+    /**
      * Отображение данных о влиянии на здоровье
      */
     const displayHealthImpact = () => {
@@ -130,11 +152,12 @@
             console.log('📅 Потерянные дни:', daysLost);
         }
 
-        // Рассчитываем и отображаем годы
+        // Рассчитываем и отображаем годы с правильным склонением
         if (yearsLostElement && healthImpact.total_days_lost) {
             const yearsLost = Math.round(healthImpact.total_days_lost / 365);
-            yearsLostElement.textContent = yearsLost;
-            console.log('📆 Потерянные годы:', yearsLost);
+            const yearsText = getYearsText(yearsLost);
+            yearsLostElement.textContent = yearsText;
+            console.log('📆 Потерянные годы:', yearsText);
         }
 
         console.log('✅ Данные о влиянии на здоровье отображены');
