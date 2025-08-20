@@ -178,8 +178,12 @@ async function navigateToNextScreen() {
         // Небольшая задержка для плавности
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Переход
-        window.location.href = nextScreen;
+        // Переход с использованием LoadingManager или прямой переход
+        if (window.LoadingManager && window.LoadingManager.navigateWithTransition) {
+            window.LoadingManager.navigateWithTransition(nextScreen);
+        } else {
+            window.location.href = nextScreen;
+        }
         
     } catch (error) {
         console.error('❌ Ошибка при навигации:', error);
