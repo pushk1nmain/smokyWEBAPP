@@ -35,38 +35,24 @@
 }
 
 /* Основной контейнер */
-    body {
+body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #ffffff;
+    background: #E6F0FF;
     color: var(--tg-theme-text-color);
     line-height: 1.6;
-    body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #ffffff;
-    color: var(--tg-theme-text-color);
-    line-height: 1.6;
-    overflow: auto; /* Разрешаем прокрутку */
+    overflow: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
+    height: 100dvh;
 }
 
 .app-container {
-    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
-    overflow: auto; /* Разрешаем прокрутку */
-}
-
-    .app-container {
-    height: 100dvh; /* Динамическая высота viewport для адаптации к клавиатуре */
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    background: linear-gradient(180deg, rgba(198, 255, 221, 0.6) 0%, rgba(198, 255, 221, 0.3) 25%, rgba(198, 255, 221, 0.1) 50%, transparent 100%); /* Заметный зеленый градиент сверху */
-    overflow: auto; /* Разрешаем прокрутку */
+    background: #E6F0FF;
+    overflow: auto;
 }
 
 /* Экран приветствия */
@@ -234,7 +220,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: #ffffff; /* White background */
+    background: #E6F0FF; /* White background */
     display: flex;
     flex-direction: column;
     align-items: center;
