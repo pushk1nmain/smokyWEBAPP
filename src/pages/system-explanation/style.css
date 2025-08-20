@@ -97,7 +97,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 20px var(--container-padding) 20px;
+    padding: 16px var(--container-padding) 20px;
     position: relative;
     z-index: 1;
     min-height: 100vh;
@@ -121,7 +121,7 @@ body {
 .header-section {
     width: 100%;
     text-align: center;
-    margin-top: 16px;
+    margin-top: 50px;
     margin-bottom: 16px;
     flex-shrink: 0;
     
@@ -153,7 +153,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     flex: 1;
     justify-content: center;
     min-height: 0;
@@ -164,7 +164,7 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 16px 14px;
+    padding: 20px 16px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 14px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
@@ -228,7 +228,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 16px;
+    margin-top: 32px;
     flex-shrink: 0;
 }
 
